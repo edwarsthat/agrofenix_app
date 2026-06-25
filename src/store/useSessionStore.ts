@@ -3,15 +3,19 @@ import { create } from "zustand"
 import config from "../config"
 
 interface SessionType {
+    isAuth: boolean
     token: string | null
     usuario: string | null
+    permisos: string[] 
     login: (usuario: string, password: string) => Promise<void>
     logout: (token: string) => Promise<void>
 }
 
 const useSessionStore = create<SessionType>((set) => ({
+    isAuth: false,
     token: null,
     usuario: null,
+    permisos: [],
     login: async (usuario, password): Promise<void> => {
         const response = await fetch(`${config.API_URL}/login`, {
             method: "POST",
@@ -24,8 +28,13 @@ const useSessionStore = create<SessionType>((set) => ({
         }
 
         const data = await response.json() 
-
-        set({ token: data.token, usuario: data.usuario })
+        console.log("useSession", data)
+        set({ 
+            token: data.session_id, 
+            usuario: data.usuario, 
+            permisos: data.permisos,
+            isAuth: true
+        })
     },
     logout: async () => {
         console.log("logout")
