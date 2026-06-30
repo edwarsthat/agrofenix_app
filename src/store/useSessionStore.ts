@@ -1,6 +1,14 @@
 import { fetch } from "@tauri-apps/plugin-http"
 import { create } from "zustand"
 import config from "../config"
+import { invoke } from "@tauri-apps/api/core"
+import { listen } from "@tauri-apps/api/event"
+
+// Listeners de los eventos que emite el backend de Rust. Se registran una sola
+// vez al cargar el módulo para no duplicarlos en cada login.
+listen("socket://message", (e) => console.log("[socket] mensaje:", e.payload))
+listen("socket://error", (e) => console.error("[socket] error:", e.payload))
+listen("socket://closed", () => console.warn("[socket] conexión cerrada"))
 
 interface SessionType {
     isAuth: boolean
@@ -28,13 +36,19 @@ const useSessionStore = create<SessionType>((set) => ({
         }
 
         const data = await response.json() 
-        console.log("useSession", data)
         set({ 
             token: data.session_id, 
             usuario: data.usuario, 
             permisos: data.permisos,
             isAuth: true
         })
+
+        try {
+            await invoke("connect_socket", { token: data.session_id })
+            console.log("✅ socket conectado")
+        } catch (e) {
+            console.error("❌ fallo al conectar socket:", e)
+        }
     },
     logout: async () => {
         console.log("logout")

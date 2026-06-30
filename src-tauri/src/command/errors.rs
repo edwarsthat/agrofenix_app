@@ -1,5 +1,5 @@
 
-use serde::{Serialize, Serializer};
+use serde::{Serialize};
 
 #[derive(Debug, thiserror::Error)]
 pub enum SocketError {
@@ -14,6 +14,9 @@ pub enum SocketError {
 
     #[error("Error al enviar el mensaje")]
     SendFailed,
+
+    #[error("Header invalido: {0}")]
+    InvalidHeader(#[from] tokio_tungstenite::tungstenite::http::header::InvalidHeaderValue)
 
 }
 
