@@ -1,0 +1,97 @@
+/* ==========================================================================
+   Agroalimentos Fénix — Text Input CSS
+   Plain-CSS version of the TextInput component (components/TextInput/).
+   Depends on tokens loaded via styles.css (colors, typography, radius).
+   ========================================================================== */
+
+/* Field wrapper */
+.fx-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+  font-family: var(--font-body);
+}
+.fx-field.is-disabled { opacity: 0.55; }
+
+/* Label */
+.fx-label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+  letter-spacing: var(--tracking-tight);
+}
+.fx-label .required { color: var(--color-accent-flame); margin-left: 4px; }
+
+/* Input wrapper (for icon / password-reveal positioning) */
+.fx-input-wrap { position: relative; display: flex; align-items: center; }
+
+.fx-icon {
+  position: absolute;
+  left: 14px;
+  display: flex;
+  color: var(--color-text-secondary);
+  pointer-events: none;
+}
+
+/* Input itself */
+.fx-input {
+  width: 100%;
+  box-sizing: border-box;
+  font: inherit;
+  font-size: var(--text-base);
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 13px 16px;
+  outline: none;
+  box-shadow: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+/* leading icon: add extra left padding */
+.fx-input[data-has-icon] { padding-left: 42px; }
+/* password reveal toggle: add extra right padding */
+.fx-input[data-has-reveal] { padding-right: 44px; }
+
+.fx-input::placeholder { color: var(--color-text-secondary); opacity: 0.7; }
+
+/* Focus state */
+.fx-input:focus {
+  border-color: var(--color-brand-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-brand-primary) 16%, transparent);
+}
+
+/* Error state */
+.fx-field.is-error .fx-input {
+  border-color: var(--color-danger);
+  box-shadow: none;
+}
+.fx-field.is-error .fx-input:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-danger) 16%, transparent);
+}
+
+/* Disabled state */
+.fx-input:disabled { cursor: not-allowed; }
+
+/* Password reveal toggle button */
+.fx-reveal-btn {
+  position: absolute;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+}
+
+/* Helper / error text below field */
+.fx-help {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-snug);
+}
+.fx-field.is-error .fx-help { color: var(--color-danger); }

@@ -1,0 +1,28 @@
+/* ==========================================================================
+   Agroalimentos Fénix — Global base styles
+   Document-wide defaults built on top of the design tokens. Not tied to any
+   single component — App.css should only hold styles for the App shell.
+   ========================================================================== */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-regular);
+
+  color: var(--color-text-primary);
+  background-color: var(--color-bg);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+

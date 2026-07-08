@@ -1,0 +1,101 @@
+/* ==========================================================================
+   Agroalimentos Fénix — Color tokens
+   Extracted by sampling the provided logo (phoenix mark + wordmark).
+   Base palette first, semantic aliases below.
+   ========================================================================== */
+
+:root {
+  /* ---- Base: Green (wordmark, "agroalimentos" tagline) ---- */
+  --fenix-green-900: #10241A;
+  --fenix-green-800: #16321F;
+  --fenix-green-700: #1E3D26; /* primary brand green — sampled from logo type */
+  --fenix-green-500: #33593F;
+  --fenix-green-300: #6B8A72;
+  --fenix-green-100: #E4EBE5;
+
+  /* ---- Base: Flame (phoenix body — deep red-orange to orange) ---- */
+  --fenix-flame-800: #7A200F;
+  --fenix-flame-700: #A8280F; /* deep shadow orange-red — sampled */
+  --fenix-flame-500: #D8481E; /* core flame orange — sampled */
+  --fenix-flame-400: #EC6A28;
+  --fenix-flame-200: #F6A97B;
+
+  /* ---- Base: Gold (phoenix highlights, halo ring) ---- */
+  --fenix-gold-600: #D98F1E;
+  --fenix-gold-500: #F0A83C; /* amber highlight — sampled */
+  --fenix-gold-300: #F7D998;
+  --fenix-gold-100: #FDF3D9;
+
+  /* ---- Base: Neutrals ---- */
+  --fenix-white: #FFFFFF;
+  --fenix-cream: #FBF9F4;   /* warm off-white, pairs with gold/cream tones in logo */
+  --fenix-charcoal: #23241F;
+  --fenix-gray-600: #5C5C54;
+  --fenix-gray-400: #8C8C82;
+  --fenix-gray-200: #DEDCD2;
+  --fenix-gray-100: #EFEDE6;
+
+  /* ---- Extra neutrals for dark surfaces (kept in base palette, same hue family as green/charcoal) ---- */
+  --fenix-green-950: #0A160F;   /* near-black w/ green hue, for dark bg */
+  --fenix-gray-800: #3A3A34;    /* dark surface / dark border */
+  --fenix-gray-300: #B4B2A6;    /* secondary text on dark */
+}
+
+/* ==========================================================================
+   Semantic aliases — Light mode (default)
+   ========================================================================== */
+:root,
+[data-theme="light"] {
+  --color-bg: var(--fenix-cream);
+  --color-surface: var(--fenix-white);
+  --color-surface-sunken: var(--fenix-gray-100);
+
+  --color-text-primary: var(--fenix-green-900);
+  --color-text-secondary: var(--fenix-gray-600);
+  --color-text-on-dark: var(--fenix-cream);
+  --color-text-on-accent: var(--fenix-white);
+
+  --color-border: var(--fenix-gray-200);
+  --color-border-strong: var(--fenix-green-700);
+
+  --color-brand-primary: var(--fenix-green-700);      /* wordmark green — primary brand color */
+  --color-brand-primary-hover: var(--fenix-green-800);
+  --color-accent-flame: var(--fenix-flame-500);        /* phoenix flame — energetic accent */
+  --color-accent-flame-hover: var(--fenix-flame-700);
+  --color-accent-gold: var(--fenix-gold-500);           /* phoenix halo — warm highlight accent */
+
+  --color-success: var(--fenix-green-500);
+  --color-warning: var(--fenix-gold-600);
+  --color-danger: var(--fenix-flame-700);
+}
+
+/* ==========================================================================
+   Semantic aliases — Dark mode
+   Same variable names, values re-mapped for a dark surface. Backgrounds move
+   into the green-charcoal family (not pure black) to keep the brand's warm,
+   earthy hue; accents (flame/gold) are lifted a step lighter so they still
+   read at full saturation against a dark ground.
+   ========================================================================== */
+[data-theme="dark"] {
+  --color-bg: var(--fenix-green-950);
+  --color-surface: var(--fenix-green-900);
+  --color-surface-sunken: var(--fenix-green-800);
+
+  --color-text-primary: var(--fenix-cream);
+  --color-text-secondary: var(--fenix-gray-300);
+  --color-text-on-dark: var(--fenix-cream);
+  --color-text-on-accent: var(--fenix-white);
+
+  --color-border: var(--fenix-gray-800);
+  --color-border-strong: var(--fenix-green-500);
+
+  --color-brand-primary: var(--fenix-green-300);       /* lightened so it reads on dark bg */
+  --color-brand-primary-hover: var(--fenix-green-500);
+  --color-accent-flame: var(--fenix-flame-400);         /* one step lighter than light-mode flame */
+  --color-accent-flame-hover: var(--fenix-flame-200);
+  --color-accent-gold: var(--fenix-gold-500);           /* already bright enough on dark */
+
+  --color-success: var(--fenix-green-300);
+  --color-warning: var(--fenix-gold-500);
+  --color-danger: var(--fenix-flame-400);
+}

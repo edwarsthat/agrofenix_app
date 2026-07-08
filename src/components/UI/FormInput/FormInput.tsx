@@ -1,4 +1,5 @@
 import React, { useId } from "react"
+import styles from "./styles/FormInput.module.css"
 
 type FormInputProps = {
     name: string
@@ -24,9 +25,15 @@ export default function FormInput({
     const id = useId()
     const errorId = `${id}-error`
 
+    const fieldClassName = [
+        styles["fx-field"],
+        disabled ? styles["is-disabled"] : "",
+        error ? styles["is-error"] : ""
+    ].filter(Boolean).join(" ")
+
     return (
-        <div className="form-group">
-            <label htmlFor={name} className="form-label">
+        <div className={fieldClassName}>
+            <label htmlFor={name} className={styles["fx-label"]}>
                 {label}
             </label>
             <input
@@ -37,11 +44,11 @@ export default function FormInput({
                 onChange={onChange}
                 placeholder={placeholder}
                 disabled={disabled}
-                className={`form-input ${error ? "input-error" : ""}`}
+                className={styles["fx-input"]}
                 aria-invalid={!!error}
-                aria-describedby={error ? `${name}-error` : undefined}
+                aria-describedby={error ? errorId : undefined}
             />
-            {error && <p id={errorId} className="form-error" role="alert">{error}</p>}
+            {error && <p id={errorId} className={styles["fx-help"]} role="alert">{error}</p>}
         </div>
     )
 }
