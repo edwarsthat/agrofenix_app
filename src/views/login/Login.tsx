@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, FormEvent } from "react"
 import FormInput from "../../components/UI/FormInput/FormInput"
 import FenixButton from "../../components/UI/Button/FenixButton"
 import useSessionStore from "../../store/useSessionStore"
@@ -9,15 +9,17 @@ export default function Login(){
     const login = useSessionStore(data => data.login)
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
+    const [loading, setLoading] = useState(false)
 
-    const handleLogin = async ():Promise<void> => {
+    const handleLogin = async (e: FormEvent):Promise<void> => {
+        e.preventDefault()
         try {
-            console.log(username)
-            const response = await login(username, password)
-            console.log(response)
-
+            setLoading(true)
+            await login(username, password)
         } catch (err){
             console.error(err)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -34,7 +36,7 @@ export default function Login(){
             </aside>
 
             <div className={styles.formPanelOuter}>
-                <div className={styles.formPanel}>
+                <form className={styles.formPanel} onSubmit={handleLogin}>
                     <img src={logo} alt="Agroalimentos Fénix" className={styles.logo} />
                     <h1 className={styles.title}>Iniciar sesión</h1>
                     <p className={styles.subtitle}>Ingresa tus credenciales para continuar</p>
@@ -57,8 +59,8 @@ export default function Login(){
                         />
                     </div>
 
-                    <FenixButton onClick={handleLogin} fullWidth>Login</FenixButton>
-                </div>
+                    <FenixButton type="submit" fullWidth disabled={loading}>Login</FenixButton>
+                </form>
             </div>
         </div>
     )

@@ -1,0 +1,200 @@
+/* Sidebar — Agroalimentos Fénix
+   Extraído del template "Menú de inicio (escritorio)".
+   Usa los tokens del design system (styles.css) — impórtalo antes que este módulo. */
+
+.sidebar {
+  width: 250px;
+  flex-shrink: 0;
+  background: var(--fenix-green-900);
+  color: var(--fenix-cream);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  overflow: hidden;
+  font-family: var(--font-body);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px 20px;
+}
+
+.brandLogo {
+  height: 30px;
+  width: auto;
+}
+
+.brandText {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.125rem;
+  color: var(--fenix-cream);
+}
+
+.sectionLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 20px;
+  margin-top: 8px;
+  color: var(--fenix-gray-300);
+  opacity: 0.7;
+}
+
+.sectionLabel:first-of-type {
+  margin-top: 0;
+}
+
+.item {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--fenix-gray-300);
+  border-left: 3px solid transparent;
+}
+
+.item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.itemActive {
+  composes: item;
+  background: rgba(255, 255, 255, 0.08);
+  border-left-color: var(--fenix-gold-500);
+  padding-left: 17px;
+  color: var(--fenix-cream);
+}
+
+.itemIcon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.chevron {
+  width: 14px;
+  height: 14px;
+  margin-left: auto;
+  transition: transform 0.15s;
+}
+
+.chevronOpen {
+  composes: chevron;
+  transform: rotate(90deg);
+}
+
+.children {
+  display: flex;
+  flex-direction: column;
+}
+
+.child {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px 8px 50px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--fenix-gray-300);
+  opacity: 0.85;
+}
+
+.child:hover {
+  opacity: 1;
+}
+
+.childActive {
+  composes: child;
+  color: var(--fenix-gold-300);
+  font-weight: 700;
+  opacity: 1;
+}
+
+.childDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.6;
+}
+
+.footer {
+  margin-top: auto;
+  padding: 12px 20px 0;
+}
+
+/* ==========================================================================
+   Responsive — <768px: el sidebar pasa a ser un drawer off-canvas.
+   ≥768px (desktop): columna fija siempre visible, como hasta ahora.
+   ========================================================================== */
+
+.backdrop {
+  display: none;
+}
+
+.closeBtn {
+  width: 30px;
+  height: 30px;
+  box-sizing: border-box;
+  padding: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--fenix-cream);
+  background: transparent;
+  border: none;
+  margin-left: auto;
+}
+
+@media (max-width: 767px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 270px;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .sidebarOpen {
+    transform: translateX(0);
+  }
+
+  .backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 22, 15, 0.45);
+    z-index: 40;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .backdropOpen {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .closeBtn {
+    display: flex;
+  }
+}
