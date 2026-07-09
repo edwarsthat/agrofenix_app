@@ -1,0 +1,79 @@
+/* ==========================================================================
+   Agroalimentos Fénix — Button CSS Module
+   Depends on tokens loaded globally via styles.css (colors, typography, radius, shadow).
+   ========================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  box-sizing: border-box;
+  padding: 14px 24px;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  border-radius: var(--radius-md);
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: background 120ms ease, transform 80ms ease, opacity 120ms ease;
+}
+
+.btn:active { transform: scale(0.98); }
+
+.btn:disabled,
+.btn.isLoading {
+  cursor: default;
+  opacity: 0.6;
+  transform: none;
+}
+
+.fullWidth { width: 100%; }
+
+/* ---- Variants ---- */
+.primary {
+  background: var(--color-brand-primary);
+  color: var(--color-text-on-accent);
+  box-shadow: var(--shadow-sm);
+}
+.primary:hover:not(:disabled):not(.isLoading) {
+  background: var(--color-brand-primary-hover);
+}
+
+.secondary {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  border-color: var(--color-border-strong);
+}
+.secondary:hover:not(:disabled):not(.isLoading) {
+  background: var(--color-surface-sunken);
+}
+
+.ghost {
+  background: transparent;
+  color: var(--color-brand-primary);
+}
+.ghost:hover:not(:disabled):not(.isLoading) {
+  background: var(--color-surface-sunken);
+}
+
+/* ---- Spinner ---- */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  display: inline-block;
+  animation: fx-btn-spin 700ms linear infinite;
+}
+.secondary .spinner,
+.ghost .spinner {
+  border: 2px solid color-mix(in srgb, var(--color-brand-primary) 30%, transparent);
+  border-top-color: var(--color-brand-primary);
+}
+
+@keyframes fx-btn-spin {
+  to { transform: rotate(360deg); }
+}

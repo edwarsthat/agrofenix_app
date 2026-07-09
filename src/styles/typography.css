@@ -1,0 +1,44 @@
+/* ==========================================================================
+   Agroalimentos Fénix — Typography tokens
+   The logo lettering is custom-drawn (not a real usable font). Nearest
+   Google Fonts substitutes are used for actual typesetting — see readme.md
+   "Fonts — substitution flag" for details.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,600&family=Lato:wght@400;500;700;900&display=swap');
+
+:root {
+  /* ---- Font families ---- */
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif; /* headlines — echoes bold "FÉNIX" serif */
+  --font-script: 'Playfair Display', Georgia, serif; /* use italic style for the "agroalimentos" tagline voice */
+  --font-body: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* ---- Sizes ---- */
+  --text-xs: 0.75rem;    /* 12px */
+  --text-sm: 0.875rem;   /* 14px */
+  --text-base: 1rem;     /* 16px */
+  --text-lg: 1.125rem;   /* 18px */
+  --text-xl: 1.5rem;     /* 24px */
+  --text-2xl: 2rem;      /* 32px */
+  --text-3xl: 2.75rem;   /* 44px */
+  --text-4xl: 3.5rem;    /* 56px */
+  --text-5xl: 4.5rem;    /* 72px */
+
+  /* ---- Weights ---- */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+  --weight-black: 900;
+
+  /* ---- Line heights ---- */
+  --leading-tight: 1.1;
+  --leading-snug: 1.3;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+
+  /* ---- Letter spacing ---- */
+  --tracking-tight: -0.01em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.08em;   /* small-caps tagline / "S A S" style spacing */
+  --tracking-wider: 0.16em;
+}

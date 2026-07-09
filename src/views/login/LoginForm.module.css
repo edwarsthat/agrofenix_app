@@ -1,0 +1,148 @@
+/* ==========================================================================
+   Agroalimentos Fénix — Login View layout (CSS Module)
+   Responsive structure: split brand panel on desktop, single column on mobile.
+   Depends on tokens loaded globally via styles.css.
+   ========================================================================== */
+
+.page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  background: var(--color-surface-sunken);
+  font-family: var(--font-body);
+  box-sizing: border-box;
+}
+
+/* ---- Brand panel (left, desktop only) ---- */
+.brandPanel {
+  width: 400px;
+  flex-shrink: 0;
+  background: var(--color-brand-primary);
+  background-image:
+    radial-gradient(circle at 30% 20%, rgba(240, 168, 60, 0.35), transparent 55%),
+    radial-gradient(circle at 80% 85%, rgba(216, 72, 30, 0.30), transparent 50%);
+  color: var(--color-text-on-dark);
+  padding: 56px 48px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.brandTagline {
+  font-family: var(--font-script);
+  font-style: italic;
+  font-size: var(--text-lg);
+  opacity: 0.9;
+  margin: 0;
+}
+
+.brandWordmark {
+  font-family: var(--font-display);
+  font-weight: var(--weight-black);
+  font-size: var(--text-4xl);
+  line-height: var(--leading-tight);
+  margin: 8px 0 0;
+}
+
+.brandSub {
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  opacity: 0.85;
+  max-width: 280px;
+}
+
+/* ---- Form panel (right on desktop, full width on mobile) ---- */
+.formPanelOuter {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  box-sizing: border-box;
+}
+
+.formPanel {
+  width: 100%;
+  max-width: 380px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 44px 40px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.logo {
+  height: 44px;
+  width: auto;
+  align-self: flex-start;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-weight: var(--weight-black);
+  font-size: var(--text-2xl);
+  color: var(--color-text-primary);
+  margin: 0;
+  letter-spacing: var(--tracking-tight);
+}
+
+.subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin: -12px 0 4px;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.rowEnd {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -8px;
+}
+
+/* ==========================================================================
+   Mobile — brand panel drops out, form goes edge-to-edge, logo centers
+   ========================================================================== */
+@media (max-width: 768px) {
+  .page {
+    flex-direction: column;
+  }
+
+  .brandPanel {
+    display: none;
+  }
+
+  .formPanelOuter {
+    padding: 24px 16px;
+    align-items: flex-start;
+    padding-top: 56px;
+  }
+
+  .formPanel {
+    max-width: 100%;
+    box-shadow: none;
+    border-radius: 0;
+    background: transparent;
+    padding: 0;
+  }
+
+  .logo {
+    align-self: center;
+    height: 56px;
+    margin-bottom: 4px;
+  }
+
+  .title,
+  .subtitle {
+    text-align: center;
+  }
+}

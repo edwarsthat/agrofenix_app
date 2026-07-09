@@ -1,0 +1,11 @@
+/* ==========================================================================
+   Agroalimentos Fénix — Global styles entry point
+   Tokens first, then base.css (which consumes them for document defaults).
+   ========================================================================== */
+
+@import "./colors.css";
+@import "./typography.css";
+@import "./spacing.css";
+@import "./radius.css";
+@import "./shadow.css";
+@import "./base.css";

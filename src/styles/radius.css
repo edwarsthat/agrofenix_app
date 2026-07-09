@@ -1,0 +1,12 @@
+/* ==========================================================================
+   Agroalimentos Fénix — Corner radius tokens
+   No app/web UI exists yet to source these from; this is a conservative
+   starting scale for future product work.
+   ========================================================================== */
+
+:root {
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+}
