@@ -2,6 +2,7 @@ import { useState } from "react"
 import FormInput from "../../components/UI/FormInput/FormInput"
 import FenixButton from "../../components/UI/Button/FenixButton"
 import useSessionStore from "../../store/useSessionStore"
+import logo from "../../assets/logo.png"
 import styles from "./LoginForm.module.css"
 
 export default function Login(){
@@ -34,6 +35,7 @@ export default function Login(){
 
             <div className={styles.formPanelOuter}>
                 <div className={styles.formPanel}>
+                    <img src={logo} alt="Agroalimentos Fénix" className={styles.logo} />
                     <h1 className={styles.title}>Iniciar sesión</h1>
                     <p className={styles.subtitle}>Ingresa tus credenciales para continuar</p>
 

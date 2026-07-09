@@ -14,8 +14,10 @@
 }
 
 /* ---- Brand panel (left, desktop only) ---- */
+/* Scales with viewport instead of a fixed width, so it doesn't shrink to a
+   thin sliver against a huge empty form area on wide screens. */
 .brandPanel {
-  width: 400px;
+  width: clamp(320px, 34vw, 560px);
   flex-shrink: 0;
   background: var(--color-brand-primary);
   background-image:
@@ -60,19 +62,37 @@
   justify-content: center;
   padding: 40px 24px;
   box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  /* Subtle dot texture so large empty areas on wide screens don't read as blank */
+  background-image: radial-gradient(var(--color-border) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-position: -14px -14px;
+}
+
+/* Soft vignette fading the texture near the card so it reads as background, not noise */
+.formPanelOuter::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 45%, var(--color-surface-sunken) 0%, var(--color-surface-sunken) 18%, transparent 62%);
+  pointer-events: none;
 }
 
 .formPanel {
   width: 100%;
   max-width: 380px;
   background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-lg);
   padding: 44px 40px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 18px;
+  position: relative;
+  z-index: 1;
 }
 
 .logo {
@@ -130,6 +150,7 @@
   .formPanel {
     max-width: 100%;
     box-shadow: none;
+    border: none;
     border-radius: 0;
     background: transparent;
     padding: 0;
