@@ -1,21 +1,27 @@
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 
+use futures_util::StreamExt;
 use tauri::{AppHandle, Emitter, State};
 use tokio::sync::{mpsc, Mutex};
-use tokio_tungstenite::{
-    connect_async,
-    tungstenite::{client::IntoClientRequest, Message},
-};
-use futures_util::{SinkExt, StreamExt};
+use tokio_tungstenite::connect_async;
 
 use crate::command::errors::SocketError;
+use crate::socket::actor::run_socket_loop;
+use crate::socket::{
+    protocol::{build_envelop, build_request, build_ws_url},
+    pending::PendingRequest,
+};
+
+const REQUEST_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(15);
+
 
 pub struct SocketState {
     tx: Arc<Mutex<Option<mpsc::UnboundedSender<String>>>>,
-    /// Id de la conexión vigente. Cada conexión nueva lo incrementa; la task
-    /// vieja usa esto para saber si todavía "es la actual" antes de limpiar.
     current_id: Arc<AtomicU64>,
+    next_request_id: Arc<AtomicU64>,
+    pending: Arc<PendingRequest>,
+    session_token: Arc<Mutex<Option<String>>>,
 }
 
 impl SocketState {
@@ -23,6 +29,9 @@ impl SocketState {
         Self {
             tx: Arc::new(Mutex::new(None)),
             current_id: Arc::new(AtomicU64::new(0)),
+            next_request_id: Arc::new(AtomicU64::new(0)),
+            pending: Arc::new(PendingRequest::new()),
+            session_token: Arc::new(Mutex::new(None)),
         }
     }
 }
@@ -34,19 +43,13 @@ pub async fn connect_socket(
     token: String,
 ) -> Result<(), SocketError> {
     let base = std::env::var("VITE_API_URL")?;
-    let ws_base = base
-        .replace("http://", "ws://")
-        .replace("https://", "wss://");
-    let url = format!("{ws_base}/ws");
+    let url = build_ws_url(&base);
     println!("[socket] intentando conectar a {url}");
 
     // Auth por header en vez de query string: no se filtra en logs ni proxies.
-    let mut request = url.into_client_request()?;
-    request.headers_mut().insert(
-        "Authorization",
-        format!("Bearer {token}").parse()?,
-    );
+    let request = build_request(&url, &token)?;
 
+    *state.session_token.lock().await = Some(token.clone());
     let (ws_stream, _) = match connect_async(request).await {
         Ok(stream) => {
             println!("[socket] conexión establecida");
@@ -57,64 +60,67 @@ pub async fn connect_socket(
             return Err(e.into());
         }
     };
-    let (mut write, mut read) = ws_stream.split();
+    let (write, read) = ws_stream.split();
 
-    let (tx, mut rx) = mpsc::unbounded_channel::<String>();
-
+    let (tx, rx) = mpsc::unbounded_channel::<String>();
     let my_id = state.current_id.fetch_add(1, Ordering::SeqCst) + 1;
     *state.tx.lock().await = Some(tx);
 
     let tx_state = state.tx.clone();
     let id_state = state.current_id.clone();
+    let pending_state = state.pending.clone();
+    let token_state = state.session_token.clone();
 
     tokio::spawn(async move {
-        loop {
-            tokio::select! {
-                // ── Mensajes salientes (desde el frontend vía el canal) ──
-                maybe_msg = rx.recv() => {
-                    match maybe_msg {
-                        Some(msg) => {
-                            if let Err(e) = write.send(Message::Text(msg)).await {
-                                let _ = app.emit("socket://error", e.to_string());
-                                break;
-                            }
-                        }
-                        None => break,
-                    }
-                }
-
-                // ── Mensajes entrantes (desde el servidor) ──
-                maybe_frame = read.next() => {
-                    match maybe_frame {
-                        Some(Ok(Message::Text(text))) => {
-                            let _ = app.emit("socket://message", text);
-                        }
-                        // Stream split -> el pong NO sale solo, lo respondemos aquí.
-                        Some(Ok(Message::Ping(payload))) => {
-                            if write.send(Message::Pong(payload)).await.is_err() {
-                                break;
-                            }
-                        }
-                        Some(Ok(Message::Close(_))) => break,
-                        Some(Ok(_)) => {}
-                        Some(Err(e)) => {
-                            let _ = app.emit("socket://error", e.to_string());
-                            break;
-                        }
-                        None => break,
-                    }
-                }
-            }
-        }
-
+        run_socket_loop(write, read, rx, pending_state.clone(), &app).await;
         // Limpieza solo si seguimos siendo la conexión vigente. Si otra conexión
         // ya nos reemplazó (current_id != my_id), no tocamos su estado ni
         // emitimos un "closed" espurio que confunda al frontend.
         if id_state.load(Ordering::SeqCst) == my_id {
             *tx_state.lock().await = None;
+            pending_state.clear().await;
+            *token_state.lock().await = None;
             let _ = app.emit("socket://closed", ());
         }
     });
 
     Ok(())
+}
+
+#[tauri::command]
+pub async fn send_socket_message(
+    state: State<'_, SocketState>,
+    info: serde_json::Value,
+) -> Result<serde_json::Value, SocketError> {
+    let token = state
+        .session_token
+        .lock()
+        .await
+        .clone()
+        .ok_or(SocketError::NotConnected)?;
+    let id = state
+        .next_request_id
+        .fetch_add(1, Ordering::SeqCst)
+        .to_string();
+
+    let envelope = build_envelop(&id, &token, &info);
+
+    let resp_rx = state.pending.register(id.clone()).await;
+    let tx_guard = state.tx.lock().await;
+    let tx = tx_guard.as_ref().ok_or(SocketError::NotConnected)?;
+
+    if tx.send(envelope.to_string()).is_err() {
+        state.pending.cancel(&id).await;
+        return Err(SocketError::SendFailed);
+    }
+    drop(tx_guard);
+
+    match tokio::time::timeout(REQUEST_TIMEOUT, resp_rx).await {
+        Ok(Ok(text)) => serde_json::from_str(&text).map_err(SocketError::from),
+        Ok(Err(_)) => Err(SocketError::SendFailed),
+        Err(_) => {
+            state.pending.cancel(&id).await;
+            Err(SocketError::TimeOut)
+        }
+    }
 }

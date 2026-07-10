@@ -4,6 +4,7 @@ import Login from "./views/login/Login";
 import useSessionStore from './store/useSessionStore';
 import Home from './views/home/Home';
 import Usuarios from './views/administracion/usuarios/Usuarios';
+import Cargos from './views/administracion/cargos/Cargos';
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         >
           <Route index element={<div>Home</div>} />
           <Route path="administracion/usuarios" element={<Usuarios />} />
+          <Route path="administracion/cargos" element={<Cargos />} />
         </Route>
       </Routes>
     </main>

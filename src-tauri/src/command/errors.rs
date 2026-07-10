@@ -16,8 +16,16 @@ pub enum SocketError {
     SendFailed,
 
     #[error("Header invalido: {0}")]
-    InvalidHeader(#[from] tokio_tungstenite::tungstenite::http::header::InvalidHeaderValue)
+    InvalidHeader(#[from] tokio_tungstenite::tungstenite::http::header::InvalidHeaderValue),
 
+    #[error("El pauload debe ser un objeto JSON")]
+    InvalidPayload,
+
+    #[error("Respuesta invalida del servidor: {0}")]
+    InvalidResponse(#[from] serde_json::Error),
+
+    #[error("El servidor no respondio a tiempo")]
+    TimeOut,
 }
 
 impl Serialize for SocketError {

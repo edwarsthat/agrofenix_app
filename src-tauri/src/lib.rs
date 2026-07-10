@@ -1,4 +1,5 @@
 pub mod command;
+pub mod socket;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -16,7 +17,8 @@ pub fn run() {
         .manage(command::socket::SocketState::new())
         .invoke_handler(tauri::generate_handler![
             greet,
-            command::socket::connect_socket
+            command::socket::connect_socket,
+            command::socket::send_socket_message
             ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

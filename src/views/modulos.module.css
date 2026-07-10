@@ -1,0 +1,24 @@
+
+/* ---- Toolbar: título + buscador + botón de agregar ---- */
+.toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.toolbarTitle {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 2rem;
+  color: var(--color-text-primary);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.toolbarSubtitle {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin: 4px 0 0;
+}

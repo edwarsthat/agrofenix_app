@@ -1,0 +1,246 @@
+/* Table — Agroalimentos Fénix
+   Esquema estándar para toda vista de listado (tabla + toolbar + acciones + paginación).
+   Extraído del template "Vista de lista (CRUD estándar)".
+   Importa styles.css del design system ANTES de este módulo — la mayoría de colores
+   son alias semánticos (--color-*) que ya cambian solos con [data-theme="dark"] en un
+   ancestro. Solo el avatar y las insignias de estado usan tokens de marca fijos
+   (--fenix-*) para el efecto "tinte suave", así que esos dos sí llevan una sección
+   explícita de modo oscuro más abajo. */
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-body);
+}
+
+
+
+
+
+.searchInput {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-surface-sunken);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  width: 320px;
+}
+
+.addButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: var(--color-brand-primary);
+  color: var(--color-text-on-accent);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+
+.addButton:hover {
+  background: var(--color-brand-primary-hover);
+}
+
+/* ---- Encabezado de tabla ---- */
+.headRow,
+.row {
+  display: grid;
+  /* Ajusta la cantidad/anchos de columnas por vista; deja la última fija para acciones. */
+  grid-template-columns: 2.2fr 3fr 1fr 1fr 110px;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 22px;
+}
+
+.headRow {
+  padding: 13px 22px;
+  background: var(--color-surface-sunken);
+  border-bottom: 1px solid var(--color-border);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+/* ---- Filas de datos ---- */
+.row {
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.875rem;
+  color: var(--color-text-primary);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row:hover {
+  background: var(--color-surface-sunken);
+}
+
+.cellPrimary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.cellSecondary {
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--fenix-green-100);
+  color: var(--fenix-green-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+/* ---- Insignia de estado ---- */
+.badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+}
+
+.badgeActive {
+  background: var(--fenix-green-100);
+  color: var(--fenix-green-700);
+}
+
+.badgeInactive {
+  background: var(--fenix-gray-100);
+  color: var(--fenix-gray-600);
+}
+
+/* ---- Acciones por registro: editar / eliminar ---- */
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.actionBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+}
+
+.actionBtn:hover {
+  background: var(--color-surface-sunken);
+  color: var(--color-brand-primary);
+}
+
+.actionBtnDelete:hover {
+  background: var(--color-surface-sunken);
+  color: var(--color-danger);
+}
+
+/* ---- Pie: paginación ---- */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 22px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.paginationControls {
+  display: flex;
+  gap: 6px;
+}
+
+.paginationBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+}
+
+.paginationBtn:hover {
+  background: var(--color-surface-sunken);
+}
+
+.paginationBtnDisabled {
+  opacity: 0.4;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* ---- Estado vacío ---- */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 56px 22px;
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.emptyTitle {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.0625rem;
+  color: var(--color-text-primary);
+}
+
+/* ==========================================================================
+   Modo oscuro — solo los dos combos que usan tokens de marca fijos
+   (--fenix-*) en vez de alias semánticos necesitan un valor explícito aquí;
+   todo lo demás en este archivo ya usa --color-* y se adapta solo.
+   ========================================================================== */
+:global([data-theme='dark']) .avatar {
+  background: var(--fenix-green-800);
+  color: var(--fenix-green-300);
+}
+
+:global([data-theme='dark']) .badgeActive {
+  background: var(--fenix-green-800);
+  color: var(--fenix-green-300);
+}
+
+:global([data-theme='dark']) .badgeInactive {
+  background: var(--fenix-gray-800);
+  color: var(--fenix-gray-300);
+}
