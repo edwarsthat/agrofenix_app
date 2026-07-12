@@ -1,6 +1,8 @@
 pub mod command;
 pub mod socket;
 
+
+
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -14,7 +16,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_http::init())
-        .manage(command::socket::SocketState::new())
+        .manage(socket::state::SocketHandles::new())
         .invoke_handler(tauri::generate_handler![
             greet,
             command::socket::connect_socket,
