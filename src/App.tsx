@@ -5,10 +5,14 @@ import useSessionStore from './store/useSessionStore';
 import Home from './views/home/Home';
 import Usuarios from './views/administracion/usuarios/Usuarios';
 import Cargos from './views/administracion/cargos/Cargos';
+import { FenixToastStack } from './components/UI/Toast/FenixToast';
+import { useToastStore } from './store/useTosterStore';
 
 
 function App() {
   const isAuth = useSessionStore((s) => s.isAuth);
+  const toasts = useToastStore((s) => s.toasts);
+  const dismiss = useToastStore((s) => s.dismiss);
 
   return (
     <main>
@@ -22,6 +26,8 @@ function App() {
           <Route path="administracion/cargos" element={<Cargos />} />
         </Route>
       </Routes>
+
+      <FenixToastStack toasts={toasts} onDismiss={dismiss} />
     </main>
   );
 }

@@ -1,0 +1,126 @@
+/* Toast — Agroalimentos Fénix
+   Notificación de éxito / atención / error / info.
+   Usa los tokens del design system (styles.css) — impórtalo antes que este módulo. */
+
+.stack {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.stack > * {
+  pointer-events: auto;
+}
+
+.toast {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 360px;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+  border-left: 4px solid var(--toast-accent, var(--color-success));
+  font-family: var(--font-body);
+  transition: transform 220ms cubic-bezier(.2, .7, .3, 1), opacity 220ms ease;
+}
+
+/* Variant accents */
+.success { --toast-accent: var(--color-success); --toast-chip-bg: color-mix(in srgb, var(--color-success) 16%, var(--color-surface)); }
+.warning { --toast-accent: var(--color-warning); --toast-chip-bg: color-mix(in srgb, var(--color-warning) 20%, var(--color-surface)); }
+.error   { --toast-accent: var(--color-danger);  --toast-chip-bg: color-mix(in srgb, var(--color-danger) 16%, var(--color-surface)); }
+.info    { --toast-accent: var(--color-brand-primary); --toast-chip-bg: color-mix(in srgb, var(--color-brand-primary) 14%, var(--color-surface)); }
+
+/* Enter/exit states */
+.entering {
+  transform: translateX(24px) scale(0.98);
+  opacity: 0;
+}
+
+.entered {
+  transform: translateX(0) scale(1);
+  opacity: 1;
+}
+
+.leaving {
+  transform: translateX(24px) scale(0.98);
+  opacity: 0;
+}
+
+.iconChip {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--toast-chip-bg);
+  color: var(--toast-accent);
+}
+
+.body {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-top: 1px;
+}
+
+.title {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  color: var(--color-text-primary);
+  letter-spacing: var(--tracking-tight);
+}
+
+.description {
+  margin-top: 2px;
+  font-size: var(--text-xs);
+  line-height: var(--leading-snug);
+  color: var(--color-text-secondary);
+}
+
+.closeBtn {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-left: 2px;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+}
+
+.progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: var(--toast-accent);
+  opacity: 0.55;
+  transform-origin: left;
+  animation-name: fenix-toast-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fenix-toast-progress {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}

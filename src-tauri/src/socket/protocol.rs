@@ -21,7 +21,7 @@ pub fn extract_message_id(text: &str) -> Option<String> {
 }
 
 pub fn build_envelop(id: &str, token: &str, info: &serde_json::Value) -> String {
-    serde_json::json!({"id": id,"token": token,"info": info,}).to_string()
+    serde_json::json!({"id": id,"token": token, "payload": info,}).to_string()
 }
 
 #[cfg(test)]
