@@ -1,5 +1,7 @@
 
 export interface Cargo {
-    _id: string
+    id: string
     nombre: string
+    descripcion: string | null
+    creado_en: string
 }
