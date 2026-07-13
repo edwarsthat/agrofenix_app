@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './FenixLoading.module.css';
 
-export type LoadingVariant = 'view' | 'overlay';
+export type LoadingVariant = 'view' | 'overlay' | 'app';
 
 export interface LoadingProps {
   /**
@@ -9,29 +9,36 @@ export interface LoadingProps {
    * data yet (first load, navigation between menu items).
    * 'overlay' — translucent layer over existing (stale) content, used when
    * refetching data for a view that's already showing something.
+   * 'app' — same as 'overlay' but fixed to the viewport; this is the one the
+   * global loading store renders.
    */
   variant?: LoadingVariant;
-  /** Text under the spinner. Pass '' to hide it. */
   label?: string;
   className?: string;
 }
+
+const VARIANT_CLASS: Record<LoadingVariant, string> = {
+  view: styles.view,
+  overlay: styles.overlay,
+  app: styles.app,
+};
 
 export const FenixLoading: React.FC<LoadingProps> = ({
   variant = 'view',
   label = 'Cargando…',
   className,
 }) => {
-  const isOverlay = variant === 'overlay';
+  const isCompact = variant !== 'view';
 
   return (
     <div
       role="status"
       aria-live="polite"
-      className={[isOverlay ? styles.overlay : styles.view, className || ''].filter(Boolean).join(' ')}
+      className={[VARIANT_CLASS[variant], className || ''].filter(Boolean).join(' ')}
     >
-      <span className={isOverlay ? styles.ringSmall : styles.ring} />
+      <span className={isCompact ? styles.ringSmall : styles.ring} />
       {label && (
-        <div className={isOverlay ? styles.labelSmall : styles.label}>{label}</div>
+        <div className={isCompact ? styles.labelSmall : styles.label}>{label}</div>
       )}
     </div>
   );

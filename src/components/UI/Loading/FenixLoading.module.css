@@ -16,7 +16,8 @@
   animation: fx-loading-fade 180ms ease;
 }
 
-.overlay {
+.overlay,
+.app {
   position: absolute;
   inset: 0;
   z-index: 20;
@@ -28,6 +29,13 @@
   background: color-mix(in srgb, var(--color-bg) 72%, transparent);
   backdrop-filter: blur(1.5px);
   animation: fx-loading-fade 150ms ease;
+}
+
+/* Cubre toda la ventana, no el contenedor padre. Por debajo de los toasts
+   para que un error siga siendo visible mientras se apaga el loading. */
+.app {
+  position: fixed;
+  z-index: 900;
 }
 
 /* ---- Spinner ring ---- */

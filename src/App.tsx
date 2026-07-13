@@ -7,12 +7,16 @@ import Usuarios from './views/administracion/usuarios/Usuarios';
 import Cargos from './views/administracion/cargos/Cargos';
 import { FenixToastStack } from './components/UI/Toast/FenixToast';
 import { useToastStore } from './store/useTosterStore';
+import FenixLoading from './components/UI/Loading/FenixLoading';
+import { useLoadingStore } from './store/useLoadingStore';
 
 
 function App() {
   const isAuth = useSessionStore((s) => s.isAuth);
   const toasts = useToastStore((s) => s.toasts);
   const dismiss = useToastStore((s) => s.dismiss);
+  const isLoading = useLoadingStore((s) => s.loading);
+  const loadingLabel = useLoadingStore((s) => s.label);
 
   return (
     <main>
@@ -26,6 +30,8 @@ function App() {
           <Route path="administracion/cargos" element={<Cargos />} />
         </Route>
       </Routes>
+
+      {isLoading && <FenixLoading variant="app" label={loadingLabel} />}
 
       <FenixToastStack toasts={toasts} onDismiss={dismiss} />
     </main>

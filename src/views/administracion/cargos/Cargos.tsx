@@ -5,30 +5,26 @@ import { Cargo } from "../../../types/administracion/cargos";
 
 
 export default function Cargos() {
-    const [loading, setLoading] = useState<boolean>(false)
     const [cargos, setCargos] = useState<Cargo[]>([])
-    
+
     useEffect(() => {
         let cancelado = false
         const handleRequest = async (): Promise<void> => {
             try {
-                setLoading(true)
                 const request = {
                     action: "administracion:cargos:read"
                 }
+                // El loading global y el toast de error los pone socketRequest.
                 const response = await socketRequest<Cargo[]>(request)
                 if(!cancelado) setCargos(response.data ?? [])
             } catch (err) {
-                // El toast ya lo mostró socketRequest.
                 console.error("[cargos] error:", err)
-            } finally {
-                if(!cancelado) setLoading(false)
             }
         }
         handleRequest()
 
         return () => { cancelado = true }
-        
+
     }, [])
 
     return (
