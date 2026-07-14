@@ -5,6 +5,7 @@ import tableStyles from "../../../components/funcionalidad/tablas/Table.module.c
 import { socketRequest } from "../../../lib/socket"
 import { Cargo } from "../../../types/administracion/cargos"
 import Tabla, { TablaColumn } from "../../../components/funcionalidad/tablas/Tabla"
+import { modal } from "../../../store/useModalStore"
 
 const columns: TablaColumn<Cargo>[] = [
     { key: "nombre", header: "Nombre", width: "1fr" },
@@ -39,9 +40,17 @@ export default function Cargos() {
 
     }, [])
 
-    // TODO: reemplazar por el modal de creación cuando exista.
+    // TODO: reemplazar por el formulario de creación real cuando exista.
     const handleAgregar = () => {
-        console.log("[cargos] agregar cargo — pendiente de modal")
+        modal.show({
+            title: "Agregar cargo",
+            children: <p>Formulario para crear un cargo (pendiente).</p>,
+            footer: (
+                <button type="button" onClick={() => modal.close()}>
+                    Cerrar
+                </button>
+            ),
+        })
     }
 
     // TODO: reemplazar por el modal de edición cuando exista.

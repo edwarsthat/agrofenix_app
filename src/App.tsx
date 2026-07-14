@@ -9,6 +9,7 @@ import { FenixToastStack } from './components/UI/Toast/FenixToast';
 import { useToastStore } from './store/useTosterStore';
 import FenixLoading from './components/UI/Loading/FenixLoading';
 import { useLoadingStore } from './store/useLoadingStore';
+import { ModalHost } from './components/funcionalidad/modal/ModalHost';
 
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
       {isLoading && <FenixLoading variant="app" label={loadingLabel} />}
 
       <FenixToastStack toasts={toasts} onDismiss={dismiss} />
+      <ModalHost />
     </main>
   );
 }

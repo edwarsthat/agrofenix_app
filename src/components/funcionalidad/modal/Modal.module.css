@@ -13,9 +13,15 @@
   to { opacity: 1; }
 }
 
+.dialog:not([open]) {
+  display: none;
+}
+
 .dialog {
   display: flex;
   flex-direction: column;
+  position: fixed;
+  inset: 0;
   width: 100%;
   max-height: calc(100vh - var(--space-12));
   margin: auto;
@@ -32,6 +38,8 @@
 }
 
 .dialog::backdrop {
+  position: fixed;
+  inset: 0;
   background: color-mix(in srgb, var(--fenix-charcoal) 55%, transparent);
   animation: fadeIn 160ms ease;
 }

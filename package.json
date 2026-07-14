@@ -10,14 +10,15 @@
     "tauri": "tauri"
   },
   "dependencies": {
-    "@tauri-apps/api": "^2",
-    "@tauri-apps/plugin-http": "^2.5.9",
-    "@tauri-apps/plugin-opener": "^2",
-    "lucide-react": "^1.23.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-router-dom": "^7.18.0",
-    "zustand": "^5.0.14"
+    "@tauri-apps/api": "2",
+    "@tauri-apps/plugin-http": "2.5.9",
+    "@tauri-apps/plugin-opener": "2",
+    "lucide-react": "1.23.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-router-dom": "7.18.0",
+    "zod": "4.4.3",
+    "zustand": "5.0.14"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2",

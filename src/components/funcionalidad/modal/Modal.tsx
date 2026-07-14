@@ -2,25 +2,15 @@ import React, { useEffect, useId, useRef } from 'react';
 import styles from './Modal.module.css';
 
 export interface ModalProps {
-  /** Controls visibility */
   open: boolean;
-  /** Called when the modal requests to close (backdrop click, ESC, close button) */
   onClose: () => void;
-  /** Dialog title, shown in the header */
   title?: string;
-  /** Optional description under the title */
   description?: string;
-  /** Dialog width */
   size?: 'sm' | 'md' | 'lg';
-  /** Main content */
   children?: React.ReactNode;
-  /** Footer content — typically action buttons, right-aligned */
   footer?: React.ReactNode;
-  /** Clicking the backdrop closes the modal */
   closeOnBackdropClick?: boolean;
-  /** Pressing Escape closes the modal — native <dialog> behavior; set false to prevent it */
   closeOnEsc?: boolean;
-  /** Hide the built-in close (×) button */
   hideCloseButton?: boolean;
 }
 
@@ -32,7 +22,7 @@ function CloseIcon() {
   );
 }
 
-export function ModalPreview({
+export function Modal({
   open,
   onClose,
   title,
@@ -49,7 +39,6 @@ export function ModalPreview({
   const titleId = `fx-modal-title-${reactId}`;
   const descId = `fx-modal-desc-${reactId}`;
 
-  // Open/close the native <dialog> to match the `open` prop
   useEffect(() => {
     const el = dialogRef.current;
     if (!el) return;
@@ -60,8 +49,6 @@ export function ModalPreview({
     }
   }, [open]);
 
-  // "cancel" fires on ESC before close — block it if closeOnEsc is false,
-  // otherwise let it close and notify the parent via onClose
   useEffect(() => {
     const el = dialogRef.current;
     if (!el) return;
@@ -72,7 +59,6 @@ export function ModalPreview({
       }
       onClose();
     };
-    // native close (any cause, incl. cancel) — keep parent state in sync
     const handleClose = () => onClose();
     el.addEventListener('cancel', handleCancel);
     el.addEventListener('close', handleClose);
@@ -83,9 +69,6 @@ export function ModalPreview({
   }, [closeOnEsc, onClose]);
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDialogElement>) => {
-    // A click that lands on the <dialog> element itself (not its content box)
-    // is a click on the ::backdrop — <dialog> has no padding here, so this
-    // is reliable.
     if (closeOnBackdropClick && e.target === dialogRef.current) {
       onClose();
     }
@@ -137,4 +120,4 @@ export function ModalPreview({
   );
 }
 
-export default ModalPreview;
+export default Modal;
