@@ -1,0 +1,165 @@
+/* ==========================================================================
+   Agroalimentos Fénix — Generic Form layout (CSS Module)
+   For a schema-driven form component: pass a list of fields, each rendered
+   into this grid according to its declared width (full/half/third/etc).
+   Uses container queries (not viewport media queries) so the form collapses
+   correctly no matter what container it's dropped into — modal, sidebar,
+   full page, split panel...
+   Depends on tokens loaded globally via styles.css (colors, typography,
+   spacing, radius, shadow).
+   ========================================================================== */
+
+.form {
+  container-type: inline-size;
+  container-name: fx-form;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  font-family: var(--font-body);
+  color: var(--color-text-primary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* ---- Section (group of related fields, e.g. "Datos de contacto") ---- */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.section + .section {
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+}
+
+.sectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-bottom: var(--space-1);
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-lg);
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.sectionDescription {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: var(--leading-normal);
+}
+
+/* ---- Grid: 12 columns, fields span according to declared width ---- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--space-5) var(--space-4);
+  width: 100%;
+  min-width: 0;
+}
+
+/* ---- Field cell — width variants (map schema "width" -> class) ---- */
+.field {
+  grid-column: span 12;
+  min-width: 0; /* prevents inputs from overflowing a narrow grid track */
+  box-sizing: border-box;
+}
+
+.field--half     { grid-column: span 6; }
+.field--third     { grid-column: span 4; }
+.field--twoThirds { grid-column: span 8; }
+.field--quarter   { grid-column: span 3; }
+.field--full      { grid-column: span 12; }
+
+/* ---- Inline group of small controls sharing one row (e.g. city + zip) ---- */
+.inlineGroup {
+  display: flex;
+  gap: var(--space-3);
+  min-width: 0;
+}
+.inlineGroup > * {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---- Full-width helper/error line under a field or section ---- */
+.hint {
+  grid-column: span 12;
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  margin: calc(-1 * var(--space-3)) 0 0;
+}
+.hint.isError { color: var(--color-danger); }
+
+/* ---- Divider between arbitrary chunks inside a section ---- */
+.divider {
+  grid-column: span 12;
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 0;
+}
+
+/* ---- Actions row (submit / cancel), sticks to the bottom of the form ---- */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+}
+
+.actions--end    { justify-content: flex-end; }
+.actions--start   { justify-content: flex-start; }
+.actions--between { justify-content: space-between; }
+.actions--stretch > * { flex: 1; }
+
+/* ---- Disabled whole-form state ---- */
+.form.isDisabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   Container queries — respond to the FORM'S OWN box, not the viewport.
+   Collapses progressively as available width shrinks, regardless of where
+   the form is mounted (full page, modal, side drawer, dashboard card...).
+   ========================================================================== */
+
+/* Comfortable width: keep quarter/third fields as declared */
+
+/* Medium: promote thirds/quarters up so they don't get too cramped */
+@container fx-form (max-width: 640px) {
+  .field--third,
+  .field--quarter {
+    grid-column: span 6;
+  }
+}
+
+/* Narrow: everything stacks to one column, inline groups stack too */
+@container fx-form (max-width: 420px) {
+  .field--half,
+  .field--third,
+  .field--twoThirds,
+  .field--quarter {
+    grid-column: span 12;
+  }
+
+  .inlineGroup {
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+}

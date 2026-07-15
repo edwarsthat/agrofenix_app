@@ -5,6 +5,7 @@ import useSessionStore from './store/useSessionStore';
 import Home from './views/home/Home';
 import Usuarios from './views/administracion/usuarios/Usuarios';
 import Cargos from './views/administracion/cargos/Cargos';
+import CrearCargo from './views/administracion/cargos/CrearCargo';
 import { FenixToastStack } from './components/UI/Toast/FenixToast';
 import { useToastStore } from './store/useTosterStore';
 import FenixLoading from './components/UI/Loading/FenixLoading';
@@ -29,6 +30,7 @@ function App() {
           <Route index element={<div>Home</div>} />
           <Route path="administracion/usuarios" element={<Usuarios />} />
           <Route path="administracion/cargos" element={<Cargos />} />
+          <Route path="administracion/cargos/crear" element={<CrearCargo />} />
         </Route>
       </Routes>
 

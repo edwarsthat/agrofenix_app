@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { Plus } from "lucide-react"
 import styles from "../../modulos.module.css"
 import tableStyles from "../../../components/funcionalidad/tablas/Table.module.css"
 import { socketRequest } from "../../../lib/socket"
 import { Cargo } from "../../../types/administracion/cargos"
 import Tabla, { TablaColumn } from "../../../components/funcionalidad/tablas/Tabla"
-import { modal } from "../../../store/useModalStore"
 
 const columns: TablaColumn<Cargo>[] = [
     { key: "nombre", header: "Nombre", width: "1fr" },
@@ -19,16 +19,14 @@ const columns: TablaColumn<Cargo>[] = [
 
 export default function Cargos() {
     const [cargos, setCargos] = useState<Cargo[]>([])
+    const navigate = useNavigate()
 
     useEffect(() => {
         let cancelado = false
         const handleRequest = async (): Promise<void> => {
             try {
-                const request = {
-                    action: "administracion:cargos:read"
-                }
                 // El loading global y el toast de error los pone socketRequest.
-                const response = await socketRequest<Cargo[]>(request)
+                const response = await socketRequest<Cargo[]>({ action: "administracion:cargos:read" })
                 if (!cancelado) setCargos(response.data ?? [])
             } catch (err) {
                 console.error("[cargos] error:", err)
@@ -37,21 +35,9 @@ export default function Cargos() {
         handleRequest()
 
         return () => { cancelado = true }
-
     }, [])
 
-    // TODO: reemplazar por el formulario de creación real cuando exista.
-    const handleAgregar = () => {
-        modal.show({
-            title: "Agregar cargo",
-            children: <p>Formulario para crear un cargo (pendiente).</p>,
-            footer: (
-                <button type="button" onClick={() => modal.close()}>
-                    Cerrar
-                </button>
-            ),
-        })
-    }
+    const handleAgregar = () => navigate("/administracion/cargos/crear")
 
     // TODO: reemplazar por el modal de edición cuando exista.
     const handleEditar = (cargo: Cargo) => {
