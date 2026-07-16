@@ -1,4 +1,4 @@
-import { FormEvent, useMemo, useState } from "react"
+import { FormEvent, useEffect, useMemo, useState } from "react"
 import { Check, ChevronDown, ChevronRight, FolderCog, Search } from "lucide-react"
 import useForm from "../../../hooks/useForm"
 import FormInput from "../../../components/UI/FormInput/FormInput"
@@ -11,9 +11,13 @@ import styles from "./CargoForm.module.css"
 
 interface CargoFormProps {
     areas: string[]
-    /** Mapa nombre-de-permiso -> id (ej: "usuarios:crear" -> "uuid"). */
     permisosMap: Map<string, string>
-    onSuccess: (cargo: Cargo) => void
+    /** Id del cargo a editar (modo edición). undefined/null en modo crear. */
+    cargoId?: string | null
+    /** Nombre y descripción del cargo a editar (modo edición). null en modo crear. */
+    datosCargo?: CargosFormType | null
+    cargoPermisos?: string[] | null
+    onSuccess: (cargo?: Cargo | null) => void
     onCancel: () => void
 }
 
@@ -22,14 +26,28 @@ interface Permiso {
     id: string
 }
 
-export default function CargoForm({ areas, permisosMap, onSuccess, onCancel }: CargoFormProps) {
-    const { formState, handleChange, formErrors, validateForm } =
+export default function CargoForm({ areas, permisosMap, cargoId, datosCargo, cargoPermisos, onSuccess, onCancel }: CargoFormProps) {
+    const { formState, handleChange, formErrors, validateForm, fillForm } =
         useForm<CargosFormType>(CargosInitialValues)
     const [loading, setLoading] = useState(false)
 
     const [seleccionados, setSeleccionados] = useState<Set<string>>(new Set())
     const [expandidas, setExpandidas] = useState<Set<string>>(new Set())
     const [busqueda, setBusqueda] = useState("")
+
+    // Hay cargo => se está editando; si no, se está creando.
+    const esEdicion = Boolean(datosCargo)
+
+    // En modo edición precarga nombre y descripción del cargo en el form.
+    useEffect(() => {
+        if (datosCargo) fillForm(datosCargo)
+    }, [datosCargo])
+
+    // En modo edición precarga los permisos que ya tiene el cargo. Llega async
+    // (null hasta que responde el server), por eso se sincroniza en un efecto.
+    useEffect(() => {
+        if (cargoPermisos) setSeleccionados(new Set(cargoPermisos))
+    }, [cargoPermisos])
 
     // Agrupa los permisos por área usando `areas` (nombres únicos) + `permisosMap`.
     const gruposPorArea = useMemo(() => {
@@ -109,16 +127,19 @@ export default function CargoForm({ areas, permisosMap, onSuccess, onCancel }: C
         setLoading(true)
         try {
             const request = {
-                action: "administracion:cargos:create",
-                payload: { ...formState, permisos: [...seleccionados] },
+                action: esEdicion ? "administracion:cargos:update" : "administracion:cargos:add",
+                payload: esEdicion
+                    ? { cargo_id: cargoId, ...formState, permisos: [...seleccionados] }
+                    : { ...formState, permisos: [...seleccionados] },
                 isSuccess: true,
             }
-            console.log(request)
+            // socketRequest lanza si el status es >= 400, así que llegar aquí ya
+            // es éxito: redirigimos siempre, aunque el server no devuelva `data`.
             const response = await socketRequest<Cargo>(request)
-            if (response.data) onSuccess(response.data)
+            onSuccess(response.data)
         } catch (err) {
             // El toast de error ya lo pone socketRequest; aquí solo dejamos el form abierto.
-            console.error("[cargos] crear cargo:", err)
+            console.error(esEdicion ? "[cargos] editar cargo:" : "[cargos] crear cargo:", err)
         } finally {
             setLoading(false)
         }
@@ -133,9 +154,13 @@ export default function CargoForm({ areas, permisosMap, onSuccess, onCancel }: C
                         <ChevronRight size={13} />
                         <strong>Cargos</strong>
                     </div>
-                    <h1 className={styles["role-form-title"]}>Crear cargo</h1>
+                    <h1 className={styles["role-form-title"]}>
+                        {esEdicion ? "Editar cargo" : "Crear cargo"}
+                    </h1>
                     <p className={styles["role-form-subtitle"]}>
-                        Registra un nuevo cargo dentro de la organización.
+                        {esEdicion
+                            ? "Modifica la información y los permisos del cargo."
+                            : "Registra un nuevo cargo dentro de la organización."}
                     </p>
                 </div>
             </header>
@@ -288,7 +313,7 @@ export default function CargoForm({ areas, permisosMap, onSuccess, onCancel }: C
                     Cancelar
                 </FenixButton>
                 <FenixButton type="submit" variant="primary" loading={loading}>
-                    Crear cargo
+                    {esEdicion ? "Guardar cambios" : "Crear cargo"}
                 </FenixButton>
             </div>
         </form>

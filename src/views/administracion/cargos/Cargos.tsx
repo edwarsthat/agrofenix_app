@@ -39,10 +39,8 @@ export default function Cargos() {
 
     const handleAgregar = () => navigate("/administracion/cargos/crear")
 
-    // TODO: reemplazar por el modal de edición cuando exista.
-    const handleEditar = (cargo: Cargo) => {
-        console.log("[cargos] editar cargo", cargo)
-    }
+    const handleEditar = (cargo: Cargo) =>
+        navigate(`/administracion/cargos/editar/${cargo.id}`, { state: { cargo } })
 
     // TODO: agregar confirmación + acción "administracion:cargos:delete" cuando exista en el server.
     const handleEliminar = (cargo: Cargo) => {

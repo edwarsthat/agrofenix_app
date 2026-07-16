@@ -42,8 +42,12 @@ export async function socketRequest<T>({
 }: SocketRequest): Promise<ServerResponse<T>> {
     if (showLoading) loading.start(loadingLabel)
     try {
+        // El servidor espera el payload aplanado: { action, ...data }. Si lo
+        // dejáramos como { action, payload }, al envolverlo en Rust ({ id, token,
+        // payload }) quedaría doblemente anidado.
         const request = {
-            action, payload
+            action,
+            ...(payload as Record<string, unknown> | undefined),
         }
         await sleep(DEBUG_DELAY_MS) // TEMPORAL: borrar
         const response = await invoke<ServerResponse<T>>("send_socket_message", { info: request })

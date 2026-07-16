@@ -31,6 +31,7 @@ function App() {
           <Route path="administracion/usuarios" element={<Usuarios />} />
           <Route path="administracion/cargos" element={<Cargos />} />
           <Route path="administracion/cargos/crear" element={<CrearCargo />} />
+          <Route path="administracion/cargos/editar/:id" element={<CrearCargo />} />
         </Route>
       </Routes>
 
