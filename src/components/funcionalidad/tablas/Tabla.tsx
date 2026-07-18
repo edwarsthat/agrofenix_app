@@ -1,12 +1,25 @@
 import { ReactNode } from 'react'
-import { Pencil, Trash2 } from 'lucide-react'
+import { Pencil, Trash2, CheckCircle2, XCircle } from 'lucide-react'
 import styles from './Table.module.css'
 
 export interface TablaColumn<T> {
     key: string
     header: string
     width?: string // valor de grid-template-columns, ej: '2.2fr', '110px'
+    type?: 'boolean' // si el dato es booleano, renderiza un ícono en vez del valor crudo
     render?: (row: T) => ReactNode
+}
+
+function renderBooleano(valor: unknown): ReactNode {
+    return (
+        <span className={styles.boolCell}>
+            {valor ? (
+                <CheckCircle2 size={18} className={styles.boolTrue} aria-label="Sí" />
+            ) : (
+                <XCircle size={18} className={styles.boolFalse} aria-label="No" />
+            )}
+        </span>
+    )
 }
 
 interface TablaAcciones<T> {
@@ -59,11 +72,18 @@ export default function Tabla<T>({
                         className={styles.row}
                         style={{ gridTemplateColumns }}
                     >
-                        {columns.map(col => (
-                            <span key={col.key}>
-                                {col.render ? col.render(row) : String((row as Record<string, unknown>)[col.key] ?? '')}
-                            </span>
-                        ))}
+                        {columns.map(col => {
+                            const valor = (row as Record<string, unknown>)[col.key]
+                            return (
+                                <span key={col.key}>
+                                    {col.render
+                                        ? col.render(row)
+                                        : col.type === 'boolean'
+                                            ? renderBooleano(valor)
+                                            : String(valor ?? '')}
+                                </span>
+                            )
+                        })}
 
                         {mostrarAcciones && (
                             <div className={styles.actions}>

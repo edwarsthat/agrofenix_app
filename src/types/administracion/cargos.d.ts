@@ -4,4 +4,5 @@ export interface Cargo {
     nombre: string
     descripcion: string | null
     creado_en: string
+    activo: boolean
 }

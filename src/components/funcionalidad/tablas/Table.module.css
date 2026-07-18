@@ -138,6 +138,21 @@
   color: var(--fenix-gray-600);
 }
 
+/* ---- Columna booleana (íconos sí/no) ---- */
+.boolCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.boolTrue {
+  color: var(--color-success);
+}
+
+.boolFalse {
+  color: var(--color-danger);
+}
+
 /* ---- Acciones por registro: editar / eliminar ---- */
 .actions {
   display: flex;
@@ -243,4 +258,8 @@
 :global([data-theme='dark']) .badgeInactive {
   background: var(--fenix-gray-800);
   color: var(--fenix-gray-300);
+}
+
+:global([data-theme='dark']) .boolTrue {
+  color: var(--fenix-green-300);
 }
