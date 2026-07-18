@@ -6,6 +6,7 @@ import tableStyles from "../../../components/funcionalidad/tablas/Table.module.c
 import { socketRequest } from "../../../lib/socket"
 import { Cargo } from "../../../types/administracion/cargos"
 import Tabla, { TablaColumn } from "../../../components/funcionalidad/tablas/Tabla"
+import { confirm } from "../../../helpers/Confirmacion"
 
 const columns: TablaColumn<Cargo>[] = [
     { key: "nombre", header: "Nombre", width: "1fr" },
@@ -19,6 +20,7 @@ const columns: TablaColumn<Cargo>[] = [
 
 export default function Cargos() {
     const [cargos, setCargos] = useState<Cargo[]>([])
+    const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -43,8 +45,24 @@ export default function Cargos() {
         navigate(`/administracion/cargos/editar/${cargo.id}`, { state: { cargo } })
 
     // TODO: agregar confirmación + acción "administracion:cargos:delete" cuando exista en el server.
-    const handleEliminar = (cargo: Cargo) => {
-        console.log("[cargos] eliminar cargo", cargo)
+    const handleEliminar = async (cargo: Cargo) => {
+        if (loading) return
+        if (await confirm({ mensaje: "¿Eliminar este cargo?", danger: true })) {
+            try {
+                setLoading(true)
+                const request = {
+                    action: "administracion:cargos:delete",
+                    payload: cargo.id,
+                    isSuccess: true,
+                }
+                await socketRequest(request)
+
+            } catch (err) {
+                console.error("[cargos] error:", err)
+            } finally {
+                setLoading(false)
+            }
+        }
     }
 
     return (
