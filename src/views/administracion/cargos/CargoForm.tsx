@@ -3,11 +3,11 @@ import { Check, ChevronDown, ChevronRight, FolderCog, Search } from "lucide-reac
 import useForm from "../../../hooks/useForm"
 import FormInput from "../../../components/UI/FormInput/FormInput"
 import FenixButton from "../../../components/UI/Button/FenixButton"
-import { socketRequest } from "../../../lib/socket"
 import { Cargo } from "../../../types/administracion/cargos"
 import { CargosFormType, CargosInitialValues, cargosSchema } from "./validation"
 import { areaLabel, permisoAccionLabel } from "./permisosLabels"
 import styles from "./CargoForm.module.css"
+import useCargoStore from "../../../store/data/administracion/useCargoStore"
 
 interface CargoFormProps {
     areas: string[]
@@ -17,7 +17,7 @@ interface CargoFormProps {
     /** Nombre y descripción del cargo a editar (modo edición). null en modo crear. */
     datosCargo?: CargosFormType | null
     cargoPermisos?: string[] | null
-    onSuccess: (cargo?: Cargo | null) => void
+    onSuccess: (cargo?: boolean | null) => void
     onCancel: () => void
 }
 
@@ -29,6 +29,7 @@ interface Permiso {
 export default function CargoForm({ areas, permisosMap, cargoId, datosCargo, cargoPermisos, onSuccess, onCancel }: CargoFormProps) {
     const { formState, handleChange, formErrors, validateForm, fillForm } =
         useForm<CargosFormType>(CargosInitialValues)
+    const { addCargo, updateCargo } = useCargoStore()
     const [loading, setLoading] = useState(false)
 
     const [seleccionados, setSeleccionados] = useState<Set<string>>(new Set())
@@ -121,28 +122,13 @@ export default function CargoForm({ areas, permisosMap, cargoId, datosCargo, car
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault()
-        if (loading) return
         if (!validateForm(cargosSchema)) return
-
         setLoading(true)
-        try {
-            const request = {
-                action: esEdicion ? "administracion:cargos:update" : "administracion:cargos:add",
-                payload: esEdicion
-                    ? { cargo_id: cargoId, ...formState, permisos: [...seleccionados] }
-                    : { ...formState, permisos: [...seleccionados] },
-                isSuccess: true,
-            }
-            // socketRequest lanza si el status es >= 400, así que llegar aquí ya
-            // es éxito: redirigimos siempre, aunque el server no devuelva `data`.
-            const response = await socketRequest<Cargo>(request)
-            onSuccess(response.data)
-        } catch (err) {
-            // El toast de error ya lo pone socketRequest; aquí solo dejamos el form abierto.
-            console.error(esEdicion ? "[cargos] editar cargo:" : "[cargos] crear cargo:", err)
-        } finally {
-            setLoading(false)
-        }
+        const response = esEdicion ?
+            (cargoId ? await updateCargo(cargoId, formState, seleccionados) : false) :
+            await addCargo(formState, seleccionados) 
+        onSuccess(response)
+        setLoading(false)
     }
 
     return (

@@ -6,7 +6,6 @@ import { listen } from "@tauri-apps/api/event"
 
 // Listeners de los eventos que emite el backend de Rust. Se registran una sola
 // vez al cargar el módulo para no duplicarlos en cada login.
-listen("socket://message", (e) => console.log("[socket] mensaje:", e.payload))
 listen("socket://error", (e) => console.error("[socket] error:", e.payload))
 listen("socket://closed", () => console.warn("[socket] conexión cerrada"))
 

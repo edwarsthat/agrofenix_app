@@ -35,6 +35,21 @@
   width: 320px;
 }
 
+.searchInput input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  outline: none;
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.searchInput input::placeholder {
+  color: var(--color-text-secondary);
+}
+
 .addButton {
   display: inline-flex;
   align-items: center;
