@@ -3,7 +3,6 @@ import { Check, ChevronDown, ChevronRight, FolderCog, Search } from "lucide-reac
 import useForm from "../../../hooks/useForm"
 import FormInput from "../../../components/UI/FormInput/FormInput"
 import FenixButton from "../../../components/UI/Button/FenixButton"
-import { Cargo } from "../../../types/administracion/cargos"
 import { CargosFormType, CargosInitialValues, cargosSchema } from "./validation"
 import { areaLabel, permisoAccionLabel } from "./permisosLabels"
 import styles from "./CargoForm.module.css"
@@ -127,7 +126,7 @@ export default function CargoForm({ areas, permisosMap, cargoId, datosCargo, car
         const response = esEdicion ?
             (cargoId ? await updateCargo(cargoId, formState, seleccionados) : false) :
             await addCargo(formState, seleccionados) 
-        onSuccess(response)
+        if (response) onSuccess(response)
         setLoading(false)
     }
 

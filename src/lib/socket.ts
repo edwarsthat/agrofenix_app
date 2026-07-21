@@ -30,8 +30,8 @@ export function isSocketErr(e: unknown): e is SocketErr {
 
 // TEMPORAL: retardo artificial para poder ver el loading. Poner a 0 (o borrar
 // junto con su uso en socketRequest) antes de subir a producción.
-const DEBUG_DELAY_MS = 10
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+// const DEBUG_DELAY_MS = 0
+// const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 export async function socketRequest<T>({
     action,
@@ -49,7 +49,7 @@ export async function socketRequest<T>({
             action,
             ...(payload as Record<string, unknown> | undefined),
         }
-        await sleep(DEBUG_DELAY_MS) // TEMPORAL: borrar
+        // await sleep(DEBUG_DELAY_MS) // TEMPORAL: borrar
         const response = await invoke<ServerResponse<T>>("send_socket_message", { info: request })
 
         // El servidor respondió, pero con un error de negocio. El toast lo pone el

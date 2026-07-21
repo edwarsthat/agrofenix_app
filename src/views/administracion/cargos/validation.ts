@@ -1,5 +1,6 @@
 import z from "zod";
 import { FormType } from "../../../components/funcionalidad/form/Form";
+import { nombreCargoSchema, descripcionCargoSchema } from "../../../types/administracion/cargos";
 
 export type CargosFormType = {
     nombre: string
@@ -30,13 +31,6 @@ export const formArr: FormType<CargosFormType> = {
 }
 
 export const cargosSchema = z.object({
-    nombre: z
-        .string()
-        .trim()
-        .min(3, "El nombre debe tener al menos 3 caracteres")
-        .max(80, "El nombre no puede superar los 80 caracteres"),
-    descripcion: z
-        .string()
-        .trim()
-        .max(255, "La descripción no puede superar los 255 caracteres"),
+    nombre: nombreCargoSchema,
+    descripcion: descripcionCargoSchema,
 })

@@ -39,7 +39,6 @@ export default function CrearCargo() {
                         payload: { cargo_id: cargoId },
                     }
                     const response2 = await socketRequest<string[]>(request)
-                    console.log("si es esta respuesta", response2)
                     if (!cancelado) setCargoPermisos(response2.data ?? [])
                 }
             } catch (err) {

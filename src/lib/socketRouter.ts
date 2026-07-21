@@ -1,24 +1,20 @@
 import { listen } from "@tauri-apps/api/event";
-import useCargoStore from "../store/data/administracion/useCargoStore";
+import cargoRouter from "./socketRouter/cargos";
+
+export interface ServerEvent {
+    event: string
+    action: string
+    data: unknown
+}
 
 export function initSocketRouter() {
     listen("socket://message", (e) => {
-        const msg = JSON.parse(e.payload as string)
-        console.log("router", msg)
+        const msg: ServerEvent = JSON.parse(e.payload as string)
 
         switch (msg.event) {
             case "cargos":
-                switch (msg.action){
-                    case "add":
-                        useCargoStore.getState().eventAddCargo(msg.data.data)
-                        break
-                    case "update":
-                        useCargoStore.getState().eventUpdateCargo(msg.data.data)
-                        break
-                    case "delete":
-                        useCargoStore.getState().eventDeleteCargo(msg.data.cargo_id)
-                        break
-                }
+               cargoRouter(msg)
+               break;
         }
     })
 

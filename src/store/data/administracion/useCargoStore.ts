@@ -1,5 +1,6 @@
 import { create } from "zustand";
-import { Cargo } from "../../../types/administracion/cargos";
+import z from "zod";
+import { Cargo, cargoSchema } from "../../../types/administracion/cargos";
 import { socketRequest } from "../../../lib/socket";
 import { confirm } from "../../../helpers/Confirmacion";
 import { CargosFormType } from "../../../views/administracion/cargos/validation";
@@ -24,7 +25,12 @@ const useCargoStore = create<CargoStore>((set, get) => ({
         try {
             const response = await socketRequest<Cargo[]>({ action: "administracion:cargos:read" })
             if (response.status === 200) {
-                set({ cargos: response.data ?? [] })
+                const parsed = z.array(cargoSchema).safeParse(response.data ?? [])
+                if (!parsed.success) {
+                    console.error("[cargos] respuesta inválida:", parsed.error)
+                    return
+                }
+                set({ cargos: parsed.data })
             }
         } catch (err) {
             console.error("[cargos] error:", err)
@@ -79,19 +85,19 @@ const useCargoStore = create<CargoStore>((set, get) => ({
     },
     eventAddCargo: (cargo: Cargo) => {
         set((state) =>
-
             state.cargos.some((c) => c.id === cargo.id)
                 ? state
                 : { cargos: [...state.cargos, cargo] }
         )
     },
     eventUpdateCargo: (cargo: Cargo) => {
-        set((state) => ({
-            cargos: state.cargos.map((c) => (c.id === cargo.id ? cargo : c)),
-        }))
+        set((state) =>
+            state.cargos.some((c) => c.id === cargo.id)
+                ? { cargos: state.cargos.map((c) => (c.id === cargo.id ? cargo : c)) }
+                : { cargos: [...state.cargos, cargo] }
+        )
     },
     eventDeleteCargo: (cargoId: string) => {
-        console.log(cargoId)
         set((state) => ({
             cargos: state.cargos.map((c) =>
                 c.id === cargoId ? { ...c, activo: false } : c
