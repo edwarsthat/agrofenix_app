@@ -3,6 +3,7 @@ import { create } from "zustand"
 import config from "../config"
 import { invoke } from "@tauri-apps/api/core"
 import { listen } from "@tauri-apps/api/event"
+import { socketRequest } from "../lib/socket"
 
 // Listeners de los eventos que emite el backend de Rust. Se registran una sola
 // vez al cargar el módulo para no duplicarlos en cada login.
@@ -13,12 +14,12 @@ interface SessionType {
     isAuth: boolean
     token: string | null
     usuario: string | null
-    permisos: string[] 
+    permisos: string[]
     login: (usuario: string, password: string) => Promise<void>
     logout: (token: string) => Promise<void>
 }
 
-const useSessionStore = create<SessionType>((set) => ({
+const useSessionStore = create<SessionType>((set, get) => ({
     isAuth: false,
     token: null,
     usuario: null,
@@ -29,15 +30,15 @@ const useSessionStore = create<SessionType>((set) => ({
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ usuario, password }),
         })
-        
+
         if (!response.ok) {
             throw new Error("Usuario o contraseña incorrectos")
         }
 
-        const data = await response.json() 
-        set({ 
-            token: data.session_id, 
-            usuario: data.usuario, 
+        const data = await response.json()
+        set({
+            token: data.session_id,
+            usuario: data.usuario,
             permisos: data.permisos,
             isAuth: true
         })
@@ -50,7 +51,18 @@ const useSessionStore = create<SessionType>((set) => ({
         }
     },
     logout: async () => {
-        console.log("logout")
+        try {
+            const token = get().token
+            await socketRequest({
+                action: "sistema:auth:logout",
+                payload: { token }
+            })
+        } catch (err) {
+            console.error("[useSessionStore]:", err)
+        } finally {
+            await invoke("disconect_socket").catch((err) => {console.error(err)})
+            set({ token: null, usuario: null, permisos: [], isAuth: false })
+        }
     }
 }))
 

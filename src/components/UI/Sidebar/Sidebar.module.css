@@ -134,7 +134,28 @@
 
 .footer {
   margin-top: auto;
-  padding: 12px 20px 0;
+  padding: 12px 12px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.logoutBtn {
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--fenix-gray-300);
+}
+
+.logoutBtn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--fenix-cream);
 }
 
 /* ==========================================================================

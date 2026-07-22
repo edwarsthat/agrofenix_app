@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
-import { X } from 'lucide-react'
+import { X, LogOut } from 'lucide-react'
 import { menu, MenuNode } from '../../../config/menu'
 import useSessionStore from '../../../store/useSessionStore'
 import styles from './Sidebar.module.css'
@@ -80,6 +80,8 @@ export interface SideBarProps {
 
 export default function SideBar({ isOpen, onClose }: SideBarProps) {
     const permisos = useSessionStore((state) => state.permisos)
+    const token = useSessionStore((state) => state.token)
+    const logout = useSessionStore((state) => state.logout)
     const visibles = menu.filter(nodo => tienePermiso(nodo, permisos))
     const generales = visibles.filter(nodo => !nodo.children)
     const modulos = visibles.filter(nodo => !!nodo.children)
@@ -117,6 +119,17 @@ export default function SideBar({ isOpen, onClose }: SideBarProps) {
                         ))}
                     </>
                 )}
+
+                <div className={styles.footer}>
+                    <button
+                        type="button"
+                        className={styles.logoutBtn}
+                        onClick={() => logout(token ?? '')}
+                    >
+                        <LogOut className={styles.itemIcon} />
+                        <span>Cerrar sesión</span>
+                    </button>
+                </div>
             </nav>
         </>
     )

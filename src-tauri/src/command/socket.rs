@@ -91,3 +91,9 @@ pub async fn send_socket_message(
         }
     }
 }
+
+#[tauri::command]
+pub async fn disconect_socket(state: State<'_, SocketHandles>,) -> Result<(), SocketError>{
+    *state.tx.lock().await = None;
+    Ok(())
+}
