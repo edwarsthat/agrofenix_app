@@ -1,7 +1,8 @@
-import { FormEvent } from "react"
+import { ChangeEvent, FormEvent } from "react"
 import { ZodType } from "zod"
 import useForm from "../../../hooks/useForm"
 import FormInput from "../../UI/FormInput/FormInput"
+import FormSelectInput, { FormSelectOption } from "../../UI/FormInput/FormSelectInput"
 import FenixButton from "../../UI/Button/FenixButton"
 import styles from "./Form.module.css"
 
@@ -9,11 +10,13 @@ type FieldWidth = "full" | "half" | "third" | "twoThirds" | "quarter"
 
 interface ItemFormType<T> {
     label: string
-    type: "text"
+    type: "text" | "select"
     nombre: keyof T & string
     /** Ancho del campo dentro de la grilla de 12 columnas. Por defecto "full". */
     width?: FieldWidth
     placeholder?: string
+    /** Opciones a mostrar. Requerido cuando type es "select". */
+    options?: FormSelectOption[]
 }
 
 export interface FormType<T extends Record<string, string | number>> {
@@ -84,14 +87,35 @@ export default function Form<T extends Record<string, string | number>>({
 
             <div className={styles.grid}>
                 {formArr.map(item => {
-                    if (item.type === "text") {
-                        const cellClass = [
-                            styles.field,
-                            widthClass[item.width ?? "full"],
-                        ]
-                            .filter(Boolean)
-                            .join(" ")
+                    const cellClass = [
+                        styles.field,
+                        widthClass[item.width ?? "full"],
+                    ]
+                        .filter(Boolean)
+                        .join(" ")
 
+                    if (item.type === "select") {
+                        return (
+                            <div key={item.nombre} className={cellClass}>
+                                <FormSelectInput
+                                    name={item.nombre}
+                                    label={item.label}
+                                    options={item.options ?? []}
+                                    value={String(formState[item.nombre] ?? "")}
+                                    onChange={(value) =>
+                                        handleChange({
+                                            target: { name: item.nombre, value, type: "select" },
+                                        } as unknown as ChangeEvent<HTMLSelectElement>)
+                                    }
+                                    placeholder={item.placeholder ?? item.label}
+                                    error={formErrors[item.nombre]}
+                                    disabled={disabled}
+                                />
+                            </div>
+                        )
+                    }
+
+                    if (item.type === "text") {
                         return (
                             <div key={item.nombre} className={cellClass}>
                                 <FormInput
