@@ -9,9 +9,10 @@ import useCargoStore from "../../../store/data/administracion/useCargoStore";
 import { modal } from "../../../store/useModalStore";
 import { UsuarioFormType } from "./validation";
 import UsuarioForm from "./UsuarioForm";
+import PasswordTemporal from "./PasswordTemporal";
 
 export default function Usuarios() {
-    const { getUsuarios, usuarios, addUsuario } = useUsuarioStore();
+    const { getUsuarios, usuarios, addUsuario, updateUsuario } = useUsuarioStore();
     const { cargos, getCargos } = useCargoStore();
 
     useEffect(() => {
@@ -50,11 +51,35 @@ export default function Usuarios() {
         const esEdicion = Boolean(usuario)
 
         const handleSubmit = async (values: UsuarioFormType) => {
-            const ok = esEdicion
-                ?  false 
-                : await addUsuario(values)
-            if (ok) modal.close()
+            if (esEdicion) {
+                if(!usuario?.id) return
+                
+                const updated = await updateUsuario(usuario?.id, values)
+                if(updated){
+
+                } else {
+                    return;
+                }
+            }
+
+            const creado = await addUsuario(values)
+            if (!creado) return
+
+            modal.show({
+                size: "sm",
+                hideCloseButton: true,
+                closeOnBackdropClick: false,
+                closeOnEsc: false,
+                children: (
+                    <PasswordTemporal
+                        password={creado.password_temporal}
+                        usuario={values.usuario}
+                        onClose={modal.close}
+                    />
+                ),
+            })
         }
+
 
         modal.show({
             title: esEdicion ? "Editar usuario" : "Crear usuario",
