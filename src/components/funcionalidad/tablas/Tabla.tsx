@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { Pencil, Trash2, CheckCircle2, XCircle } from 'lucide-react'
+import { Pencil, Trash2, KeyRound, CheckCircle2, XCircle } from 'lucide-react'
 import styles from './Table.module.css'
 
 export interface TablaColumn<T> {
@@ -25,6 +25,7 @@ function renderBooleano(valor: unknown): ReactNode {
 interface TablaAcciones<T> {
     onEditar?: (row: T) => void
     onEliminar?: (row: T) => void
+    onResetPassword?: (row: T) => void
 }
 
 interface TablaProps<T> {
@@ -44,7 +45,7 @@ export default function Tabla<T>({
     emptyTitle = 'Sin resultados',
     emptyMessage = 'No hay datos para mostrar.'
 }: TablaProps<T>) {
-    const mostrarAcciones = Boolean(acciones && (acciones.onEditar || acciones.onEliminar))
+    const mostrarAcciones = Boolean(acciones && (acciones.onEditar || acciones.onEliminar || acciones.onResetPassword))
 
     const gridTemplateColumns = [
         ...columns.map(col => col.width ?? '1fr'),
@@ -93,8 +94,20 @@ export default function Tabla<T>({
                                         className={styles.actionBtn}
                                         onClick={() => acciones.onEditar!(row)}
                                         aria-label="Editar"
+                                        title="Editar"
                                     >
                                         <Pencil size={16} />
+                                    </button>
+                                )}
+                                {acciones?.onResetPassword && (
+                                    <button
+                                        type="button"
+                                        className={styles.actionBtn}
+                                        onClick={() => acciones.onResetPassword!(row)}
+                                        aria-label="Cambiar contraseña"
+                                        title="Cambiar contraseña"
+                                    >
+                                        <KeyRound size={16} />
                                     </button>
                                 )}
                                 {acciones?.onEliminar && (
@@ -103,6 +116,7 @@ export default function Tabla<T>({
                                         className={`${styles.actionBtn} ${styles.actionBtnDelete}`}
                                         onClick={() => acciones.onEliminar!(row)}
                                         aria-label="Eliminar"
+                                        title="Eliminar"
                                     >
                                         <Trash2 size={16} />
                                     </button>

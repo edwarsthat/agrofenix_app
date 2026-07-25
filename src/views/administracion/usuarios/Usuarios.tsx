@@ -12,7 +12,14 @@ import UsuarioForm from "./UsuarioForm";
 import PasswordTemporal from "./PasswordTemporal";
 
 export default function Usuarios() {
-    const { getUsuarios, usuarios, addUsuario, updateUsuario } = useUsuarioStore();
+    const {
+        getUsuarios,
+        usuarios,
+        addUsuario,
+        updateUsuario,
+        eliminarUsuario,
+        newPassword
+    } = useUsuarioStore();
     const { cargos, getCargos } = useCargoStore();
 
     useEffect(() => {
@@ -45,21 +52,42 @@ export default function Usuarios() {
         { key: "activo", header: "Activo", width: "90px", type: "boolean" },
     ], [])
 
-    const handleEliminar = async () => { }
+    const handleEliminar = async (usuario: Usuario) => {
+        await eliminarUsuario(usuario.id)
+    }
+    const handleResetPassword = async (usuario: Usuario) => {
+        const response = await newPassword(usuario.id)
+
+        if (!response) return
+
+        modal.show({
+            size: "sm",
+            hideCloseButton: true,
+            closeOnBackdropClick: false,
+            closeOnEsc: false,
+            children: (
+                <PasswordTemporal
+                    password={response.password_temporal}
+                    usuario={usuario.usuario}
+                    onClose={modal.close}
+                />
+            ),
+        })
+
+    }
 
     const abrirFormulario = (usuario?: Usuario) => {
         const esEdicion = Boolean(usuario)
 
         const handleSubmit = async (values: UsuarioFormType) => {
             if (esEdicion) {
-                if(!usuario?.id) return
-                
-                const updated = await updateUsuario(usuario?.id, values)
-                if(updated){
+                if (!usuario?.id) return
 
-                } else {
-                    return;
+                const updated = await updateUsuario(usuario?.id, values)
+                if (updated) {
+                    modal.close()
                 }
+                return
             }
 
             const creado = await addUsuario(values)
@@ -109,7 +137,11 @@ export default function Usuarios() {
                 columns={columns}
                 data={usuarios}
                 rowKey={(cargo) => cargo.id}
-                acciones={{ onEditar: abrirFormulario, onEliminar: handleEliminar }}
+                acciones={{
+                    onEditar: abrirFormulario,
+                    onEliminar: handleEliminar,
+                    onResetPassword: handleResetPassword
+                }}
                 emptyTitle="Sin cargos"
                 emptyMessage="Todavía no hay cargos registrados."
             />

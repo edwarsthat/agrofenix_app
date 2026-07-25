@@ -3,6 +3,7 @@ import { Usuario, usuarioSchema } from "../../../types/administracion/usuarios";
 import { ServerResponse, socketRequest } from "../../../lib/socket";
 import z from "zod";
 import { UsuarioFormType } from "../../../views/administracion/usuarios/validation";
+import { confirm } from "../../../helpers/Confirmacion";
 
 export interface UsuarioCreado {
     id: string
@@ -12,16 +13,20 @@ type AddUsuarioResponse = ServerResponse<Usuario> & { password_temporal: string 
 
 interface UsuariosStore {
     usuarios: Usuario[]
-    eliminados: string[]
+    eliminado: string[]
     getUsuarios: () => Promise<void>
     addUsuario: (form: UsuarioFormType) => Promise<UsuarioCreado | null>
     updateUsuario: (usuario_id: string, form: UsuarioFormType) => Promise<boolean>
+    newPassword: (usuario_id: string) => Promise<UsuarioCreado | null >
+    eliminarUsuario: (usuario_id: string) => Promise<void>
     eventAddUsuario: (usuario: Usuario) => void
+    eventUpdateUsuario: (usuario: Usuario) => void
+    eventDeleteUsuario: (usuario_id: string) => void
 }
 
-const useUsuarioStore = create<UsuariosStore>((set) => ({
+const useUsuarioStore = create<UsuariosStore>((set, get) => ({
     usuarios: [],
-    eliminados: [],
+    eliminado: [],
     getUsuarios: async () => {
         try {
             const request = {
@@ -59,18 +64,63 @@ const useUsuarioStore = create<UsuariosStore>((set) => ({
             return null
         }
     },
-    updateUsuario: async (usuario_id: string, formState: UsuarioFormType ) => {
+    updateUsuario: async (usuario_id: string, formState: UsuarioFormType) => {
         try {
             const request = {
                 action: "administracion:usuarios:update",
                 payload: { usuario_id: usuario_id, ...formState },
                 isSuccess: true,
             }
+            console.log(request)
             await socketRequest<Usuario>(request)
             return true
         } catch (err) {
             console.error("[cargos] error:", err)
             return false
+        }
+    },
+    eliminarUsuario: async (usuario_id) => {
+        if (get().eliminado.includes(usuario_id)) return
+
+        if (!(await confirm({ mensaje: "¿Eliminar el usuario?", danger: true }))) return
+
+        set((state) => ({ eliminado: [...state.eliminado, usuario_id] }))
+
+        try {
+            const request = {
+                action: "administracion:usuarios:delete",
+                payload: {
+                    usuario_id, isSuccess: true
+                }
+            }
+            await socketRequest(request)
+            set((state) => ({
+                usuarios: state.usuarios.map((u) =>
+                    u.id === usuario_id ? { ...u, activo: false } : u
+                ),
+            }))
+        } catch (err) {
+            console.error("[usuarios] error:", err)
+        } finally {
+            set((state) => ({ eliminado: state.eliminado.filter((id) => id !== usuario_id) }))
+        }
+    },
+    newPassword: async (usuario_id: string) => {
+        try {
+            const request = {
+                action: "administracion:usuarios:newpassword",
+                payload: {
+                    usuario_id, isSuccess: true
+                }
+            }
+            const response = await socketRequest<Usuario>(request) as AddUsuarioResponse
+            return {
+                id: response.id,
+                password_temporal: response.password_temporal,
+            }
+        } catch (err) {
+            console.error("[usuarios] error:", err)
+            return null
         }
     },
     eventAddUsuario: (usuario: Usuario) => {
@@ -80,6 +130,20 @@ const useUsuarioStore = create<UsuariosStore>((set) => ({
                 : { usuarios: [...state.usuarios, usuario] }
         )
     },
+    eventUpdateUsuario: (usuario: Usuario) => {
+        set((state) =>
+            state.usuarios.some((c) => c.id === usuario.id)
+                ? { usuarios: state.usuarios.map((c) => (c.id === usuario.id ? usuario : c)) }
+                : { usuarios: [...state.usuarios, usuario] }
+        )
+    },
+    eventDeleteUsuario: (usuario_id: string) => {
+        set((state) => ({
+            usuarios: state.usuarios.map((u) =>
+                u.id === usuario_id ? { ...u, activo: false } : u
+            ),
+        }))
+    }
 }))
 
 export default useUsuarioStore
