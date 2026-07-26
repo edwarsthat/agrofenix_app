@@ -17,7 +17,8 @@ interface UsuariosStore {
     getUsuarios: () => Promise<void>
     addUsuario: (form: UsuarioFormType) => Promise<UsuarioCreado | null>
     updateUsuario: (usuario_id: string, form: UsuarioFormType) => Promise<boolean>
-    newPassword: (usuario_id: string) => Promise<UsuarioCreado | null >
+    newPassword: (usuario_id: string) => Promise<UsuarioCreado | null>
+    reActivarUsuario: (usuario_id: string) => Promise<UsuarioCreado | null>
     eliminarUsuario: (usuario_id: string) => Promise<void>
     eventAddUsuario: (usuario: Usuario) => void
     eventUpdateUsuario: (usuario: Usuario) => void
@@ -107,8 +108,29 @@ const useUsuarioStore = create<UsuariosStore>((set, get) => ({
     },
     newPassword: async (usuario_id: string) => {
         try {
+
             const request = {
                 action: "administracion:usuarios:newpassword",
+                payload: {
+                    usuario_id, isSuccess: true
+                }
+            }
+            const response = await socketRequest<Usuario>(request) as AddUsuarioResponse
+            return {
+                id: response.id,
+                password_temporal: response.password_temporal,
+            }
+        } catch (err) {
+            console.error("[usuarios] error:", err)
+            return null
+        }
+    },
+    reActivarUsuario: async (usuario_id: string) => {
+        if (!(await confirm({ mensaje: "¿Activar el usuario?", danger: true }))) return null
+
+        try {
+            const request = {
+                action: "administracion:usuarios:reactivar",
                 payload: {
                     usuario_id, isSuccess: true
                 }

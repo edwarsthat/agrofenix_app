@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { Pencil, Trash2, KeyRound, CheckCircle2, XCircle } from 'lucide-react'
+import { Pencil, Trash2, KeyRound, CheckCircle2, XCircle, RotateCcw } from 'lucide-react'
 import styles from './Table.module.css'
 
 export interface TablaColumn<T> {
@@ -26,12 +26,14 @@ interface TablaAcciones<T> {
     onEditar?: (row: T) => void
     onEliminar?: (row: T) => void
     onResetPassword?: (row: T) => void
+    onReactivar?: (row: T) => void
 }
 
 interface TablaProps<T> {
     columns: TablaColumn<T>[]
     data: T[]
     rowKey: (row: T) => string | number
+    estaActivo?: (row: T) => boolean
     acciones?: TablaAcciones<T>
     emptyTitle?: string
     emptyMessage?: string
@@ -42,11 +44,13 @@ export default function Tabla<T>({
     data,
     rowKey,
     acciones,
+    estaActivo,
     emptyTitle = 'Sin resultados',
     emptyMessage = 'No hay datos para mostrar.'
 }: TablaProps<T>) {
-    const mostrarAcciones = Boolean(acciones && (acciones.onEditar || acciones.onEliminar || acciones.onResetPassword))
-
+    const mostrarAcciones = Boolean(
+        acciones && (acciones.onEditar || acciones.onEliminar || acciones.onReactivar || acciones.onResetPassword)
+    )
     const gridTemplateColumns = [
         ...columns.map(col => col.width ?? '1fr'),
         ...(mostrarAcciones ? ['110px'] : [])
@@ -110,17 +114,36 @@ export default function Tabla<T>({
                                         <KeyRound size={16} />
                                     </button>
                                 )}
-                                {acciones?.onEliminar && (
-                                    <button
-                                        type="button"
-                                        className={`${styles.actionBtn} ${styles.actionBtnDelete}`}
-                                        onClick={() => acciones.onEliminar!(row)}
-                                        aria-label="Eliminar"
-                                        title="Eliminar"
-                                    >
-                                        <Trash2 size={16} />
-                                    </button>
-                                )}
+                                {(() => {
+                                    // sin estaActivo asumimos activo (comportamiento anterior)
+                                    const activo = estaActivo ? estaActivo(row) : true
+
+                                    if (activo) {
+                                        return acciones?.onEliminar && (
+                                            <button
+                                                type="button"
+                                                className={`${styles.actionBtn} ${styles.actionBtnDelete}`}
+                                                onClick={() => acciones.onEliminar!(row)}
+                                                aria-label="Eliminar"
+                                                title="Eliminar"
+                                            >
+                                                <Trash2 size={16} />
+                                            </button>
+                                        )
+                                    }
+
+                                    return acciones?.onReactivar && (
+                                        <button
+                                            type="button"
+                                            className={`${styles.actionBtn} ${styles.actionBtnReactivar}`}
+                                            onClick={() => acciones.onReactivar!(row)}
+                                            aria-label="Reactivar"
+                                            title="Reactivar"
+                                        >
+                                            <RotateCcw size={16} />
+                                        </button>
+                                    )
+                                })()}
                             </div>
                         )}
                     </div>

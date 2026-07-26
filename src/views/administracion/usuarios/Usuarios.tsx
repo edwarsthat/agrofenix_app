@@ -18,7 +18,8 @@ export default function Usuarios() {
         addUsuario,
         updateUsuario,
         eliminarUsuario,
-        newPassword
+        newPassword,
+        reActivarUsuario
     } = useUsuarioStore();
     const { cargos, getCargos } = useCargoStore();
 
@@ -75,7 +76,25 @@ export default function Usuarios() {
         })
 
     }
+    const handleReactivar = async (usuario: Usuario) => {
+        const response = await reActivarUsuario(usuario.id)
 
+        if (!response) return
+
+        modal.show({
+            size: "sm",
+            hideCloseButton: true,
+            closeOnBackdropClick: false,
+            closeOnEsc: false,
+            children: (
+                <PasswordTemporal
+                    password={response.password_temporal}
+                    usuario={usuario.usuario}
+                    onClose={modal.close}
+                />
+            ),
+        })
+    }
     const abrirFormulario = (usuario?: Usuario) => {
         const esEdicion = Boolean(usuario)
 
@@ -137,10 +156,12 @@ export default function Usuarios() {
                 columns={columns}
                 data={usuarios}
                 rowKey={(cargo) => cargo.id}
+                estaActivo={(u) => u.activo}
                 acciones={{
                     onEditar: abrirFormulario,
                     onEliminar: handleEliminar,
-                    onResetPassword: handleResetPassword
+                    onResetPassword: handleResetPassword,
+                    onReactivar: handleReactivar
                 }}
                 emptyTitle="Sin cargos"
                 emptyMessage="Todavía no hay cargos registrados."
