@@ -15,14 +15,17 @@ interface SessionType {
     token: string | null
     usuario: string | null
     permisos: string[]
+    debe_cambiar_password: boolean
     login: (usuario: string, password: string) => Promise<void>
     logout: (token: string) => Promise<void>
+    changePassword: (newPassword: string) => Promise<void>
 }
 
 const useSessionStore = create<SessionType>((set, get) => ({
     isAuth: false,
     token: null,
     usuario: null,
+    debe_cambiar_password: false,
     permisos: [],
     login: async (usuario, password): Promise<void> => {
         const response = await fetch(`${config.API_URL}/login`, {
@@ -36,19 +39,34 @@ const useSessionStore = create<SessionType>((set, get) => ({
         }
 
         const data = await response.json()
-        set({
-            token: data.session_id,
-            usuario: data.usuario,
-            permisos: data.permisos,
-            isAuth: true
-        })
 
-        try {
-            await invoke("connect_socket", { token: data.session_id })
-            console.log("✅ socket conectado")
-        } catch (e) {
-            console.error("❌ fallo al conectar socket:", e)
+        console.log("session store", data)
+        if (data.usuario.debe_cambiar_password) {
+
+            set({
+                debe_cambiar_password: true,
+                usuario: data.usuario.usuario,
+                token: data.session_id,
+            })
+
+        } else {
+
+            set({
+                token: data.session_id,
+                usuario: data.usuario.usuario,
+                permisos: data.permisos,
+                debe_cambiar_password: data.debe_cambiar_password,
+                isAuth: true
+            })
+
+            try {
+                await invoke("connect_socket", { token: data.session_id })
+                console.log("✅ socket conectado")
+            } catch (e) {
+                console.error("❌ fallo al conectar socket:", e)
+            }
         }
+
     },
     logout: async () => {
         try {
@@ -60,10 +78,35 @@ const useSessionStore = create<SessionType>((set, get) => ({
         } catch (err) {
             console.error("[useSessionStore]:", err)
         } finally {
-            await invoke("disconect_socket").catch((err) => {console.error(err)})
+            await invoke("disconect_socket").catch((err) => { console.error(err) })
             set({ token: null, usuario: null, permisos: [], isAuth: false })
         }
-    }
+    },
+    changePassword: async (new_password: string): Promise<void> => {
+        const usuario = get().usuario
+        const token = get().token
+
+        const response = await fetch(`${config.API_URL}/cambiar-password`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+            body: JSON.stringify({ usuario, new_password }),
+        })
+
+        if (!response.ok) {
+            throw new Error("No se pudo actualizar la contraseña")
+        }
+
+        set({
+            token: null,
+            usuario: null,
+            permisos: [],
+            debe_cambiar_password: false,
+            isAuth: false
+        })
+    },
 }))
 
 export default useSessionStore;

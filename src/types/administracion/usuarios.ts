@@ -34,6 +34,7 @@ export const usuarioSchema = z.object({
     activo: z.boolean(),
     creado_en: z.string(),
     actualizado_en: z.string(),
+    debe_cambiar_password: z.boolean()
 })
 
 export const usuarioDeletePayloadSchema = z.object({

@@ -1,29 +1,62 @@
-import { useState, FormEvent } from "react"
+import { useState, FormEvent, useEffect } from "react"
 import FormInput from "../../components/UI/FormInput/FormInput"
 import FenixButton from "../../components/UI/Button/FenixButton"
 import useSessionStore from "../../store/useSessionStore"
 import logo from "../../assets/logo.png"
 import styles from "./LoginForm.module.css"
+import { modal } from "../../store/useModalStore"
+import ChangePassword from "./ChangePassword"
+import { LoginFormType } from "./validations"
 
-export default function Login(){
-    const login = useSessionStore(data => data.login)
+export default function Login() {
+    const { login, debe_cambiar_password, changePassword } = useSessionStore()
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [loading, setLoading] = useState(false)
 
-    const handleLogin = async (e: FormEvent):Promise<void> => {
+    useEffect(() => {
+        const handleModificarPassword = async () => {
+            if (!debe_cambiar_password) return
+
+            const handleSubmit = async (values: LoginFormType): Promise<void> => {
+                try {
+                    await changePassword(values.new_password)
+                    modal.close()
+                } catch (err) {
+                    console.error(err)
+                }
+            }
+
+            modal.show({
+                size: "sm",
+                hideCloseButton: true,
+                closeOnBackdropClick: false,
+                closeOnEsc: false,
+                children: (
+                    <ChangePassword
+                        onCancel={modal.close}
+                        handleSubmit={handleSubmit}
+                    />
+                ),
+            })
+        }
+
+        handleModificarPassword()
+    }, [debe_cambiar_password, changePassword])
+
+    const handleLogin = async (e: FormEvent): Promise<void> => {
         e.preventDefault()
         try {
             setLoading(true)
             await login(username, password)
-        } catch (err){
+        } catch (err) {
             console.error(err)
         } finally {
             setLoading(false)
         }
     }
 
-    return(
+    return (
         <div className={styles.page}>
             <aside className={styles.brandPanel}>
                 <div>
