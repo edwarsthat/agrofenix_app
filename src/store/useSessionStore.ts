@@ -18,7 +18,7 @@ interface SessionType {
     debe_cambiar_password: boolean
     login: (usuario: string, password: string) => Promise<void>
     logout: (token: string) => Promise<void>
-    changePassword: (newPassword: string) => Promise<void>
+    changePassword: (password: string, newPassword: string) => Promise<void>
 }
 
 const useSessionStore = create<SessionType>((set, get) => ({
@@ -82,7 +82,7 @@ const useSessionStore = create<SessionType>((set, get) => ({
             set({ token: null, usuario: null, permisos: [], isAuth: false })
         }
     },
-    changePassword: async (new_password: string): Promise<void> => {
+    changePassword: async (password:string, new_password: string): Promise<void> => {
         const usuario = get().usuario
         const token = get().token
 
@@ -92,7 +92,7 @@ const useSessionStore = create<SessionType>((set, get) => ({
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`,
             },
-            body: JSON.stringify({ usuario, new_password }),
+            body: JSON.stringify({ usuario, new_password, password }),
         })
 
         if (!response.ok) {

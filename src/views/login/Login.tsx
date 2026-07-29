@@ -20,7 +20,7 @@ export default function Login() {
 
             const handleSubmit = async (values: LoginFormType): Promise<void> => {
                 try {
-                    await changePassword(values.new_password)
+                    await changePassword(values.password, values.new_password)
                     modal.close()
                 } catch (err) {
                     console.error(err)

@@ -10,7 +10,7 @@ type FieldWidth = "full" | "half" | "third" | "twoThirds" | "quarter"
 
 interface ItemFormType<T> {
     label: string
-    type: "text" | "select"
+    type: "text" | "select" | "password"
     nombre: keyof T & string
     /** Ancho del campo dentro de la grilla de 12 columnas. Por defecto "full". */
     width?: FieldWidth
@@ -115,7 +115,7 @@ export default function Form<T extends Record<string, string | number>>({
                         )
                     }
 
-                    if (item.type === "text") {
+                    if (item.type === "text" || item.type === "password") {
                         return (
                             <div key={item.nombre} className={cellClass}>
                                 <FormInput
