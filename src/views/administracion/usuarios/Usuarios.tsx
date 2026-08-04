@@ -1,8 +1,8 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useUsuarioStore from "../../../store/data/administracion/useUsuariosStore"
 import styles from "../../modulos.module.css"
 import tableStyles from "../../../components/funcionalidad/tablas/Table.module.css"
-import { Plus } from "lucide-react"
+import { Plus, Search } from "lucide-react"
 import Tabla, { TablaColumn } from "../../../components/funcionalidad/tablas/Tabla";
 import { Usuario } from "../../../types/administracion/usuarios";
 import useCargoStore from "../../../store/data/administracion/useCargoStore";
@@ -22,6 +22,7 @@ export default function Usuarios() {
         reActivarUsuario
     } = useUsuarioStore();
     const { cargos, getCargos } = useCargoStore();
+    const [busqueda, setBusqueda] = useState("")
 
     useEffect(() => {
         if (usuarios.length === 0) getUsuarios()
@@ -51,7 +52,21 @@ export default function Usuarios() {
             render: (u) => nombrePorCargo.get(u.cargo_id) ?? "—",
         },
         { key: "activo", header: "Activo", width: "90px", type: "boolean" },
-    ], [])
+    ], [nombrePorCargo])
+
+    // Filtra por nombre, apellido, usuario o cargo (ignora mayúsculas y espacios sobrantes).
+    const usuariosFiltrados = useMemo(() => {
+        const q = busqueda.trim().toLowerCase()
+        if (!q) return usuarios
+        return usuarios.filter((u) => {
+            const cargo = nombrePorCargo.get(u.cargo_id) ?? ""
+            return (
+                `${u.nombre} ${u.apellido}`.toLowerCase().includes(q) ||
+                u.usuario.toLowerCase().includes(q) ||
+                cargo.toLowerCase().includes(q)
+            )
+        })
+    }, [usuarios, busqueda, nombrePorCargo])
 
     const handleEliminar = async (usuario: Usuario) => {
         await eliminarUsuario(usuario.id)
@@ -145,6 +160,15 @@ export default function Usuarios() {
         <div>
             <div className={styles.toolbar}>
                 <h2 className={styles.toolbarTitle}>Usuarios</h2>
+                <label className={tableStyles.searchInput}>
+                    <Search size={15} />
+                    <input
+                        type="text"
+                        value={busqueda}
+                        onChange={(e) => setBusqueda(e.target.value)}
+                        placeholder="Buscar por nombre o cargo..."
+                    />
+                </label>
 
                 <button type="button" className={tableStyles.addButton} onClick={() => abrirFormulario()}>
                     <Plus size={16} />
@@ -154,7 +178,7 @@ export default function Usuarios() {
 
             <Tabla
                 columns={columns}
-                data={usuarios}
+                data={usuariosFiltrados}
                 rowKey={(cargo) => cargo.id}
                 estaActivo={(u) => u.activo}
                 acciones={{

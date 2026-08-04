@@ -40,7 +40,6 @@ const useUsuarioStore = create<UsuariosStore>((set, get) => ({
                     console.error("[cargos] respuesta inválida:", parsed.error)
                     return
                 }
-                console.log(parsed.data)
                 set({ usuarios: parsed.data })
             }
         } catch (err) {
@@ -90,9 +89,8 @@ const useUsuarioStore = create<UsuariosStore>((set, get) => ({
         try {
             const request = {
                 action: "administracion:usuarios:delete",
-                payload: {
-                    usuario_id, isSuccess: true
-                }
+                payload: { usuario_id },
+                isSuccess: true,
             }
             await socketRequest(request)
             set((state) => ({
@@ -111,9 +109,8 @@ const useUsuarioStore = create<UsuariosStore>((set, get) => ({
 
             const request = {
                 action: "administracion:usuarios:newpassword",
-                payload: {
-                    usuario_id, isSuccess: true
-                }
+                payload: { usuario_id },
+                isSuccess: true,
             }
             const response = await socketRequest<Usuario>(request) as AddUsuarioResponse
             return {
@@ -131,9 +128,8 @@ const useUsuarioStore = create<UsuariosStore>((set, get) => ({
         try {
             const request = {
                 action: "administracion:usuarios:reactivar",
-                payload: {
-                    usuario_id, isSuccess: true
-                }
+                payload: { usuario_id },
+                isSuccess: true,
             }
             const response = await socketRequest<Usuario>(request) as AddUsuarioResponse
             return {

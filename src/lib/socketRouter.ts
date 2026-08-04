@@ -1,6 +1,7 @@
 import { listen } from "@tauri-apps/api/event";
 import cargoRouter from "./socketRouter/cargos";
 import usuarioRouter from "./socketRouter/usuarios";
+import cargoPersonalRouter from "./socketRouter/cargoPersonal";
 
 export interface ServerEvent {
     event: string
@@ -18,6 +19,9 @@ export function initSocketRouter() {
                 break;
             case "usuarios":
                 usuarioRouter(msg)
+                break;
+            case "cargos_personal":
+                cargoPersonalRouter(msg)
                 break;
         }
     })

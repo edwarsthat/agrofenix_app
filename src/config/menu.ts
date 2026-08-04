@@ -18,7 +18,10 @@ export const menu: MenuNode[] = [
         children: [
             { label: 'Usuarios', path: '/administracion/usuarios', permiso: 'usuarios:read' },
             { label: 'Cargos',   path: '/administracion/cargos',   permiso: 'cargos:read' },
+            { label: 'Cargos Personal',   path: '/administracion/cargos-personal',   permiso: 'cargos_personal:read' },
+
             { label: 'Roles',    path: '/administracion/roles',    permiso: 'roles:read' },
+            
         ],
     },
 ]
