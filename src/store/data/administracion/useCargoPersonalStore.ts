@@ -12,6 +12,7 @@ interface CargoPersonalStore {
     addCargoPersonal: (form: CargoPersonalForm) => Promise<CargoPersonal | null>
     updateCargoPersonal: (cargo_id: string, form: CargoPersonalForm) => Promise<boolean>
     eliminarCargoPersonal: (cargo_id: string) => Promise<void>
+    activarCargoPersonal: (cargo_id: string) => Promise<boolean>
     eventAddCargoPersonal: (cargo: CargoPersonal) => void
     eventUpdateCargoPersonal: (cargo: CargoPersonal) => void
     eventDeleteCargoPersonal: (cargo_id: string) => void
@@ -95,6 +96,27 @@ const useCargoPersonalStore = create<CargoPersonalStore>((set, get) => ({
             console.error("[cargosPersonal] error:", err)
         } finally {
             set((state) => ({ eliminados: state.eliminados.filter((id) => id !== cargo_id) }))
+        }
+    },
+    activarCargoPersonal: async (cargo_id: string) => {
+        if (!(await confirm({ mensaje: "¿Activar el cargo?", danger: true }))) return false
+
+        try {
+            const request = {
+                action: "administracion:cargos_personal:reactivar",
+                payload: { cargo_id },
+                isSuccess: true,
+            }
+            await socketRequest<CargoPersonal>(request)
+            set((state) => ({
+                cargosPersonal: state.cargosPersonal.map((c) =>
+                    c.id === cargo_id ? { ...c, activo: true } : c
+                ),
+            }))
+            return true
+        } catch (err) {
+            console.error("[cargos_personal] error:", err)
+            return false
         }
     },
     eventAddCargoPersonal: (cargo: CargoPersonal) => {

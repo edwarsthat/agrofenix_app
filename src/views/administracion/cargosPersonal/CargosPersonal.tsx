@@ -15,7 +15,8 @@ export default function CargosPersonal() {
         getCargoPersonal,
         addCargoPersonal,
         updateCargoPersonal,
-        eliminarCargoPersonal
+        eliminarCargoPersonal,
+        activarCargoPersonal
     } = useCargoPersonalStore();
     const [busqueda, setBusqueda] = useState("")
 
@@ -82,6 +83,10 @@ export default function CargosPersonal() {
         await eliminarCargoPersonal(cargoPersonal.id)
     }
 
+    const handleActivar = async (cargo: CargoPersonal) => {
+        await activarCargoPersonal(cargo.id)
+    }
+
     return (
         <div>
             <div className={styles.toolbar}>
@@ -106,7 +111,11 @@ export default function CargosPersonal() {
                 data={cargosPersonalFiltrados}
                 rowKey={(cargo) => cargo.id}
                 estaActivo={(cargo) => cargo.activo}
-                acciones={{ onEditar: abrirFormulario, onEliminar: handleEliminar }}
+                acciones={{ 
+                    onEditar: abrirFormulario, 
+                    onEliminar: handleEliminar,
+                    onReactivar: handleActivar
+                }}
                 emptyTitle="Sin cargos personal"
                 emptyMessage="Todavía no hay cargos personal registrados."
             />
