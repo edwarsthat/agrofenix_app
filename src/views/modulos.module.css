@@ -1,11 +1,32 @@
 
+/* ---- Layout de vista: apila toolbar, filtros, tabla y demás bloques con una
+       separación uniforme. Envolver la vista en .page evita que cada bloque
+       tenga que traer su propio margen. ---- */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Separación mayor para bloques que necesitan respirar más (ej: filtros
+   sobre la tabla). Se aplica al elemento que va ARRIBA del espacio. */
+.pageSection {
+  margin-bottom: var(--space-2);
+}
+
 /* ---- Toolbar: título + buscador + botón de agregar ---- */
 .toolbar {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 20px;
+  gap: var(--space-5);
+  margin-bottom: var(--space-5);
+}
+
+/* Dentro de .page la separación la da el gap; el margin-bottom de arriba
+   queda solo para las vistas que todavía no usan .page. */
+.page .toolbar {
+  margin-bottom: 0;
 }
 
 .toolbarTitle {

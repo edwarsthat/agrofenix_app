@@ -12,6 +12,7 @@ import FenixLoading from './components/UI/Loading/FenixLoading';
 import { useLoadingStore } from './store/useLoadingStore';
 import { ModalHost } from './components/funcionalidad/modal/ModalHost';
 import CargosPersonal from './views/administracion/cargosPersonal/CargosPersonal';
+import Personal from './views/administracion/personal/Personal';
 
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
           <Route path="administracion/cargos/crear" element={<CrearCargo />} />
           <Route path="administracion/cargos/editar/:id" element={<CrearCargo />} />
           <Route path="administracion/cargos-personal" element={<CargosPersonal />} />
+          <Route path='administracion/personal' element={<Personal />} />
         </Route>
       </Routes>
 
