@@ -25,6 +25,15 @@ const personalRouter = (msg: ServerEvent) => {
             usePersonalStore.getState().eventUpdatePersonal(parsed.data.data)
             break
         }
+        case "delete": {
+            const parsed = personalEventPayloadSchema.safeParse(msg.data)
+            if (!parsed.success) {
+                console.error("[socketRouter] personal:delete payload inválido", parsed.error)
+                break
+            }
+            usePersonalStore.getState().eventDeletePersonal(parsed.data.data.id)
+            break
+        }
     }
 }
 

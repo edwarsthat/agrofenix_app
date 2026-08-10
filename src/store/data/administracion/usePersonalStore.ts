@@ -3,6 +3,7 @@ import { Empleado, empleadoSchema } from "../../../types/administracion/personal
 import { PersonalFormType, PersonalReadPayload } from "../../../views/administracion/personal/validations";
 import { socketRequest } from "../../../lib/socket";
 import z from "zod";
+import { confirm } from "../../../helpers/Confirmacion";
 
 interface PersonalStore {
     persoonal: Empleado[]
@@ -10,8 +11,11 @@ interface PersonalStore {
     addPersonal: (form: PersonalFormType) => Promise<Empleado | null>
     getPersonal: (filtros?: PersonalReadPayload) => Promise<void>
     updatePersonal: (empleado_id: string, version: number, form: PersonalFormType) => Promise<boolean>
+    deletePersonal: (empleado_id: string) => Promise<void>
+    activarPersonal: (empleado_id: string) => Promise<boolean>
     eventAddPersonal: (empleado: Empleado) => void
     eventUpdatePersonal: (empleado: Empleado) => void
+    eventDeletePersonal: (empelado: string) => void
 }
 
 const usePersonalStore = create<PersonalStore>((set, get) => ({
@@ -58,15 +62,58 @@ const usePersonalStore = create<PersonalStore>((set, get) => ({
     },
     updatePersonal: async (empleado_id: string, version: number, form: PersonalFormType) => {
         try {
-            // `version` es la que tenía el empleado cuando se abrió el formulario:
-            // si otro usuario ya guardó cambios sobre él, el servidor rechaza esta
-            // petición en vez de pisar lo suyo.
             const request = {
                 action: "administracion:personal:update",
                 payload: { empleado_id: empleado_id, version, ...form },
                 isSuccess: true,
             }
             await socketRequest<Empleado>(request)
+            return true
+        } catch (err) {
+            console.error("[personal] error:", err)
+            return false
+        }
+    },
+    deletePersonal: async (empleado_id: string) => {
+        if (get().eliminados.includes(empleado_id)) return
+
+        if (!(await confirm({ mensaje: "¿Eliminar el empleado?", danger: true }))) return
+
+        set((state) => ({ eliminados: [...state.eliminados, empleado_id] }))
+
+        try {
+            const request = {
+                action: "administracion:personal:delete",
+                payload: { empleado_id },
+                isSuccess: true,
+            }
+            await socketRequest(request)
+            set((state) => ({
+                persoonal: state.persoonal.map((c) =>
+                    c.id === empleado_id ? { ...c, activo: false } : c
+                ),
+            }))
+        } catch (err) {
+            console.error("[personal] error:", err)
+        } finally {
+            set((state) => ({ eliminados: state.eliminados.filter((id) => id !== empleado_id) }))
+        }
+    },
+    activarPersonal: async (empleado_id: string) => {
+        if (!(await confirm({ mensaje: "¿Activar el empleado?", danger: true }))) return false
+
+        try {
+            const request = {
+                action: "administracion:personal:reactivar",
+                payload: { empleado_id },
+                isSuccess: true,
+            }
+            await socketRequest<Empleado>(request)
+            set((state) => ({
+                persoonal: state.persoonal.map((c) =>
+                    c.id === empleado_id ? { ...c, activo: true } : c
+                ),
+            }))
             return true
         } catch (err) {
             console.error("[personal] error:", err)
@@ -92,6 +139,13 @@ const usePersonalStore = create<PersonalStore>((set, get) => ({
             persoonal[index] = empleado
             return { persoonal }
         })
+    },
+    eventDeletePersonal: (empleado_id: string) => {
+        set((state) => ({
+            persoonal: state.persoonal.map((c) =>
+                c.id === empleado_id ? { ...c, activo: false } : c
+            ),
+        }))
     }
 
 }));

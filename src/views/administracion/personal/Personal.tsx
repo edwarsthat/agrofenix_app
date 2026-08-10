@@ -17,6 +17,8 @@ export default function Personal() {
         addPersonal,
         getPersonal,
         updatePersonal,
+        deletePersonal,
+        activarPersonal
     } = usePersonalStore();
     const { cargosPersonal, getCargoPersonal } = useCargoPersonalStore();
 
@@ -92,8 +94,12 @@ export default function Personal() {
             ),
         })
     }
-    const handleEliminar = async () => { }
-    const handleActivar = async () => { }
+    const handleEliminar = async (empleado: Empleado) => { 
+        await deletePersonal(empleado.id)
+    }
+    const handleActivar = async (empleado: Empleado) => {
+        await activarPersonal(empleado.id) 
+     }
 
     return (
         <div className={styles.page}>
