@@ -20,6 +20,7 @@ export const menu: MenuNode[] = [
             { label: 'Cargos',   path: '/administracion/cargos',   permiso: 'cargos:read' },
             { label: 'Cargos Personal',   path: '/administracion/cargos-personal',   permiso: 'cargos_personal:read' },
             { label: 'Personal',   path: '/administracion/personal',   permiso: 'personal:read' },
+            { label: 'Sesiones',   path: '/administracion/sesiones',   permiso: 'sesiones:read' },
 
             { label: 'Roles',    path: '/administracion/roles',    permiso: 'roles:read' },
             

@@ -3,6 +3,7 @@ import cargoRouter from "./socketRouter/cargos";
 import usuarioRouter from "./socketRouter/usuarios";
 import cargoPersonalRouter from "./socketRouter/cargoPersonal";
 import personalRouter from "./socketRouter/personal";
+import sesionRouter from "./socketRouter/sesiones";
 
 export interface ServerEvent {
     event: string
@@ -26,6 +27,9 @@ export function initSocketRouter() {
                 break;
             case "personal":
                 personalRouter(msg)
+                break;
+            case "sesiones":
+                sesionRouter(msg)
                 break;
         }
     })

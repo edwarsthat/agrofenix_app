@@ -1,6 +1,6 @@
 import styles from "../../modulos.module.css"
 import tableStyles from "../../../components/funcionalidad/tablas/Table.module.css"
-import { Plus, Search } from "lucide-react"
+import { Plus } from "lucide-react"
 import { Empleado } from "../../../types/administracion/personal"
 import { PersonalFormType } from "./validations"
 import { modal } from "../../../store/useModalStore"
@@ -24,7 +24,7 @@ export default function Personal() {
 
     useEffect(() => {
         if (useCargoPersonalStore.getState().cargosPersonal.length === 0) getCargoPersonal()
-    }, [persoonal, cargosPersonal])
+    }, [persoonal]);
 
     const nombrePorCargo = useMemo(() => {
         const mapa = new Map<string, string>()
