@@ -1,0 +1,260 @@
+/* Card — Agroalimentos Fénix
+   Esquema genérico para listas/tablas en tarjeta (uso móvil o paneles compactos).
+   Complementa a Table.module.css: mismo sistema de tokens, misma semántica de
+   avatar/badge/acciones, pero en formato tarjeta apilada en vez de grid de tabla.
+   Extraído del template "Sesiones activas (móvil)".
+   Importa styles.css del design system ANTES de este módulo. Solo el avatar y las
+   insignias de estado usan tokens de marca fijos (--fenix-*), así que llevan
+   sección explícita de modo oscuro más abajo; el resto usa alias --color-* y se
+   adapta solo. */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-body);
+}
+
+/* ---- Cabecera: avatar + título/subtítulo + badge/acción ---- */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  background: var(--fenix-green-100);
+  color: var(--fenix-green-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.headerText {
+  min-width: 0;
+  flex: 1;
+}
+
+.title {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subtitle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.actionBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.actionBtn:hover {
+  background: var(--color-surface-sunken);
+  color: var(--color-brand-primary);
+}
+
+.actionBtnDelete:hover {
+  background: var(--color-surface-sunken);
+  color: var(--color-danger);
+}
+
+.actionBtnReactivar:hover {
+  background: var(--color-surface-sunken);
+  color: var(--color-success);
+}
+
+/* ---- Acciones por registro: editar / eliminar / reactivar ---- */
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-border);
+}
+
+/* ---- Insignia de estado ---- */
+.badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: var(--radius-pill);
+  flex-shrink: 0;
+}
+
+.badgeActive {
+  background: var(--fenix-green-100);
+  color: var(--fenix-green-700);
+}
+
+.badgeInactive {
+  background: var(--fenix-gray-100);
+  color: var(--fenix-gray-600);
+}
+
+/* ---- Cuerpo: grid de metadatos (2 columnas) ---- */
+.meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
+}
+
+.metaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.metaItemFull {
+  grid-column: 1 / -1;
+}
+
+.metaLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fenix-gray-300);
+  opacity: 0.8;
+}
+
+.metaValue {
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+
+.metaValueMono {
+  font-size: 12.5px;
+  font-family: monospace;
+  color: var(--color-text-secondary);
+}
+
+/* ---- Columna booleana (íconos sí/no) ---- */
+.boolCell {
+  display: flex;
+  align-items: center;
+}
+
+.boolTrue {
+  color: var(--color-success);
+}
+
+.boolFalse {
+  color: var(--color-danger);
+}
+
+/* ---- Chips de filtro ---- */
+.filters {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.filterChip {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+.filterChipActive {
+  background: var(--fenix-green-700);
+  color: var(--fenix-cream);
+  border-color: var(--fenix-green-700);
+}
+
+/* ---- Acción destructiva de bloque (ej. "cerrar otras sesiones") ---- */
+.dangerAction {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  background: var(--color-surface);
+  color: var(--color-danger);
+  border: 1.5px solid var(--color-danger);
+  border-radius: 14px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ---- Estado vacío ---- */
+.empty {
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+}
+
+/* ==========================================================================
+   Modo oscuro — solo los combos con tokens de marca fijos (--fenix-*)
+   necesitan valor explícito aquí; el resto usa --color-* y se adapta solo.
+   ========================================================================== */
+:global([data-theme='dark']) .avatar {
+  background: var(--fenix-green-800);
+  color: var(--fenix-green-300);
+}
+
+:global([data-theme='dark']) .badgeActive {
+  background: var(--fenix-green-800);
+  color: var(--fenix-green-300);
+}
+
+:global([data-theme='dark']) .badgeInactive {
+  background: var(--fenix-gray-800);
+  color: var(--fenix-gray-300);
+}
+
+:global([data-theme='dark']) .boolTrue {
+  color: var(--fenix-green-300);
+}

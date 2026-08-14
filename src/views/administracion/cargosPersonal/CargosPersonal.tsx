@@ -8,6 +8,9 @@ import Tabla, { TablaColumn } from "../../../components/funcionalidad/tablas/Tab
 import { CargoPersonalForm } from "./validations"
 import { modal } from "../../../store/useModalStore"
 import CargosPersonalForm from "./CargosPersonalForm"
+import MobileList from "../../../components/funcionalidad/listasMobile/MobileList"
+import { CardColumn } from "../../../components/funcionalidad/listasMobile/CardRow"
+import useIsMobile from "../../../hooks/useIsMobile"
 
 export default function CargosPersonal() {
     const {
@@ -19,6 +22,7 @@ export default function CargosPersonal() {
         activarCargoPersonal
     } = useCargoPersonalStore();
     const [busqueda, setBusqueda] = useState("")
+    const isMobile = useIsMobile()
 
     useEffect(() => {
         if (useCargoPersonalStore.getState().cargosPersonal.length === 0) getCargoPersonal()
@@ -33,6 +37,16 @@ export default function CargosPersonal() {
             render: (c) => TIPO_CONTRATO_LABELS[c.tipo_contrato],
         },
         { key: "activo", header: "Activo", width: "90px", type: "boolean" },
+    ], [])
+
+    // En móvil el nombre va en el título de la tarjeta y el estado en la insignia.
+    const columnsMobile: CardColumn<CargoPersonal>[] = useMemo(() => [
+        {
+            key: "tipo_contrato",
+            header: "Tipo de contrato",
+            fullWidth: true,
+            render: (c) => TIPO_CONTRATO_LABELS[c.tipo_contrato],
+        },
     ], [])
 
     // Filtra por nombre o por el nombre visible del tipo de contrato.
@@ -87,6 +101,13 @@ export default function CargosPersonal() {
         await activarCargoPersonal(cargo.id)
     }
 
+    // Mismas acciones para escritorio (Tabla) y móvil (MobileList).
+    const acciones = {
+        onEditar: abrirFormulario,
+        onEliminar: handleEliminar,
+        onReactivar: handleActivar
+    }
+
     return (
         <div>
             <div className={styles.toolbar}>
@@ -106,19 +127,27 @@ export default function CargosPersonal() {
                 </button>
             </div>
 
-            <Tabla
-                columns={columns}
-                data={cargosPersonalFiltrados}
-                rowKey={(cargo) => cargo.id}
-                estaActivo={(cargo) => cargo.activo}
-                acciones={{ 
-                    onEditar: abrirFormulario, 
-                    onEliminar: handleEliminar,
-                    onReactivar: handleActivar
-                }}
-                emptyTitle="Sin cargos personal"
-                emptyMessage="Todavía no hay cargos personal registrados."
-            />
+            {isMobile ? (
+                <MobileList
+                    columns={columnsMobile}
+                    data={cargosPersonalFiltrados}
+                    rowKey={(cargo) => cargo.id}
+                    titulo={(cargo) => cargo.nombre}
+                    estaActivo={(cargo) => cargo.activo}
+                    acciones={acciones}
+                    emptyMessage="Todavía no hay cargos personal registrados."
+                />
+            ) : (
+                <Tabla
+                    columns={columns}
+                    data={cargosPersonalFiltrados}
+                    rowKey={(cargo) => cargo.id}
+                    estaActivo={(cargo) => cargo.activo}
+                    acciones={acciones}
+                    emptyTitle="Sin cargos personal"
+                    emptyMessage="Todavía no hay cargos personal registrados."
+                />
+            )}
         </div>
     )
 }

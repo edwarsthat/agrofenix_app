@@ -5,6 +5,9 @@ import Tabla, { TablaColumn } from "../../../components/funcionalidad/tablas/Tab
 import useUsuarioStore from "../../../store/data/administracion/useUsuariosStore";
 import useCargoStore from "../../../store/data/administracion/useCargoStore";
 import { Sesion } from "../../../types/administracion/sesiones";
+import MobileList from "../../../components/funcionalidad/listasMobile/MobileList";
+import { CardColumn } from "../../../components/funcionalidad/listasMobile/CardRow";
+import useIsMobile from "../../../hooks/useIsMobile";
 
 // `expira_en` llega como ISO del backend; se muestra en horario local.
 function formatearFecha(iso: string): string {
@@ -20,6 +23,7 @@ export default function Sesiones() {
     const { sesiones, getSessiones, deleteSesiones } = useSesionesStore();
     const { usuarios, getUsuarios } = useUsuarioStore();
     const { cargos, getCargos } = useCargoStore();
+    const isMobile = useIsMobile();
 
     useEffect(() => {
         getSessiones()
@@ -60,6 +64,16 @@ export default function Sesiones() {
         },
     ], [nombrePorUsuario, nombrePorCargo])
 
+    // En móvil el usuario va en el título de la tarjeta y el cargo en el subtítulo.
+    const columnsMobile: CardColumn<Sesion>[] = useMemo(() => [
+        {
+            key: "expira_en",
+            header: "Expira",
+            fullWidth: true,
+            render: (s) => formatearFecha(s.expira_en),
+        },
+    ], [])
+
     const handleEliminar = async (sesion: Sesion) => {
         await deleteSesiones(sesion.usuario_id)
     }
@@ -69,16 +83,30 @@ export default function Sesiones() {
                 <h2 className={styles.toolbarTitle}>Sesiones</h2>
             </div>
 
-            <Tabla
-                columns={columns}
-                data={sesiones}
-                rowKey={(sesion) => `${sesion.usuario_id}-${sesion.expira_en}`}
-                emptyTitle="Sin sesiones"
-                emptyMessage="No hay sesiones activas en este momento."
-                acciones={{
-                    onEliminar: handleEliminar
-                }}
-            />
+            {isMobile ? (
+                <MobileList
+                    columns={columnsMobile}
+                    data={sesiones}
+                    rowKey={(sesion) => `${sesion.usuario_id}-${sesion.expira_en}`}
+                    titulo={(s) => nombrePorUsuario.get(s.usuario_id) ?? "—"}
+                    subtitulo={(s) => nombrePorCargo.get(s.cargo_id) ?? "—"}
+                    emptyMessage="No hay sesiones activas en este momento."
+                    acciones={{
+                        onEliminar: handleEliminar
+                    }}
+                />
+            ) : (
+                <Tabla
+                    columns={columns}
+                    data={sesiones}
+                    rowKey={(sesion) => `${sesion.usuario_id}-${sesion.expira_en}`}
+                    emptyTitle="Sin sesiones"
+                    emptyMessage="No hay sesiones activas en este momento."
+                    acciones={{
+                        onEliminar: handleEliminar
+                    }}
+                />
+            )}
         </div>
     )
 }

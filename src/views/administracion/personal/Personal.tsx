@@ -10,6 +10,9 @@ import Tabla, { TablaColumn } from "../../../components/funcionalidad/tablas/Tab
 import useCargoPersonalStore from "../../../store/data/administracion/useCargoPersonalStore"
 import { useEffect, useMemo } from "react"
 import PersonalFiltros from "./PersonalFiltros"
+import MobileList from "../../../components/funcionalidad/listasMobile/MobileList"
+import { CardColumn } from "../../../components/funcionalidad/listasMobile/CardRow"
+import useIsMobile from "../../../hooks/useIsMobile"
 
 export default function Personal() {
     const {
@@ -21,6 +24,7 @@ export default function Personal() {
         activarPersonal
     } = usePersonalStore();
     const { cargosPersonal, getCargoPersonal } = useCargoPersonalStore();
+    const isMobile = useIsMobile();
 
     useEffect(() => {
         if (useCargoPersonalStore.getState().cargosPersonal.length === 0) getCargoPersonal()
@@ -62,6 +66,19 @@ export default function Personal() {
         { key: "activo", header: "Activo", width: "90px", type: "boolean" },
     ], [nombrePorCargo])
 
+    // En móvil el nombre va en el título de la tarjeta, el cargo en el subtítulo
+    // y el estado en la insignia; el resto va al grid de metadatos.
+    const columnsMobile: CardColumn<Empleado>[] = useMemo(() => [
+        { key: "codigo", header: "Código", mono: true },
+        {
+            key: "documento",
+            header: "Documento",
+            render: (e) => `${e.tipo_documento} ${e.documento}`,
+        },
+        { key: "telefono", header: "Teléfono", render: (e) => e.telefono ?? "—" },
+        { key: "fecha_ingreso", header: "Ingreso" },
+    ], [])
+
     const abrirFormulario = (empleado?: Empleado) => {
         const esEdicion = Boolean(empleado)
 
@@ -101,6 +118,13 @@ export default function Personal() {
         await activarPersonal(empleado.id) 
      }
 
+    // Mismas acciones para escritorio (Tabla) y móvil (MobileList).
+    const acciones = {
+        onEditar: abrirFormulario,
+        onEliminar: handleEliminar,
+        onReactivar: handleActivar
+    }
+
     return (
         <div className={styles.page}>
             <div className={styles.toolbar}>
@@ -116,19 +140,28 @@ export default function Personal() {
                 <PersonalFiltros onBuscar={getPersonal} />
             </div>
 
-            <Tabla
-                columns={columns}
-                data={persoonal}
-                rowKey={(empleado) => empleado.id}
-                estaActivo={(empleado) => empleado.activo}
-                acciones={{
-                    onEditar: abrirFormulario,
-                    onEliminar: handleEliminar,
-                    onReactivar: handleActivar
-                }}
-                emptyTitle="Sin personal"
-                emptyMessage="Todavía no hay empleados registrados."
-            />
+            {isMobile ? (
+                <MobileList
+                    columns={columnsMobile}
+                    data={persoonal}
+                    rowKey={(empleado) => empleado.id}
+                    titulo={(e) => `${e.nombre} ${e.apellido}`}
+                    subtitulo={(e) => nombrePorCargo.get(e.cargo_id) ?? "—"}
+                    estaActivo={(empleado) => empleado.activo}
+                    acciones={acciones}
+                    emptyMessage="Todavía no hay empleados registrados."
+                />
+            ) : (
+                <Tabla
+                    columns={columns}
+                    data={persoonal}
+                    rowKey={(empleado) => empleado.id}
+                    estaActivo={(empleado) => empleado.activo}
+                    acciones={acciones}
+                    emptyTitle="Sin personal"
+                    emptyMessage="Todavía no hay empleados registrados."
+                />
+            )}
         </div>
     )
 }

@@ -1,6 +1,7 @@
 import { invoke } from "@tauri-apps/api/core"
 import { toast } from "../store/useTosterStore"
 import { loading } from "../store/useLoadingStore"
+import useSessionStore from "../store/useSessionStore"
 
 export interface SocketRequest {
     action: string
@@ -24,8 +25,31 @@ export interface ServerResponse<T> {
     data?: T | null
 }
 
+/** Errores que significan que ya no hay socket: la sesión no sirve. */
+const KINDS_SIN_SESION: SocketErr["kind"][] = ["NotConnected", "Disconnected"]
+
 export function isSocketErr(e: unknown): e is SocketErr {
     return typeof e === "object" && e !== null && "kind" in e
+}
+
+/**
+ * Si el error implica que la sesión murió, la cierra y devuelve true para que
+ * quien llama no ponga además el toast genérico de error.
+ *
+ * Cubre el hueco que deja `socket://closed`: cuando el socket nunca llegó a
+ * conectarse no hay loop que se cierre, así que nadie emite ese evento.
+ */
+function manejarSesionCaida(err: unknown): boolean {
+    if (!isSocketErr(err) || !KINDS_SIN_SESION.includes(err.kind)) return false
+
+    const { isAuth, cerrarSesion } = useSessionStore.getState()
+    // Guard para que N peticiones en paralelo no disparen N toasts.
+    if (isAuth) {
+        cerrarSesion()                                   // isAuth = false -> <Navigate to="/login" />
+        invoke("disconect_socket").catch(() => { })      // limpia el estado del socket en Rust
+        toast.error("Sesión finalizada", "Se perdió la conexión con el servidor. Vuelve a iniciar sesión.")
+    }
+    return true
 }
 
 // TEMPORAL: retardo artificial para poder ver el loading. Poner a 0 (o borrar
@@ -63,9 +87,14 @@ export async function socketRequest<T>({
         }
         return response
     } catch (err) {
-        // Los errores de Rust (TimeOut, NotConnected...) llegan como string, no como Error.
-        const message = err instanceof Error ? err.message : String(err)
-        toast.error("Error", message)
+        // Los errores de Rust (TimeOut, NotConnected...) llegan como { kind, message },
+        // no como Error: hay que sacarles el mensaje a mano.
+        if (!manejarSesionCaida(err)) {
+            const message = isSocketErr(err)
+                ? err.message
+                : err instanceof Error ? err.message : String(err)
+            toast.error("Error", message)
+        }
         throw err
     } finally {
         if (showLoading) loading.stop()

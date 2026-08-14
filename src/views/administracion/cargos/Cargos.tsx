@@ -6,6 +6,9 @@ import tableStyles from "../../../components/funcionalidad/tablas/Table.module.c
 import { Cargo } from "../../../types/administracion/cargos"
 import Tabla, { TablaColumn } from "../../../components/funcionalidad/tablas/Tabla"
 import useCargoStore from "../../../store/data/administracion/useCargoStore"
+import MobileList from "../../../components/funcionalidad/listasMobile/MobileList"
+import { CardColumn } from "../../../components/funcionalidad/listasMobile/CardRow"
+import useIsMobile from "../../../hooks/useIsMobile"
 
 const columns: TablaColumn<Cargo>[] = [
     { key: "nombre", header: "Nombre", width: "1fr" },
@@ -18,10 +21,21 @@ const columns: TablaColumn<Cargo>[] = [
     { key: "activo", header: "Activo", width: "110px", type: "boolean" },
 ]
 
+// En móvil el nombre va en el título de la tarjeta y el estado en la insignia.
+const columnsMobile: CardColumn<Cargo>[] = [
+    {
+        key: "descripcion",
+        header: "Descripción",
+        fullWidth: true,
+        render: (cargo) => cargo.descripcion ?? "—",
+    },
+]
+
 export default function Cargos() {
     const { cargos, getCargos, eliminarCargo } = useCargoStore()
     const navigate = useNavigate()
     const [busqueda, setBusqueda] = useState("")
+    const isMobile = useIsMobile()
 
     useEffect(() => {
         getCargos()
@@ -62,14 +76,26 @@ export default function Cargos() {
                 </button>
             </div>
 
-            <Tabla
-                columns={columns}
-                data={cargosFiltrados}
-                rowKey={(cargo) => cargo.id}
-                acciones={{ onEditar: handleEditar, onEliminar: handleEliminar }}
-                emptyTitle="Sin cargos"
-                emptyMessage="Todavía no hay cargos registrados."
-            />
+            {isMobile ? (
+                <MobileList
+                    columns={columnsMobile}
+                    data={cargosFiltrados}
+                    rowKey={(cargo) => cargo.id}
+                    titulo={(cargo) => cargo.nombre}
+                    badge={(cargo) => ({ texto: cargo.activo ? "Activo" : "Inactivo", activo: cargo.activo })}
+                    acciones={{ onEditar: handleEditar, onEliminar: handleEliminar }}
+                    emptyMessage="Todavía no hay cargos registrados."
+                />
+            ) : (
+                <Tabla
+                    columns={columns}
+                    data={cargosFiltrados}
+                    rowKey={(cargo) => cargo.id}
+                    acciones={{ onEditar: handleEditar, onEliminar: handleEliminar }}
+                    emptyTitle="Sin cargos"
+                    emptyMessage="Todavía no hay cargos registrados."
+                />
+            )}
         </div>
     )
 }

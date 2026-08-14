@@ -1,18 +1,15 @@
-use std::sync::atomic::Ordering;
 use futures_util::StreamExt;
+use std::sync::atomic::Ordering;
 use tauri::{AppHandle, State};
 use tokio::sync::mpsc;
 use tokio_tungstenite::connect_async;
 
 use crate::command::errors::SocketError;
 use crate::socket::actor::run_socket_loop;
+use crate::socket::protocol::{build_envelop, build_request, build_ws_url};
 use crate::socket::state::SocketHandles;
-use crate::socket::{
-    protocol::{build_envelop, build_request, build_ws_url},
-};
 
 const REQUEST_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(15);
-
 
 #[tauri::command]
 pub async fn connect_socket(
@@ -20,7 +17,11 @@ pub async fn connect_socket(
     state: State<'_, SocketHandles>,
     token: String,
 ) -> Result<(), SocketError> {
-    let base = std::env::var("VITE_API_URL")?;
+    let base = std::env::var("VITE_API_URL")
+        .ok()
+        .or_else(|| option_env!("VITE_API_URL").map(str::to_owned))
+        .ok_or(SocketError::EnvVar(std::env::VarError::NotPresent))?;
+
     let url = build_ws_url(&base);
     println!("[socket] intentando conectar a {url}");
 
@@ -93,7 +94,7 @@ pub async fn send_socket_message(
 }
 
 #[tauri::command]
-pub async fn disconect_socket(state: State<'_, SocketHandles>,) -> Result<(), SocketError>{
+pub async fn disconect_socket(state: State<'_, SocketHandles>) -> Result<(), SocketError> {
     *state.tx.lock().await = None;
     Ok(())
 }

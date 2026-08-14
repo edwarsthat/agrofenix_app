@@ -2,15 +2,17 @@ use tokio_tungstenite::tungstenite::{client::IntoClientRequest, handshake::clien
 
 use crate::command::errors::SocketError;
 
-
-pub fn build_ws_url(base:&str) -> String {
-    let ws = base.replace("http://", "ws://").replace("https://", "wss://");
+pub fn build_ws_url(base: &str) -> String {
+    let ws = base
+        .replace("http://", "ws://")
+        .replace("https://", "wss://");
     format!("{ws}/ws")
 }
 
 pub fn build_request(url: &str, token: &str) -> Result<Request, SocketError> {
     let mut req = url.into_client_request()?;
-    req.headers_mut().insert("Authorization", format!("Bearer {token}").parse()?);
+    req.headers_mut()
+        .insert("Authorization", format!("Bearer {token}").parse()?);
     Ok(req)
 }
 
@@ -30,7 +32,10 @@ mod tests {
 
     #[test]
     fn converts_http_to_ws() {
-        assert_eq!(build_ws_url("http://localhost:8080"), "ws://localhost:8080/ws");
+        assert_eq!(
+            build_ws_url("http://localhost:8080"),
+            "ws://localhost:8080/ws"
+        );
     }
 
     #[test]

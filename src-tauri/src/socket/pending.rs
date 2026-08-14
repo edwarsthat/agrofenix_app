@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use tokio::sync::{Mutex, oneshot};
+use tokio::sync::{oneshot, Mutex};
 
 pub struct PendingRequest {
     inner: Mutex<HashMap<String, oneshot::Sender<String>>>,

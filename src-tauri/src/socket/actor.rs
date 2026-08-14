@@ -4,13 +4,7 @@ use futures_util::{SinkExt, Stream, StreamExt};
 use tokio::sync::mpsc;
 use tokio_tungstenite::tungstenite::Message;
 
-use crate::socket::{
-    events::SocketEvents, 
-    pending::PendingRequest, 
-    protocol::{extract_message_id}
-};
-
-
+use crate::socket::{events::SocketEvents, pending::PendingRequest, protocol::extract_message_id};
 
 pub async fn run_socket_loop<W, R, E>(
     mut write: W,
@@ -18,7 +12,7 @@ pub async fn run_socket_loop<W, R, E>(
     mut rx: mpsc::UnboundedReceiver<String>,
     pending: Arc<PendingRequest>,
     events: &E,
-) where 
+) where
     W: SinkExt<Message, Error = tokio_tungstenite::tungstenite::Error> + Unpin,
     R: Stream<Item = Result<Message, tokio_tungstenite::tungstenite::Error>> + Unpin,
     E: SocketEvents,

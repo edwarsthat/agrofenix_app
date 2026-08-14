@@ -10,6 +10,9 @@ import { modal } from "../../../store/useModalStore";
 import { UsuarioFormType } from "./validation";
 import UsuarioForm from "./UsuarioForm";
 import PasswordTemporal from "./PasswordTemporal";
+import MobileList from "../../../components/funcionalidad/listasMobile/MobileList";
+import { CardColumn } from "../../../components/funcionalidad/listasMobile/CardRow";
+import useIsMobile from "../../../hooks/useIsMobile";
 
 export default function Usuarios() {
     const {
@@ -23,6 +26,7 @@ export default function Usuarios() {
     } = useUsuarioStore();
     const { cargos, getCargos } = useCargoStore();
     const [busqueda, setBusqueda] = useState("")
+    const isMobile = useIsMobile()
 
     useEffect(() => {
         if (usuarios.length === 0) getUsuarios()
@@ -52,6 +56,17 @@ export default function Usuarios() {
             render: (u) => nombrePorCargo.get(u.cargo_id) ?? "—",
         },
         { key: "activo", header: "Activo", width: "90px", type: "boolean" },
+    ], [nombrePorCargo])
+
+    // En móvil el nombre va en el título de la tarjeta, el usuario en el subtítulo
+    // y el estado en la insignia, así que el grid de metadatos solo lleva el resto.
+    const columnsMobile: CardColumn<Usuario>[] = useMemo(() => [
+        { key: "email", header: "Correo", fullWidth: true },
+        {
+            key: "cargo_id",
+            header: "Cargo",
+            render: (u) => nombrePorCargo.get(u.cargo_id) ?? "—",
+        },
     ], [nombrePorCargo])
 
     // Filtra por nombre, apellido, usuario o cargo (ignora mayúsculas y espacios sobrantes).
@@ -156,6 +171,14 @@ export default function Usuarios() {
         })
     }
 
+    // Mismas acciones para escritorio (Tabla) y móvil (MobileList).
+    const acciones = {
+        onEditar: abrirFormulario,
+        onEliminar: handleEliminar,
+        onResetPassword: handleResetPassword,
+        onReactivar: handleReactivar
+    }
+
     return (
         <div>
             <div className={styles.toolbar}>
@@ -176,20 +199,28 @@ export default function Usuarios() {
                 </button>
             </div>
 
-            <Tabla
-                columns={columns}
-                data={usuariosFiltrados}
-                rowKey={(cargo) => cargo.id}
-                estaActivo={(u) => u.activo}
-                acciones={{
-                    onEditar: abrirFormulario,
-                    onEliminar: handleEliminar,
-                    onResetPassword: handleResetPassword,
-                    onReactivar: handleReactivar
-                }}
-                emptyTitle="Sin cargos"
-                emptyMessage="Todavía no hay cargos registrados."
-            />
+            {isMobile ? (
+                <MobileList
+                    columns={columnsMobile}
+                    data={usuariosFiltrados}
+                    rowKey={(usuario) => usuario.id}
+                    titulo={(u) => `${u.nombre} ${u.apellido}`}
+                    subtitulo={(u) => `@${u.usuario}`}
+                    estaActivo={(u) => u.activo}
+                    acciones={acciones}
+                    emptyMessage="Todavía no hay usuarios registrados."
+                />
+            ) : (
+                <Tabla
+                    columns={columns}
+                    data={usuariosFiltrados}
+                    rowKey={(cargo) => cargo.id}
+                    estaActivo={(u) => u.activo}
+                    acciones={acciones}
+                    emptyTitle="Sin cargos"
+                    emptyMessage="Todavía no hay cargos registrados."
+                />
+            )}
         </div>
     )
 }

@@ -13,6 +13,7 @@ export default function Login() {
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
         const handleModificarPassword = async () => {
@@ -41,16 +42,17 @@ export default function Login() {
             })
         }
 
-        handleModificarPassword()
+        handleModificarPassword().catch((err) => console.error(err))
     }, [debe_cambiar_password, changePassword])
 
     const handleLogin = async (e: FormEvent): Promise<void> => {
         e.preventDefault()
+        setError(null)
         try {
             setLoading(true)
             await login(username, password)
         } catch (err) {
-            console.error(err)
+            setError(err instanceof Error ? err.message : "No se pudo iniciar sesión")
         } finally {
             setLoading(false)
         }
@@ -91,6 +93,10 @@ export default function Login() {
                             placeholder="Ingresa tu contraseña"
                         />
                     </div>
+
+                    {error && (
+                        <p className={styles.formError} role="alert">{error}</p>
+                    )}
 
                     <FenixButton type="submit" fullWidth disabled={loading}>Login</FenixButton>
                 </form>

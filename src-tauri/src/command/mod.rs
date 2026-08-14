@@ -1,2 +1,2 @@
-pub mod socket;
 pub mod errors;
+pub mod socket;

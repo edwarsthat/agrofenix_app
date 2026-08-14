@@ -183,6 +183,8 @@
 }
 
 @media (max-width: 767px) {
+  /* El drawer va de borde a borde de la pantalla, así que suma los insets del
+     celular (barra de estado arriba, barra de gestos abajo) a su padding. */
   .sidebar {
     position: fixed;
     top: 0;
@@ -193,6 +195,8 @@
     transform: translateX(-100%);
     transition: transform 0.22s ease;
     box-shadow: var(--shadow-lg);
+    padding: calc(20px + env(safe-area-inset-top, 0px)) 0
+      calc(20px + env(safe-area-inset-bottom, 0px));
   }
 
   .sidebarOpen {

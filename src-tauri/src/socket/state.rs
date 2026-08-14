@@ -5,7 +5,6 @@ use tokio::sync::{mpsc, Mutex};
 use crate::socket::events::SocketEvents;
 use crate::socket::pending::PendingRequest;
 
-
 #[derive(Clone)]
 pub struct SocketHandles {
     pub tx: Arc<Mutex<Option<mpsc::UnboundedSender<String>>>>,
@@ -16,7 +15,6 @@ pub struct SocketHandles {
 }
 
 impl SocketHandles {
-
     pub fn new() -> Self {
         Self {
             tx: Arc::new(Mutex::new(None)),
@@ -126,7 +124,12 @@ mod tests {
 
         assert!(handles.tx.lock().await.is_some());
         assert!(handles.session_token.lock().await.is_some());
-        assert!(handles.pending.resolve("req-1", "payload".to_string()).await);
+        assert!(
+            handles
+                .pending
+                .resolve("req-1", "payload".to_string())
+                .await
+        );
         assert_eq!(resp_rx.await.unwrap(), "payload");
         assert_eq!(events.closed_count(), 0);
     }
@@ -138,7 +141,12 @@ mod tests {
 
         handles.disconnect_if_currennt(1, &events).await;
 
-        let tx = handles.tx.lock().await.clone().expect("tx sigue disponible");
+        let tx = handles
+            .tx
+            .lock()
+            .await
+            .clone()
+            .expect("tx sigue disponible");
         tx.send("ping".to_string()).expect("el canal sigue abierto");
         assert_eq!(rx.recv().await, Some("ping".to_string()));
     }

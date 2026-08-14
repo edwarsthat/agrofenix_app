@@ -1,7 +1,6 @@
 pub mod command;
+pub mod nfc;
 pub mod socket;
-
-
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -12,8 +11,9 @@ fn greet(name: &str) -> String {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     dotenvy::dotenv().ok();
-    
+
     tauri::Builder::default()
+        .plugin(tauri_plugin_nfc::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_http::init())
         .manage(socket::state::SocketHandles::new())
@@ -22,7 +22,7 @@ pub fn run() {
             command::socket::connect_socket,
             command::socket::send_socket_message,
             command::socket::disconect_socket,
-            ])
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

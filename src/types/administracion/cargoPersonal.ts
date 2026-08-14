@@ -13,6 +13,7 @@ export const TIPOS_CONTRATO = [
     "ocasional",
     "aprendizaje",
     "prestacion_servicios",
+    "destajo"
 ] as const
 
 export const TIPO_CONTRATO_LABELS: Record<TipoContrato, string> = {
@@ -22,6 +23,7 @@ export const TIPO_CONTRATO_LABELS: Record<TipoContrato, string> = {
     ocasional: "Ocasional, accidental o transitorio",
     aprendizaje: "Contrato de aprendizaje (SENA)",
     prestacion_servicios: "Prestación de servicios",
+    destajo: "Destajo (por unidad de obra)",
 }
 
 export const tipoContratoSchema = z.enum(TIPOS_CONTRATO, {

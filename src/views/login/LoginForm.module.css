@@ -123,6 +123,18 @@
   width: 100%;
 }
 
+/* Aviso de credenciales inválidas / fallo de conexión, encima del botón */
+.formError {
+  margin: -4px 0 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--color-danger) 35%, transparent);
+  background: color-mix(in srgb, var(--color-danger) 10%, var(--color-surface));
+  color: var(--color-danger);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
 .rowEnd {
   display: flex;
   justify-content: flex-end;

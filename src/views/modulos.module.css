@@ -43,3 +43,32 @@
   color: var(--color-text-secondary);
   margin: 4px 0 0;
 }
+
+/* ---- Móvil: la toolbar se apila y sus controles ocupan todo el ancho.
+       Mismo breakpoint que el Sidebar y que useIsMobile (< 768px).
+       El buscador y el botón de agregar vienen de Table.module.css, así que se
+       alcanzan por elemento (label / button) y no por su clase. ---- */
+@media (max-width: 767px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .toolbarTitle {
+    font-size: 1.5rem;
+  }
+
+  /* box-sizing explícito: el buscador es un <label> (content-box por defecto) y
+     sumaría padding + borde al 100%, quedando más ancho que el botón. */
+  .toolbar > label,
+  .toolbar > button {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .toolbar > button {
+    justify-content: center;
+  }
+}
