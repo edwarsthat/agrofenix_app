@@ -1,12 +1,9 @@
 use std::{ffi::CString, time::Duration};
 
 use pcsc::{Context, ReaderState, Scope, State, PNP_NOTIFICATION};
-use tauri::{App, AppHandle};
+use tauri::AppHandle;
 
-use crate::{
-    nfc::{errors::NfcError, reader::leer_tarjeta},
-    socket::events::NfcEvents,
-};
+use crate::nfc::{errors::NfcError, events::NfcEvents, reader::leer_tarjeta};
 
 const REINTENTO: Duration = Duration::from_secs(3);
 

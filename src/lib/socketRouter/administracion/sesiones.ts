@@ -1,6 +1,6 @@
-import { ServerEvent } from "../socketRouter";
-import { sesionDeletePayloadSchema } from "../../types/administracion/sesiones";
-import useSesionesStore from "../../store/data/administracion/useSesionesStore";
+import { ServerEvent } from "../../socketRouter";
+import { sesionDeletePayloadSchema } from "../../../types/administracion/sesiones";
+import useSesionesStore from "../../../store/data/administracion/useSesionesStore";
 
 const sesionRouter = (msg: ServerEvent) => {
     switch (msg.action) {

@@ -1,7 +1,7 @@
 import z from "zod";
-import { usuarioDeletePayloadSchema, usuarioSchema } from "../../types/administracion/usuarios";
-import { ServerEvent } from "../socketRouter";
-import useUsuarioStore from "../../store/data/administracion/useUsuariosStore";
+import { usuarioDeletePayloadSchema, usuarioSchema } from "../../../types/administracion/usuarios";
+import { ServerEvent } from "../../socketRouter";
+import useUsuarioStore from "../../../store/data/administracion/useUsuariosStore";
 
 
 const usuarioEventPayloadSchema = z.object({ data: usuarioSchema })

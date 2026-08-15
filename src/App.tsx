@@ -11,8 +11,8 @@ import { useToastStore } from './store/useTosterStore';
 import FenixLoading from './components/UI/Loading/FenixLoading';
 import { useLoadingStore } from './store/useLoadingStore';
 import { ModalHost } from './components/funcionalidad/modal/ModalHost';
-import CargosPersonal from './views/administracion/cargosPersonal/CargosPersonal';
-import Personal from './views/administracion/personal/Personal';
+import CargosPersonal from './views/talento_humano/cargosPersonal/CargosPersonal';
+import Personal from './views/talento_humano/personal/Personal';
 import Sessiones from './views/administracion/sessiones/Sesiones';
 
 
@@ -35,9 +35,10 @@ function App() {
           <Route path="administracion/cargos" element={<Cargos />} />
           <Route path="administracion/cargos/crear" element={<CrearCargo />} />
           <Route path="administracion/cargos/editar/:id" element={<CrearCargo />} />
-          <Route path="administracion/cargos-personal" element={<CargosPersonal />} />
-          <Route path='administracion/personal' element={<Personal />} />
           <Route path='administracion/sesiones' element={<Sessiones />} />
+
+          <Route path="talento_humano/cargos-personal" element={<CargosPersonal />} />
+          <Route path='talento_humano/personal' element={<Personal />} />
         </Route>
       </Routes>
 

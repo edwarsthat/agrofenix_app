@@ -1,8 +1,8 @@
-import { CargoPersonal, cargoPersonalSchema } from "../../../types/administracion/cargoPersonal";
+import { CargoPersonal, cargoPersonalSchema } from "../../../types/talento_humano/cargoPersonal";
 import { create } from "zustand"
 import { socketRequest } from "../../../lib/socket";
 import z from "zod";
-import { CargoPersonalForm } from "../../../views/administracion/cargosPersonal/validations";
+import { CargoPersonalForm } from "../../../views/talento_humano/cargosPersonal/validations";
 import { confirm } from "../../../helpers/Confirmacion";
 
 interface CargoPersonalStore {
@@ -24,7 +24,7 @@ const useCargoPersonalStore = create<CargoPersonalStore>((set, get) => ({
     getCargoPersonal: async () => {
         try {
             const request = {
-                action: "administracion:cargos_personal:read"
+                action: "talento_humano:cargos_personal:read"
             }
             const response = await socketRequest(request)
             if (response.status === 200) {
@@ -42,7 +42,7 @@ const useCargoPersonalStore = create<CargoPersonalStore>((set, get) => ({
     addCargoPersonal: async (form: CargoPersonalForm) => {
         try {
             const request = {
-                action: "administracion:cargos_personal:add",
+                action: "talento_humano:cargos_personal:add",
                 payload: { ...form },
                 isSuccess: true,
             }
@@ -62,7 +62,7 @@ const useCargoPersonalStore = create<CargoPersonalStore>((set, get) => ({
     updateCargoPersonal: async (cargo_id: string, form: CargoPersonalForm) => {
         try {
             const request = {
-                action: "administracion:cargos_personal:update",
+                action: "talento_humano:cargos_personal:update",
                 payload: { cargo_id: cargo_id, ...form },
                 isSuccess: true,
             }
@@ -82,7 +82,7 @@ const useCargoPersonalStore = create<CargoPersonalStore>((set, get) => ({
 
         try {
             const request = {
-                action: "administracion:cargos_personal:delete",
+                action: "talento_humano:cargos_personal:delete",
                 payload: { cargo_id },
                 isSuccess: true,
             }
@@ -103,7 +103,7 @@ const useCargoPersonalStore = create<CargoPersonalStore>((set, get) => ({
 
         try {
             const request = {
-                action: "administracion:cargos_personal:reactivar",
+                action: "talento_humano:cargos_personal:reactivar",
                 payload: { cargo_id },
                 isSuccess: true,
             }

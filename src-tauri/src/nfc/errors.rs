@@ -1,3 +1,6 @@
+use serde::{ser::SerializeStruct, Serialize};
+
+
 #[derive(Debug, thiserror::Error)]
 pub enum NfcError {
     #[error("El servicio de tarjetas inteligentes de Windows no esta activo")]
@@ -25,5 +28,26 @@ impl From<pcsc::Error> for NfcError {
             pcsc::Error::NoSmartcard | pcsc::Error::RemovedCard => NfcError::SinTarjeta,
             otro => NfcError::Lectura(otro.to_string()),
         }
+    }
+}
+
+
+impl Serialize for NfcError {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let kind = match self {
+            NfcError::ServicioInactivo => "ServicioInactivo",
+            NfcError::SinLector => "SinLector",
+            NfcError::SinTarjeta => "SinTarjeta",
+            NfcError::Lectura(_) => "Lectura",
+            NfcError::NoSoportado => "NoSoportado",
+        };
+
+        let mut s = serializer.serialize_struct("NfcError", 2)?;
+        s.serialize_field("kind", kind)?;
+        s.serialize_field("message", &self.to_string())?;
+        s.end()
     }
 }

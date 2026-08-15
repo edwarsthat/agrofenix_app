@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import Form from "../../../components/funcionalidad/form/Form";
 import { FormSelectOption } from "../../../components/UI/FormInput/FormSelectInput";
-import useCargoPersonalStore from "../../../store/data/administracion/useCargoPersonalStore";
+import useCargoPersonalStore from "../../../store/data/talento_humano/useCargoPersonalStore";
 import {
     buildPersonalFiltrosArr,
     personalFiltrosSchema,

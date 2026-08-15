@@ -10,8 +10,8 @@ import {
     tipoDocumentoSchema,
     TIPOS_DOCUMENTO,
     TIPO_DOCUMENTO_LABELS,
-} from "../../../types/administracion/personal"
-import type { TipoDocumento } from "../../../types/administracion/personal"
+} from "../../../types/talento_humano/personal"
+import type { TipoDocumento } from "../../../types/talento_humano/personal"
 
 
 export type PersonalFormType = {
@@ -119,7 +119,7 @@ export function buildPersonalFormArr(
 
 /* ------------------------------------------------------------------ */
 /* Filtros: el filtrado de personal lo resuelve el servidor            */
-/* (`administracion:personal:read`), no un useMemo sobre la lista.     */
+/* (`talento_humano:personal:read`), no un useMemo sobre la lista.     */
 /* ------------------------------------------------------------------ */
 
 // El formulario trabaja plano porque <Form> exige Record<string, string | number>;

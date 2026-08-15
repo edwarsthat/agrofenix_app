@@ -1,7 +1,7 @@
 import z from "zod";
-import { ServerEvent } from "../socketRouter";
-import useCargoPersonalStore from "../../store/data/administracion/useCargoPersonalStore";
-import { cargoPersonalSchema, cargoPersonalDeletePayloadSchema } from "../../types/administracion/cargoPersonal";
+import { ServerEvent } from "../../socketRouter";
+import useCargoPersonalStore from "../../../store/data/talento_humano/useCargoPersonalStore";
+import { cargoPersonalSchema, cargoPersonalDeletePayloadSchema } from "../../../types/talento_humano/cargoPersonal";
 
 
 const cargoPersonalEventPayloadSchema = z.object({ data: cargoPersonalSchema })

@@ -4,8 +4,8 @@ import {
     tipoContratoSchema,
     TIPOS_CONTRATO,
     TIPO_CONTRATO_LABELS,
-} from "../../../types/administracion/cargoPersonal"
-import type { TipoContrato } from "../../../types/administracion/cargoPersonal"
+} from "../../../types/talento_humano/cargoPersonal"
+import type { TipoContrato } from "../../../types/talento_humano/cargoPersonal"
 import { FormType } from "../../../components/funcionalidad/form/Form"
 import type { FormSelectOption } from "../../../components/UI/FormInput/FormSelectInput"
 

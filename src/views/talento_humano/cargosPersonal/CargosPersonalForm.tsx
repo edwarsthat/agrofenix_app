@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import Form from "../../../components/funcionalidad/form/Form";
 import { buildCargoPersonalFormArr, CargoPersonalForm, cargoPersonalFormSchema, CargoPersonalInitialValues } from "./validations";
-import { CargoPersonal } from "../../../types/administracion/cargoPersonal"
+import { CargoPersonal } from "../../../types/talento_humano/cargoPersonal"
 
 type propsType = {
     datosCargoPersonal?: CargoPersonal

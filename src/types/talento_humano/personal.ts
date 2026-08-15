@@ -1,4 +1,4 @@
-// src/types/administracion/personal.ts
+// src/types/talento_humano/personal.ts
 import z from "zod"
 
 export const codigoEmpleadoSchema = z

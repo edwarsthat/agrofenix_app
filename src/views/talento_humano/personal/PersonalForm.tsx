@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import Form from "../../../components/funcionalidad/form/Form";
 import { buildPersonalFormArr, PersonalFormType, personalFormSchema, PersonalInitialValues } from "./validations";
-import useCargoPersonalStore from "../../../store/data/administracion/useCargoPersonalStore";
+import useCargoPersonalStore from "../../../store/data/talento_humano/useCargoPersonalStore";
 import { FormSelectOption } from "../../../components/UI/FormInput/FormSelectInput";
-import { Empleado } from "../../../types/administracion/personal";
+import { Empleado } from "../../../types/talento_humano/personal";
 
 type propsType = {
     esEdicion: boolean

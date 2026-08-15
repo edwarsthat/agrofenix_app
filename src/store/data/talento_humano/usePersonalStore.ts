@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { Empleado, empleadoSchema } from "../../../types/administracion/personal";
-import { PersonalFormType, PersonalReadPayload } from "../../../views/administracion/personal/validations";
+import { Empleado, empleadoSchema } from "../../../types/talento_humano/personal";
+import { PersonalFormType, PersonalReadPayload } from "../../../views/talento_humano/personal/validations";
 import { socketRequest } from "../../../lib/socket";
 import z from "zod";
 import { confirm } from "../../../helpers/Confirmacion";
@@ -24,7 +24,7 @@ const usePersonalStore = create<PersonalStore>((set, get) => ({
     addPersonal: async (form: PersonalFormType) => {
         try {
             const request = {
-                action: "administracion:personal:add",
+                action: "talento_humano:personal:add",
                 payload: { ...form },
                 isSuccess: true,
             }
@@ -44,7 +44,7 @@ const usePersonalStore = create<PersonalStore>((set, get) => ({
     getPersonal: async (filtros?: PersonalReadPayload) => {
         try {
             const request = {
-                action: "administracion:personal:read",
+                action: "talento_humano:personal:read",
                 payload: filtros
             }
             const response = await socketRequest(request)
@@ -63,7 +63,7 @@ const usePersonalStore = create<PersonalStore>((set, get) => ({
     updatePersonal: async (empleado_id: string, version: number, form: PersonalFormType) => {
         try {
             const request = {
-                action: "administracion:personal:update",
+                action: "talento_humano:personal:update",
                 payload: { empleado_id: empleado_id, version, ...form },
                 isSuccess: true,
             }
@@ -83,7 +83,7 @@ const usePersonalStore = create<PersonalStore>((set, get) => ({
 
         try {
             const request = {
-                action: "administracion:personal:delete",
+                action: "talento_humano:personal:delete",
                 payload: { empleado_id },
                 isSuccess: true,
             }
@@ -104,7 +104,7 @@ const usePersonalStore = create<PersonalStore>((set, get) => ({
 
         try {
             const request = {
-                action: "administracion:personal:reactivar",
+                action: "talento_humano:personal:reactivar",
                 payload: { empleado_id },
                 isSuccess: true,
             }

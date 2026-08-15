@@ -1,7 +1,7 @@
 import z from "zod";
-import { ServerEvent } from "../socketRouter";
-import { empleadoSchema } from "../../types/administracion/personal";
-import usePersonalStore from "../../store/data/administracion/usePersonalStore";
+import { ServerEvent } from "../../socketRouter";
+import { empleadoSchema } from "../../../types/talento_humano/personal";
+import usePersonalStore from "../../../store/data/talento_humano/usePersonalStore";
 
 const personalEventPayloadSchema = z.object({ data: empleadoSchema })
 

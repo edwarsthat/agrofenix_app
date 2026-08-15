@@ -1,8 +1,8 @@
 import { vi, describe, it, expect } from "vitest"
 import cargoRouter from "./cargos"
-import useCargoStore from "../../store/data/administracion/useCargoStore"
+import useCargoStore from "../../../store/data/administracion/useCargoStore"
 
-vi.mock("../../store/data/administracion/useCargoStore")
+vi.mock("../../../store/data/administracion/useCargoStore")
 
 const cargoValido = { id: "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d", nombre: "Coordinador", descripcion: null, creado_en: "x", activo: true }
 
