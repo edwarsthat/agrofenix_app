@@ -29,6 +29,14 @@
   margin-bottom: 0;
 }
 
+/* Agrupa los botones de la toolbar: sin este wrapper el space-between los
+   separaría uno a cada extremo en vez de dejarlos juntos a la derecha. */
+.toolbarActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
 .toolbarTitle {
   font-family: var(--font-display);
   font-weight: 900;
@@ -62,13 +70,21 @@
 
   /* box-sizing explícito: el buscador es un <label> (content-box por defecto) y
      sumaría padding + borde al 100%, quedando más ancho que el botón. */
+  .toolbarActions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
   .toolbar > label,
-  .toolbar > button {
+  .toolbar > button,
+  .toolbarActions > button {
     width: 100%;
     box-sizing: border-box;
   }
 
-  .toolbar > button {
+  .toolbar > button,
+  .toolbarActions > button {
     justify-content: center;
   }
 }

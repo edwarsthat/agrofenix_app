@@ -14,6 +14,7 @@ import { ModalHost } from './components/funcionalidad/modal/ModalHost';
 import CargosPersonal from './views/talento_humano/cargosPersonal/CargosPersonal';
 import Personal from './views/talento_humano/personal/Personal';
 import Sessiones from './views/administracion/sessiones/Sesiones';
+import InventarioLlaveNfc from './views/inventarios/llaves_nfc/InventarioLlaveNfc';
 
 
 function App() {
@@ -39,6 +40,8 @@ function App() {
 
           <Route path="talento_humano/cargos-personal" element={<CargosPersonal />} />
           <Route path='talento_humano/personal' element={<Personal />} />
+
+          <Route path='inventarios/llaves-nfc' element={<InventarioLlaveNfc />} />
         </Route>
       </Routes>
 

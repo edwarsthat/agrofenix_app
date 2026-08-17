@@ -35,7 +35,7 @@ export const useModalStore = create<ModalState>((set) => ({
   open: false,
   ...defaults,
   show: (options) => set({ open: true, ...defaults, ...options }),
-  close: () => set({ open: false }),
+  close: () => set({ open: false, ...defaults }),
 }));
 
 export const modal = {

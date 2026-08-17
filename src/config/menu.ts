@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
-import { LayoutGrid, ShieldCheck, Users } from 'lucide-react'
+import { Boxes, LayoutGrid, ShieldCheck, Users } from 'lucide-react'
 
 export interface MenuNode {
     label: string
@@ -18,10 +18,8 @@ export const menu: MenuNode[] = [
         children: [
             { label: 'Usuarios', path: '/administracion/usuarios', permiso: 'usuarios:read' },
             { label: 'Cargos',   path: '/administracion/cargos',   permiso: 'cargos:read' },
-            { label: 'Sesiones',   path: '/administracion/sesiones',   permiso: 'sesiones:read' },
-
+            { label: 'Sesiones', path: '/administracion/sesiones', permiso: 'sesiones:read' },
             { label: 'Roles',    path: '/administracion/roles',    permiso: 'roles:read' },
-
         ],
     },
     {
@@ -29,8 +27,16 @@ export const menu: MenuNode[] = [
         permiso: 'talento_humano:ver',
         icon: Users,
         children: [
-            { label: 'Personal',   path: '/talento_humano/personal',   permiso: 'personal:read' },
-            { label: 'Cargos Personal',   path: '/talento_humano/cargos-personal',   permiso: 'cargos_personal:read' },
+            { label: 'Personal',        path: '/talento_humano/personal',         permiso: 'personal:read' },
+            { label: 'Cargos Personal', path: '/talento_humano/cargos-personal', permiso: 'cargos_personal:read' },
+        ],
+    },
+    {
+        label: 'Inventarios',
+        permiso: 'inventarios:ver',
+        icon: Boxes,
+        children: [
+            { label: 'Llaves NFC', path: '/inventarios/llaves-nfc', permiso: 'llaves_nfc:read' },
         ],
     },
 ]
