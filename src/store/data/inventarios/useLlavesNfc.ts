@@ -19,10 +19,10 @@ interface LlavesNfcStore {
     eliminados: string[],
     addLlaveNfc: (form: LlaveNfcForm) => Promise<LlaveNfc | null>
     getLlavesNfc: (filtros?: LlaveNfcReadPayload) => Promise<void>
-    // Al editar no se toca el UID (es la tarjeta física): solo estado y descripción.
     updateLlavesNfc: (llave_nfc_id: string, version: number, form: LlaveNfcInventarioFormType) => Promise<boolean>
-
     eventAddLlaveNfc: (llave_nfc: LlaveNfc) => void
+    eventUpdateLlaveNfc: (llave_nfc: LlaveNfc) => void
+
 }
 
 const useLlaveNfcStore = create<LlavesNfcStore>((set) => ({
@@ -98,6 +98,19 @@ const useLlaveNfcStore = create<LlavesNfcStore>((set) => ({
                 : { llavesNfc: [llave_nfc, ...state.llavesNfc] }
         )
     },
+    eventUpdateLlaveNfc: (llave_nfc: LlaveNfc) => {
+        set((state) => {
+            const index = state.llavesNfc.findIndex((c) => c.id === llave_nfc.id)
+
+            if (index === -1) {
+                return { llavesNfc: [llave_nfc, ...state.llavesNfc] }
+            }
+
+            const llavesNfc = [...state.llavesNfc]
+            llavesNfc[index] = llave_nfc
+            return { llavesNfc }
+        })
+    }
 }))
 
 export default useLlaveNfcStore;

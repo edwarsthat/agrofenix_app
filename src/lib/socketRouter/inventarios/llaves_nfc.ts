@@ -16,24 +16,15 @@ const personalRouter = (msg: ServerEvent) => {
             useLlaveNfcStore.getState().eventAddLlaveNfc(parsed.data.data)
             break
         }
-        // case "update": {
-        //     const parsed = personalEventPayloadSchema.safeParse(msg.data)
-        //     if (!parsed.success) {
-        //         console.error("[socketRouter] personal:update payload inválido", parsed.error)
-        //         break
-        //     }
-        //     usePersonalStore.getState().eventUpdatePersonal(parsed.data.data)
-        //     break
-        // }
-        // case "delete": {
-        //     const parsed = personalEventPayloadSchema.safeParse(msg.data)
-        //     if (!parsed.success) {
-        //         console.error("[socketRouter] personal:delete payload inválido", parsed.error)
-        //         break
-        //     }
-        //     usePersonalStore.getState().eventDeletePersonal(parsed.data.data.id)
-        //     break
-        // }
+        case "update": {
+            const parsed = llaveNfcEventPayloadSchema.safeParse(msg.data)
+            if (!parsed.success) {
+                console.error("[socketRouter] personal:update payload inválido", parsed.error)
+                break
+            }
+            useLlaveNfcStore.getState().eventUpdateLlaveNfc(parsed.data.data)
+            break
+        }
     }
 }
 

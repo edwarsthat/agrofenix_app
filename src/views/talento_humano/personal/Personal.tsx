@@ -116,13 +116,16 @@ export default function Personal() {
     }
     const handleActivar = async (empleado: Empleado) => {
         await activarPersonal(empleado.id) 
-     }
+    }
+
+    const handleAsignarLlave = async () => {}
 
     // Mismas acciones para escritorio (Tabla) y móvil (MobileList).
     const acciones = {
         onEditar: abrirFormulario,
         onEliminar: handleEliminar,
-        onReactivar: handleActivar
+        onReactivar: handleActivar,
+        onResetPassword: handleAsignarLlave,
     }
 
     return (
