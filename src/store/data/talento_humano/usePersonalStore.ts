@@ -13,6 +13,7 @@ interface PersonalStore {
     updatePersonal: (empleado_id: string, version: number, form: PersonalFormType) => Promise<boolean>
     deletePersonal: (empleado_id: string) => Promise<void>
     activarPersonal: (empleado_id: string) => Promise<boolean>
+    asignarLLaveNfc: (empleado_id: string, version: number, uid: string) => Promise<boolean>
     eventAddPersonal: (empleado: Empleado) => void
     eventUpdatePersonal: (empleado: Empleado) => void
     eventDeletePersonal: (empelado: string) => void
@@ -114,6 +115,20 @@ const usePersonalStore = create<PersonalStore>((set, get) => ({
                     c.id === empleado_id ? { ...c, activo: true } : c
                 ),
             }))
+            return true
+        } catch (err) {
+            console.error("[personal] error:", err)
+            return false
+        }
+    },
+    asignarLLaveNfc: async (empleado_id: string, version: number, uid: string) => {
+                try {
+            const request = {
+                action: "inventarios:llaves_nfc:asignar_llave",
+                payload: { empleado_id: empleado_id, version, uid },
+                isSuccess: true,
+            }
+            await socketRequest<Empleado>(request)
             return true
         } catch (err) {
             console.error("[personal] error:", err)

@@ -5,6 +5,7 @@ import { Empleado } from "../../../types/talento_humano/personal"
 import { PersonalFormType } from "./validations"
 import { modal } from "../../../store/useModalStore"
 import PersonalForm from "./PersonalForm"
+import EscanearLlaveNfc from "./EscanearLlaveNfc"
 import usePersonalStore from "../../../store/data/talento_humano/usePersonalStore"
 import Tabla, { TablaColumn } from "../../../components/funcionalidad/tablas/Tabla"
 import useCargoPersonalStore from "../../../store/data/talento_humano/useCargoPersonalStore"
@@ -21,7 +22,8 @@ export default function Personal() {
         getPersonal,
         updatePersonal,
         deletePersonal,
-        activarPersonal
+        activarPersonal,
+        asignarLLaveNfc
     } = usePersonalStore();
     const { cargosPersonal, getCargoPersonal } = useCargoPersonalStore();
     const isMobile = useIsMobile();
@@ -111,14 +113,30 @@ export default function Personal() {
             ),
         })
     }
-    const handleEliminar = async (empleado: Empleado) => { 
+    const handleEliminar = async (empleado: Empleado) => {
         await deletePersonal(empleado.id)
     }
     const handleActivar = async (empleado: Empleado) => {
-        await activarPersonal(empleado.id) 
+        await activarPersonal(empleado.id)
     }
 
-    const handleAsignarLlave = async () => {}
+    const handleAsignarLlave = (empleado: Empleado) => {
+        const handleGuardar = async (uid: string) => {
+            const actualizado = await asignarLLaveNfc(empleado.id, empleado.version, uid)
+            if (!actualizado) return
+
+            modal.close()
+        }
+
+        modal.show({
+            title: "Asignar llave NFC",
+            description: `Acerca la llave al lector para asignarla a ${empleado.nombre} ${empleado.apellido}`,
+            closeOnBackdropClick: false,   // que no se cierre por accidente a mitad de la lectura
+            children: (
+                <EscanearLlaveNfc onGuardar={handleGuardar} onCancel={modal.close} />
+            ),
+        })
+    }
 
     // Mismas acciones para escritorio (Tabla) y móvil (MobileList).
     const acciones = {
