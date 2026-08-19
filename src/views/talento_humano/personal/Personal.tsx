@@ -1,11 +1,12 @@
 import styles from "../../modulos.module.css"
 import tableStyles from "../../../components/funcionalidad/tablas/Table.module.css"
-import { Plus } from "lucide-react"
+import { Nfc, Plus, Unlink } from "lucide-react"
 import { Empleado } from "../../../types/talento_humano/personal"
-import { PersonalFormType } from "./validations"
+import { PersonalFormType, QuitarLlaveFormType } from "./validations"
 import { modal } from "../../../store/useModalStore"
 import PersonalForm from "./PersonalForm"
 import EscanearLlaveNfc from "./EscanearLlaveNfc"
+import PersonalFormQuitarLlave from "./PersonalFormQuitarLlave"
 import usePersonalStore from "../../../store/data/talento_humano/usePersonalStore"
 import Tabla, { TablaColumn } from "../../../components/funcionalidad/tablas/Tabla"
 import useCargoPersonalStore from "../../../store/data/talento_humano/useCargoPersonalStore"
@@ -14,6 +15,8 @@ import PersonalFiltros from "./PersonalFiltros"
 import MobileList from "../../../components/funcionalidad/listasMobile/MobileList"
 import { CardColumn } from "../../../components/funcionalidad/listasMobile/CardRow"
 import useIsMobile from "../../../hooks/useIsMobile"
+import { AccionFila, accionEditar, accionEliminar, accionReactivar } from "../../../components/funcionalidad/acciones"
+
 
 export default function Personal() {
     const {
@@ -23,7 +26,8 @@ export default function Personal() {
         updatePersonal,
         deletePersonal,
         activarPersonal,
-        asignarLLaveNfc
+        asignarLLaveNfc,
+        quitarLlaveNfc
     } = usePersonalStore();
     const { cargosPersonal, getCargoPersonal } = useCargoPersonalStore();
     const isMobile = useIsMobile();
@@ -64,6 +68,12 @@ export default function Personal() {
             width: "1fr",
             render: (e) => e.telefono ?? "—",
         },
+        {
+            key: "llave_codigo",
+            header: "Llave NFC",
+            width: "1fr",
+            render: (e) => e.llave_codigo ?? "—",
+        },
         { key: "fecha_ingreso", header: "Ingreso", width: "110px" },
         { key: "activo", header: "Activo", width: "90px", type: "boolean" },
     ], [nombrePorCargo])
@@ -78,6 +88,7 @@ export default function Personal() {
             render: (e) => `${e.tipo_documento} ${e.documento}`,
         },
         { key: "telefono", header: "Teléfono", render: (e) => e.telefono ?? "—" },
+        { key: "llave_codigo", header: "Llave NFC", render: (e) => e.llave_codigo ?? "—" },
         { key: "fecha_ingreso", header: "Ingreso" },
     ], [])
 
@@ -119,11 +130,28 @@ export default function Personal() {
     const handleActivar = async (empleado: Empleado) => {
         await activarPersonal(empleado.id)
     }
+    const handleQuitarLlave = (empleado: Empleado) => {
+        const handleGuardar = async (values: QuitarLlaveFormType) => {
+            if(!empleado.asignacion_id) return 
+            const quitada = await quitarLlaveNfc(empleado.asignacion_id, values)
+            if (!quitada) return
+
+            modal.close()
+        }
+
+        modal.show({
+            title: "Quitar llave NFC",
+            description: `Indica en qué estado queda la llave ${empleado.llave_codigo} que devuelve ${empleado.nombre} ${empleado.apellido}`,
+            children: (
+                <PersonalFormQuitarLlave handleSubmit={handleGuardar} onCancel={modal.close} />
+            ),
+        })
+    }
 
     const handleAsignarLlave = (empleado: Empleado) => {
         const handleGuardar = async (uid: string) => {
             const actualizado = await asignarLLaveNfc(empleado.id, empleado.version, uid)
-            if (!actualizado) return
+            if (!actualizado) return modal.close()
 
             modal.close()
         }
@@ -138,13 +166,26 @@ export default function Personal() {
         })
     }
 
-    // Mismas acciones para escritorio (Tabla) y móvil (MobileList).
-    const acciones = {
-        onEditar: abrirFormulario,
-        onEliminar: handleEliminar,
-        onReactivar: handleActivar,
-        onResetPassword: handleAsignarLlave,
-    }
+    const acciones: AccionFila<Empleado>[] = [
+        accionEditar(abrirFormulario),
+        {
+            id: "asignar-llave",
+            icono: Nfc,
+            titulo: "Asignar llave NFC",
+            onClick: handleAsignarLlave,
+            visible: (e) => e.activo && !e.llave_id,
+        },
+        {
+            id: "quitar-llave",
+            icono: Unlink,
+            titulo: "Quitar llave NFC",
+            variante: "danger",
+            onClick: handleQuitarLlave,
+            visible: (e) => Boolean(e.llave_id),
+        },
+        accionEliminar(handleEliminar),
+        accionReactivar(handleActivar),
+    ]
 
     return (
         <div className={styles.page}>
@@ -177,7 +218,6 @@ export default function Personal() {
                     columns={columns}
                     data={persoonal}
                     rowKey={(empleado) => empleado.id}
-                    estaActivo={(empleado) => empleado.activo}
                     acciones={acciones}
                     emptyTitle="Sin personal"
                     emptyMessage="Todavía no hay empleados registrados."

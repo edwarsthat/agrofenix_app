@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import useUsuarioStore from "../../../store/data/administracion/useUsuariosStore"
 import styles from "../../modulos.module.css"
 import tableStyles from "../../../components/funcionalidad/tablas/Table.module.css"
-import { Plus, Search } from "lucide-react"
+import { KeyRound, Plus, Search } from "lucide-react"
 import Tabla, { TablaColumn } from "../../../components/funcionalidad/tablas/Tabla";
 import { Usuario } from "../../../types/administracion/usuarios";
 import useCargoStore from "../../../store/data/administracion/useCargoStore";
@@ -13,6 +13,7 @@ import PasswordTemporal from "./PasswordTemporal";
 import MobileList from "../../../components/funcionalidad/listasMobile/MobileList";
 import { CardColumn } from "../../../components/funcionalidad/listasMobile/CardRow";
 import useIsMobile from "../../../hooks/useIsMobile";
+import { AccionFila, accionEditar, accionEliminar, accionReactivar } from "../../../components/funcionalidad/acciones";
 
 export default function Usuarios() {
     const {
@@ -172,12 +173,12 @@ export default function Usuarios() {
     }
 
     // Mismas acciones para escritorio (Tabla) y móvil (MobileList).
-    const acciones = {
-        onEditar: abrirFormulario,
-        onEliminar: handleEliminar,
-        onResetPassword: handleResetPassword,
-        onReactivar: handleReactivar
-    }
+    const acciones: AccionFila<Usuario>[] = [
+        accionEditar(abrirFormulario),
+        { id: "password", icono: KeyRound, titulo: "Cambiar contraseña", onClick: handleResetPassword },
+        accionEliminar(handleEliminar),
+        accionReactivar(handleReactivar),
+    ]
 
     return (
         <div>
@@ -215,7 +216,6 @@ export default function Usuarios() {
                     columns={columns}
                     data={usuariosFiltrados}
                     rowKey={(cargo) => cargo.id}
-                    estaActivo={(u) => u.activo}
                     acciones={acciones}
                     emptyTitle="Sin cargos"
                     emptyMessage="Todavía no hay cargos registrados."

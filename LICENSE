@@ -1,0 +1,164 @@
+LICENCIA DE USO DE SOFTWARE PROPIETARIO
+Agrofenix App
+
+Copyright (c) 2026 Agrofenix. Todos los derechos reservados.
+
+AVISO: Este es un software propietario de uso exclusivo bajo licencia comercial
+de pago. NO es software libre ni de código abierto. Cualquier uso, copia,
+modificación o distribución sin una licencia vigente otorgada por escrito por el
+Titular está prohibido y constituye una infracción de los derechos de autor.
+
+--------------------------------------------------------------------------------
+1. DEFINICIONES
+--------------------------------------------------------------------------------
+
+"Titular": Agrofenix, propietario exclusivo de todos los derechos patrimoniales
+sobre el Software.
+
+"Software": la aplicación Agrofenix App, incluyendo su código fuente y objeto,
+binarios, recursos gráficos, documentación, archivos de configuración y
+cualquier actualización, corrección o versión derivada.
+
+"Licenciatario": la persona natural o jurídica que ha suscrito con el Titular un
+contrato de licencia vigente y se encuentra al día en el pago de las
+contraprestaciones pactadas.
+
+"Contrato": el acuerdo comercial escrito y firmado entre el Titular y el
+Licenciatario que fija el alcance, la vigencia, el número de usuarios o
+instalaciones autorizadas y el precio de la licencia.
+
+--------------------------------------------------------------------------------
+2. CONCESIÓN DE LICENCIA
+--------------------------------------------------------------------------------
+
+Sujeto al pago íntegro y oportuno de las contraprestaciones pactadas en el
+Contrato, el Titular concede al Licenciatario una licencia limitada, revocable,
+no exclusiva, personal, intransferible y no sublicenciable para instalar y usar
+el Software, en formato de código objeto, únicamente:
+
+  a) para los fines internos de negocio del Licenciatario;
+  b) dentro del número de usuarios, dispositivos, sedes o instalaciones
+     autorizados expresamente en el Contrato;
+  c) durante el plazo de vigencia estipulado en el Contrato.
+
+Esta licencia constituye una autorización de uso. NO transfiere la propiedad del
+Software ni derecho alguno distinto de los expresamente concedidos aquí.
+
+--------------------------------------------------------------------------------
+3. RESTRICCIONES
+--------------------------------------------------------------------------------
+
+Salvo autorización previa, expresa y escrita del Titular, el Licenciatario NO
+podrá:
+
+  a) copiar, reproducir o distribuir el Software, total o parcialmente, salvo
+     una única copia de respaldo con fines de seguridad;
+  b) vender, arrendar, prestar, ceder, sublicenciar, revender u ofrecer el
+     Software como servicio a terceros;
+  c) modificar, adaptar, traducir o crear obras derivadas del Software;
+  d) descompilar, desensamblar, aplicar ingeniería inversa o intentar por
+     cualquier medio obtener el código fuente, salvo en la medida en que la ley
+     aplicable lo permita de forma imperativa;
+  e) eliminar, alterar u ocultar avisos de copyright, marcas, logotipos u otras
+     leyendas de propiedad presentes en el Software o en su interfaz;
+  f) usar el Software una vez terminada, suspendida o vencida la licencia, o
+     estando en mora en el pago;
+  g) publicar el código fuente, ni total ni parcialmente, en repositorios
+     públicos, foros u otros medios accesibles a terceros;
+  h) usar el Software para desarrollar un producto competidor;
+  i) permitir el acceso al Software a personas ajenas al Licenciatario que no
+     estén cubiertas por el Contrato.
+
+--------------------------------------------------------------------------------
+4. PROPIEDAD INTELECTUAL
+--------------------------------------------------------------------------------
+
+El Software es propiedad exclusiva del Titular y está protegido por las leyes de
+derecho de autor y los tratados internacionales aplicables. Todos los derechos
+que no se conceden expresamente en esta licencia quedan reservados al Titular.
+
+Cualquier mejora, corrección, personalización o desarrollo derivado del
+Software, aun cuando sea solicitado o sugerido por el Licenciatario, pertenece al
+Titular, salvo pacto expreso en contrario dentro del Contrato.
+
+--------------------------------------------------------------------------------
+5. PAGO
+--------------------------------------------------------------------------------
+
+El derecho de uso está condicionado al pago de las sumas acordadas en el
+Contrato. La falta de pago dentro de los plazos pactados faculta al Titular para
+suspender el servicio, desactivar el acceso o terminar la licencia de forma
+inmediata, sin perjuicio del cobro de las sumas adeudadas y de las acciones
+legales que correspondan.
+
+--------------------------------------------------------------------------------
+6. VIGENCIA Y TERMINACIÓN
+--------------------------------------------------------------------------------
+
+Esta licencia rige durante el plazo indicado en el Contrato y termina de forma
+automática, sin necesidad de requerimiento previo, ante cualquier incumplimiento
+de sus términos por parte del Licenciatario.
+
+Terminada la licencia por cualquier causa, el Licenciatario deberá cesar de
+inmediato todo uso del Software, desinstalarlo de todos sus equipos y destruir o
+devolver las copias en su poder, incluidas las de respaldo. Las cláusulas 3, 4,
+7, 8 y 10 sobreviven a la terminación.
+
+--------------------------------------------------------------------------------
+7. AUSENCIA DE GARANTÍAS
+--------------------------------------------------------------------------------
+
+EL SOFTWARE SE ENTREGA "TAL CUAL" Y "SEGÚN DISPONIBILIDAD". SALVO LO QUE SE
+PACTE EXPRESAMENTE EN EL CONTRATO O LO QUE EXIJA LA LEY DE FORMA IMPERATIVA, EL
+TITULAR NO OTORGA GARANTÍA ALGUNA, EXPRESA O IMPLÍCITA, INCLUYENDO SIN LIMITARSE
+A LAS GARANTÍAS DE COMERCIABILIDAD, IDONEIDAD PARA UN PROPÓSITO PARTICULAR,
+OPERACIÓN ININTERRUMPIDA O LIBRE DE ERRORES, Y NO INFRACCIÓN.
+
+--------------------------------------------------------------------------------
+8. LIMITACIÓN DE RESPONSABILIDAD
+--------------------------------------------------------------------------------
+
+En la máxima medida permitida por la ley aplicable, el Titular no será
+responsable por daños indirectos, incidentales, especiales, punitivos o
+consecuenciales, ni por lucro cesante, pérdida de datos o interrupción de
+actividades, derivados del uso o de la imposibilidad de uso del Software.
+
+La responsabilidad total del Titular por cualquier reclamación relacionada con el
+Software no excederá el monto efectivamente pagado por el Licenciatario en los
+doce (12) meses anteriores al hecho que dio origen a la reclamación.
+
+--------------------------------------------------------------------------------
+9. VERIFICACIÓN DE CUMPLIMIENTO
+--------------------------------------------------------------------------------
+
+El Titular podrá solicitar, con aviso razonable y sin interferir indebidamente en
+la operación del Licenciatario, información sobre el número de instalaciones y
+usuarios, con el fin de verificar el cumplimiento de los términos de esta
+licencia.
+
+--------------------------------------------------------------------------------
+10. COMPONENTES DE TERCEROS
+--------------------------------------------------------------------------------
+
+El Software incorpora bibliotecas de terceros distribuidas bajo sus propias
+licencias de código abierto (entre otras: Tauri, React, Vite, Zustand, Zod y las
+dependencias del ecosistema Rust). Dichos componentes se rigen por sus
+respectivas licencias, que se conservan íntegras y no afectan el carácter
+propietario del Software del Titular.
+
+--------------------------------------------------------------------------------
+11. LEY APLICABLE Y JURISDICCIÓN
+--------------------------------------------------------------------------------
+
+Esta licencia se rige por las leyes de la República de Colombia. Cualquier
+controversia derivada de su interpretación o ejecución se someterá a los jueces y
+tribunales competentes de Colombia, con renuncia expresa a cualquier otro fuero.
+
+--------------------------------------------------------------------------------
+12. CONTACTO
+--------------------------------------------------------------------------------
+
+Para adquirir, renovar o consultar los términos de una licencia:
+
+  Titular:  Agrofenix
+  Contacto: edwarsthat@gmail.com

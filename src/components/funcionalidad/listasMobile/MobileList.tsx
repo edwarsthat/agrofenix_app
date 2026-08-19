@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
-import CardRow, { CardAcciones, CardBadge, CardColumn } from './CardRow'
+import CardRow, { CardBadge, CardColumn } from './CardRow'
+import { AccionFila } from '../acciones'
 import styles from './CardRow.module.css'
 
 interface MobileListProps<T> {
@@ -11,7 +12,7 @@ interface MobileListProps<T> {
     avatar?: (row: T) => string
     badge?: (row: T) => CardBadge | null
     estaActivo?: (row: T) => boolean
-    acciones?: CardAcciones<T>
+    acciones?: AccionFila<T>[]
     emptyMessage?: string
 }
 

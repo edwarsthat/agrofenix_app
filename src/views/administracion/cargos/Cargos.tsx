@@ -9,6 +9,7 @@ import useCargoStore from "../../../store/data/administracion/useCargoStore"
 import MobileList from "../../../components/funcionalidad/listasMobile/MobileList"
 import { CardColumn } from "../../../components/funcionalidad/listasMobile/CardRow"
 import useIsMobile from "../../../hooks/useIsMobile"
+import { AccionFila, accionEditar, accionEliminar } from "../../../components/funcionalidad/acciones"
 
 const columns: TablaColumn<Cargo>[] = [
     { key: "nombre", header: "Nombre", width: "1fr" },
@@ -57,6 +58,12 @@ export default function Cargos() {
         await eliminarCargo(cargo.id)
     }
 
+    // Mismas acciones para escritorio (Tabla) y móvil (MobileList).
+    const acciones: AccionFila<Cargo>[] = [
+        accionEditar(handleEditar),
+        accionEliminar(handleEliminar),
+    ]
+
     return (
         <div>
             <div className={styles.toolbar}>
@@ -83,7 +90,7 @@ export default function Cargos() {
                     rowKey={(cargo) => cargo.id}
                     titulo={(cargo) => cargo.nombre}
                     badge={(cargo) => ({ texto: cargo.activo ? "Activo" : "Inactivo", activo: cargo.activo })}
-                    acciones={{ onEditar: handleEditar, onEliminar: handleEliminar }}
+                    acciones={acciones}
                     emptyMessage="Todavía no hay cargos registrados."
                 />
             ) : (
@@ -91,7 +98,7 @@ export default function Cargos() {
                     columns={columns}
                     data={cargosFiltrados}
                     rowKey={(cargo) => cargo.id}
-                    acciones={{ onEditar: handleEditar, onEliminar: handleEliminar }}
+                    acciones={acciones}
                     emptyTitle="Sin cargos"
                     emptyMessage="Todavía no hay cargos registrados."
                 />

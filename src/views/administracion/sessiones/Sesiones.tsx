@@ -8,6 +8,8 @@ import { Sesion } from "../../../types/administracion/sesiones";
 import MobileList from "../../../components/funcionalidad/listasMobile/MobileList";
 import { CardColumn } from "../../../components/funcionalidad/listasMobile/CardRow";
 import useIsMobile from "../../../hooks/useIsMobile";
+import { Trash2 } from "lucide-react";
+import { AccionFila } from "../../../components/funcionalidad/acciones";
 
 // `expira_en` llega como ISO del backend; se muestra en horario local.
 function formatearFecha(iso: string): string {
@@ -77,6 +79,11 @@ export default function Sesiones() {
     const handleEliminar = async (sesion: Sesion) => {
         await deleteSesiones(sesion.usuario_id)
     }
+
+    // Mismas acciones para escritorio (Tabla) y móvil (MobileList).
+    const acciones: AccionFila<Sesion>[] = [
+        { id: "eliminar", icono: Trash2, titulo: "Cerrar sesión", onClick: handleEliminar, variante: "danger" },
+    ]
     return (
         <div className={styles.page}>
             <div className={styles.toolbar}>
@@ -91,9 +98,7 @@ export default function Sesiones() {
                     titulo={(s) => nombrePorUsuario.get(s.usuario_id) ?? "—"}
                     subtitulo={(s) => nombrePorCargo.get(s.cargo_id) ?? "—"}
                     emptyMessage="No hay sesiones activas en este momento."
-                    acciones={{
-                        onEliminar: handleEliminar
-                    }}
+                    acciones={acciones}
                 />
             ) : (
                 <Tabla
@@ -102,9 +107,7 @@ export default function Sesiones() {
                     rowKey={(sesion) => `${sesion.usuario_id}-${sesion.expira_en}`}
                     emptyTitle="Sin sesiones"
                     emptyMessage="No hay sesiones activas en este momento."
-                    acciones={{
-                        onEliminar: handleEliminar
-                    }}
+                    acciones={acciones}
                 />
             )}
         </div>

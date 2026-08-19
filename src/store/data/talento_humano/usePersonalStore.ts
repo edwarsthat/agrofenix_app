@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { Empleado, empleadoSchema } from "../../../types/talento_humano/personal";
-import { PersonalFormType, PersonalReadPayload } from "../../../views/talento_humano/personal/validations";
+import { PersonalFormType, PersonalReadPayload, QuitarLlaveFormType } from "../../../views/talento_humano/personal/validations";
 import { socketRequest } from "../../../lib/socket";
 import z from "zod";
 import { confirm } from "../../../helpers/Confirmacion";
@@ -14,6 +14,7 @@ interface PersonalStore {
     deletePersonal: (empleado_id: string) => Promise<void>
     activarPersonal: (empleado_id: string) => Promise<boolean>
     asignarLLaveNfc: (empleado_id: string, version: number, uid: string) => Promise<boolean>
+    quitarLlaveNfc: (asignacion_id: string, form: QuitarLlaveFormType) => Promise<boolean>
     eventAddPersonal: (empleado: Empleado) => void
     eventUpdatePersonal: (empleado: Empleado) => void
     eventDeletePersonal: (empelado: string) => void
@@ -49,6 +50,7 @@ const usePersonalStore = create<PersonalStore>((set, get) => ({
                 payload: filtros
             }
             const response = await socketRequest(request)
+            console.log(response)
             if (response.status === 200) {
                 const parsed = z.array(empleadoSchema).safeParse(response.data ?? [])
                 if (!parsed.success) {
@@ -122,13 +124,43 @@ const usePersonalStore = create<PersonalStore>((set, get) => ({
         }
     },
     asignarLLaveNfc: async (empleado_id: string, version: number, uid: string) => {
-                try {
+        try {
             const request = {
                 action: "inventarios:llaves_nfc:asignar_llave",
                 payload: { empleado_id: empleado_id, version, uid },
                 isSuccess: true,
             }
-            await socketRequest<Empleado>(request)
+            const response = await socketRequest<Empleado>(request)
+
+            const parsed = empleadoSchema.safeParse(response.data)
+            if (parsed.success) {
+                get().eventUpdatePersonal(parsed.data)
+            } else {
+                console.error("[personal] respuesta inválida al asignar la llave:", parsed.error)
+            }
+            return true
+        } catch (err) {
+            console.error("[personal] error:", err)
+            return false
+        }
+    },
+    // La confirmación la hace el formulario de motivo que abre la vista: meter
+    // aquí un `confirm` reemplazaría ese modal, porque los dos usan useModalStore.
+    quitarLlaveNfc: async (asignacion_id: string, form: QuitarLlaveFormType) => {
+        try {
+            const request = {
+                action: "inventarios:llaves_nfc:quitar_llave",
+                payload: { asignacion_id, ...form },
+                isSuccess: true,
+            }
+            const response = await socketRequest<Empleado>(request)
+
+            const parsed = empleadoSchema.safeParse(response.data)
+            if (parsed.success) {
+                get().eventUpdatePersonal(parsed.data)
+            } else {
+                console.error("[personal] respuesta inválida al quitar la llave:", parsed.error)
+            }
             return true
         } catch (err) {
             console.error("[personal] error:", err)

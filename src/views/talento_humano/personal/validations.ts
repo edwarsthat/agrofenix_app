@@ -12,6 +12,11 @@ import {
     TIPO_DOCUMENTO_LABELS,
 } from "../../../types/talento_humano/personal"
 import type { TipoDocumento } from "../../../types/talento_humano/personal"
+import {
+    ESTADOS_LLAVE_NFC,
+    estadoLlaveNfcSchema,
+    type EstadoLlaveNfc,
+} from "../../../types/inventarios/llaves_nfc"
 
 
 export type PersonalFormType = {
@@ -253,6 +258,56 @@ export function buildPersonalFiltrosArr(
             type: "date",
             nombre: "fecha_hasta",
             width: "third",
+        },
+    ]
+}
+
+
+/* ------------------------------------------------------------------ */
+/* Quitar la llave NFC de un empleado                                  */
+/*                                                                     */
+/* El motivo ES el estado en el que queda la llave al soltarla, por eso */
+/* reutiliza `ESTADOS_LLAVE_NFC` en vez de tener una lista propia: si   */
+/* mañana el inventario gana un estado, aquí aparece solo.              */
+/* ------------------------------------------------------------------ */
+
+export type QuitarLlaveFormType = {
+    estado: EstadoLlaveNfc
+}
+
+// "inventario" es el caso normal —el empleado devolvió la tarjeta—, así que va
+// preseleccionado; los otros tres son la excepción.
+export const QuitarLlaveInitialValues: QuitarLlaveFormType = {
+    estado: "inventario",
+}
+
+// Las etiquetas no son las de `ESTADO_LLAVE_NFC_LABELS`: ahí describen un estado
+// ("En inventario") y aquí responden a "¿por qué se quita?" ("Devuelta al
+// inventario"). Mismo enum, distinta redacción.
+export const MOTIVO_QUITAR_LLAVE_LABELS: Record<EstadoLlaveNfc, string> = {
+    inventario: "Devuelta al inventario",
+    perdida: "Perdida por el empleado",
+    dañada: "Dañada",
+    baja: "Dada de baja",
+}
+
+export const motivoQuitarLlaveOptions: FormSelectOption[] = ESTADOS_LLAVE_NFC.map(estado => ({
+    value: estado,
+    label: MOTIVO_QUITAR_LLAVE_LABELS[estado],
+}))
+
+export const quitarLlaveFormSchema = z.object({
+    estado: estadoLlaveNfcSchema,
+})
+
+export function buildQuitarLlaveFormArr(): FormType<QuitarLlaveFormType>["formArr"] {
+    return [
+        {
+            label: "Motivo",
+            type: "select",
+            nombre: "estado",
+            options: motivoQuitarLlaveOptions,
+            width: "full",
         },
     ]
 }

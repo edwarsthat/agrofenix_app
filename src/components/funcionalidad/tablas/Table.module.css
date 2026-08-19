@@ -199,6 +199,11 @@
   color: var(--color-danger);
 }
 
+.actionBtnReactivar:hover {
+  background: var(--color-surface-sunken);
+  color: var(--color-success);
+}
+
 /* ---- Pie: paginación ---- */
 .footer {
   display: flex;

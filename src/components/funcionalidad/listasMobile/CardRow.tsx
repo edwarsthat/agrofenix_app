@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
-import { Pencil, Trash2, KeyRound, CheckCircle2, XCircle, RotateCcw } from 'lucide-react'
+import { CheckCircle2, XCircle } from 'lucide-react'
 import styles from './CardRow.module.css'
+import { AccionFila, VarianteAccion } from '../acciones'
 
 export interface CardColumn<T> {
     key: string
@@ -11,16 +12,15 @@ export interface CardColumn<T> {
     render?: (row: T) => ReactNode
 }
 
-export interface CardAcciones<T> {
-    onEditar?: (row: T) => void
-    onEliminar?: (row: T) => void
-    onResetPassword?: (row: T) => void
-    onReactivar?: (row: T) => void
-}
-
 export interface CardBadge {
     texto: string
     activo?: boolean
+}
+
+const CLASE_VARIANTE: Record<VarianteAccion, string> = {
+    normal: '',
+    danger: styles.actionBtnDelete,
+    success: styles.actionBtnReactivar
 }
 
 export interface CardRowProps<T> {
@@ -30,8 +30,8 @@ export interface CardRowProps<T> {
     subtitulo?: (row: T) => ReactNode
     avatar?: (row: T) => string // iniciales; por defecto se derivan del título
     badge?: (row: T) => CardBadge | null
-    estaActivo?: (row: T) => boolean
-    acciones?: CardAcciones<T>
+    estaActivo?: (row: T) => boolean // solo alimenta la insignia por defecto
+    acciones?: AccionFila<T>[]
 }
 
 function renderBooleano(valor: unknown): ReactNode {
@@ -65,9 +65,7 @@ export default function CardRow<T>({
     estaActivo,
     acciones
 }: CardRowProps<T>) {
-    const mostrarAcciones = Boolean(
-        acciones && (acciones.onEditar || acciones.onEliminar || acciones.onReactivar || acciones.onResetPassword)
-    )
+    const accionesVisibles = (acciones ?? []).filter(a => a.visible?.(row) ?? true)
     // sin estaActivo asumimos activo (mismo criterio que Tabla)
     const activo = estaActivo ? estaActivo(row) : true
     const texto = titulo(row)
@@ -119,53 +117,20 @@ export default function CardRow<T>({
                 </div>
             )}
 
-            {mostrarAcciones && (
+            {accionesVisibles.length > 0 && (
                 <div className={styles.actions}>
-                    {acciones?.onEditar && (
+                    {accionesVisibles.map(a => (
                         <button
+                            key={a.id}
                             type="button"
-                            className={styles.actionBtn}
-                            onClick={() => acciones.onEditar!(row)}
-                            aria-label="Editar"
-                            title="Editar"
+                            className={`${styles.actionBtn} ${CLASE_VARIANTE[a.variante ?? 'normal']}`}
+                            onClick={() => a.onClick(row)}
+                            aria-label={a.titulo}
+                            title={a.titulo}
                         >
-                            <Pencil size={16} />
+                            <a.icono size={16} />
                         </button>
-                    )}
-                    {acciones?.onResetPassword && (
-                        <button
-                            type="button"
-                            className={styles.actionBtn}
-                            onClick={() => acciones.onResetPassword!(row)}
-                            aria-label="Cambiar contraseña"
-                            title="Cambiar contraseña"
-                        >
-                            <KeyRound size={16} />
-                        </button>
-                    )}
-                    {activo
-                        ? acciones?.onEliminar && (
-                            <button
-                                type="button"
-                                className={`${styles.actionBtn} ${styles.actionBtnDelete}`}
-                                onClick={() => acciones.onEliminar!(row)}
-                                aria-label="Eliminar"
-                                title="Eliminar"
-                            >
-                                <Trash2 size={16} />
-                            </button>
-                        )
-                        : acciones?.onReactivar && (
-                            <button
-                                type="button"
-                                className={`${styles.actionBtn} ${styles.actionBtnReactivar}`}
-                                onClick={() => acciones.onReactivar!(row)}
-                                aria-label="Reactivar"
-                                title="Reactivar"
-                            >
-                                <RotateCcw size={16} />
-                            </button>
-                        )}
+                    ))}
                 </div>
             )}
         </div>

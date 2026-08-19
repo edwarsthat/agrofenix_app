@@ -1,7 +1,9 @@
 [package]
 name = "agrofenix_app"
 version = "0.1.0"
-description = "A Tauri App"
+description = "Agrofenix App - gestion interna: administracion, talento humano e inventario NFC"
+license-file = "../LICENSE"
+publish = false
 authors = ["you"]
 edition = "2021"
 

@@ -11,6 +11,7 @@ import CargosPersonalForm from "./CargosPersonalForm"
 import MobileList from "../../../components/funcionalidad/listasMobile/MobileList"
 import { CardColumn } from "../../../components/funcionalidad/listasMobile/CardRow"
 import useIsMobile from "../../../hooks/useIsMobile"
+import { AccionFila, accionEditar, accionEliminar, accionReactivar } from "../../../components/funcionalidad/acciones"
 
 export default function CargosPersonal() {
     const {
@@ -102,11 +103,11 @@ export default function CargosPersonal() {
     }
 
     // Mismas acciones para escritorio (Tabla) y móvil (MobileList).
-    const acciones = {
-        onEditar: abrirFormulario,
-        onEliminar: handleEliminar,
-        onReactivar: handleActivar
-    }
+    const acciones: AccionFila<CargoPersonal>[] = [
+        accionEditar(abrirFormulario),
+        accionEliminar(handleEliminar),
+        accionReactivar(handleActivar),
+    ]
 
     return (
         <div>
@@ -142,7 +143,6 @@ export default function CargosPersonal() {
                     columns={columns}
                     data={cargosPersonalFiltrados}
                     rowKey={(cargo) => cargo.id}
-                    estaActivo={(cargo) => cargo.activo}
                     acciones={acciones}
                     emptyTitle="Sin cargos personal"
                     emptyMessage="Todavía no hay cargos personal registrados."

@@ -1,5 +1,6 @@
 // src/types/talento_humano/personal.ts
 import z from "zod"
+import { codigoLlaveNfcSchema } from "../inventarios/llaves_nfc"
 
 export const codigoEmpleadoSchema = z
     .string()
@@ -76,12 +77,15 @@ export const empleadoSchema = z.object({
     fecha_nacimiento: fechaEmpleadoSchema.nullable(),
     telefono: telefonoEmpleadoSchema.nullable(),
     cargo_id: z.uuidv4(),
+    llave_id: z.uuidv4().nullable(),
+    llave_codigo: codigoLlaveNfcSchema.nullable(),
     fecha_ingreso: fechaEmpleadoSchema,
     fecha_retiro: fechaEmpleadoSchema.nullable(),
     activo: z.boolean(),
     creado_en: z.string(),
     actualizado_en: z.string(),
     version: z.number().int().nonnegative(),
+    asignacion_id: z.uuidv4().nullable(),
 })
 
 export const empleadoDeletePayloadSchema = z.object({

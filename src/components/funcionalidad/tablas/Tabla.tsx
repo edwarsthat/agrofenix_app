@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
-import { Pencil, Trash2, KeyRound, CheckCircle2, XCircle, RotateCcw } from 'lucide-react'
+import { CheckCircle2, XCircle } from 'lucide-react'
 import styles from './Table.module.css'
+import { AccionFila, VarianteAccion } from '../acciones'
 
 export interface TablaColumn<T> {
     key: string
@@ -8,6 +9,12 @@ export interface TablaColumn<T> {
     width?: string // valor de grid-template-columns, ej: '2.2fr', '110px'
     type?: 'boolean' // si el dato es booleano, renderiza un ícono en vez del valor crudo
     render?: (row: T) => ReactNode
+}
+
+const CLASE_VARIANTE: Record<VarianteAccion, string> = {
+    normal: '',
+    danger: styles.actionBtnDelete,
+    success: styles.actionBtnReactivar
 }
 
 function renderBooleano(valor: unknown): ReactNode {
@@ -22,19 +29,11 @@ function renderBooleano(valor: unknown): ReactNode {
     )
 }
 
-interface TablaAcciones<T> {
-    onEditar?: (row: T) => void
-    onEliminar?: (row: T) => void
-    onResetPassword?: (row: T) => void
-    onReactivar?: (row: T) => void
-}
-
 interface TablaProps<T> {
     columns: TablaColumn<T>[]
     data: T[]
     rowKey: (row: T) => string | number
-    estaActivo?: (row: T) => boolean
-    acciones?: TablaAcciones<T>
+    acciones?: AccionFila<T>[]
     emptyTitle?: string
     emptyMessage?: string
 }
@@ -44,16 +43,16 @@ export default function Tabla<T>({
     data,
     rowKey,
     acciones,
-    estaActivo,
     emptyTitle = 'Sin resultados',
     emptyMessage = 'No hay datos para mostrar.'
 }: TablaProps<T>) {
-    const mostrarAcciones = Boolean(
-        acciones && (acciones.onEditar || acciones.onEliminar || acciones.onReactivar || acciones.onResetPassword)
-    )
+    const accionesFila = acciones ?? []
+    const mostrarAcciones = accionesFila.length > 0
+    // 32px de botón + 6px de gap por acción, con un mínimo para que quepa el encabezado
+    const anchoAcciones = `${Math.max(110, accionesFila.length * 38)}px`
     const gridTemplateColumns = [
         ...columns.map(col => col.width ?? '1fr'),
-        ...(mostrarAcciones ? ['110px'] : [])
+        ...(mostrarAcciones ? [anchoAcciones] : [])
     ].join(' ')
 
     return (
@@ -92,58 +91,20 @@ export default function Tabla<T>({
 
                         {mostrarAcciones && (
                             <div className={styles.actions}>
-                                {acciones?.onEditar && (
-                                    <button
-                                        type="button"
-                                        className={styles.actionBtn}
-                                        onClick={() => acciones.onEditar!(row)}
-                                        aria-label="Editar"
-                                        title="Editar"
-                                    >
-                                        <Pencil size={16} />
-                                    </button>
-                                )}
-                                {acciones?.onResetPassword && (
-                                    <button
-                                        type="button"
-                                        className={styles.actionBtn}
-                                        onClick={() => acciones.onResetPassword!(row)}
-                                        aria-label="Cambiar contraseña"
-                                        title="Cambiar contraseña"
-                                    >
-                                        <KeyRound size={16} />
-                                    </button>
-                                )}
-                                {(() => {
-                                    // sin estaActivo asumimos activo (comportamiento anterior)
-                                    const activo = estaActivo ? estaActivo(row) : true
-
-                                    if (activo) {
-                                        return acciones?.onEliminar && (
-                                            <button
-                                                type="button"
-                                                className={`${styles.actionBtn} ${styles.actionBtnDelete}`}
-                                                onClick={() => acciones.onEliminar!(row)}
-                                                aria-label="Eliminar"
-                                                title="Eliminar"
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
-                                        )
-                                    }
-
-                                    return acciones?.onReactivar && (
+                                {accionesFila
+                                    .filter(a => a.visible?.(row) ?? true)
+                                    .map(a => (
                                         <button
+                                            key={a.id}
                                             type="button"
-                                            className={`${styles.actionBtn} ${styles.actionBtnReactivar}`}
-                                            onClick={() => acciones.onReactivar!(row)}
-                                            aria-label="Reactivar"
-                                            title="Reactivar"
+                                            className={`${styles.actionBtn} ${CLASE_VARIANTE[a.variante ?? 'normal']}`}
+                                            onClick={() => a.onClick(row)}
+                                            aria-label={a.titulo}
+                                            title={a.titulo}
                                         >
-                                            <RotateCcw size={16} />
+                                            <a.icono size={16} />
                                         </button>
-                                    )
-                                })()}
+                                    ))}
                             </div>
                         )}
                     </div>

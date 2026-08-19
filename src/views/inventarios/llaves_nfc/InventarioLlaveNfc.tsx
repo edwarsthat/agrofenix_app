@@ -10,6 +10,7 @@ import Tabla, { TablaColumn } from '../../../components/funcionalidad/tablas/Tab
 import MobileList from '../../../components/funcionalidad/listasMobile/MobileList'
 import { CardColumn } from '../../../components/funcionalidad/listasMobile/CardRow'
 import useIsMobile from '../../../hooks/useIsMobile'
+import { AccionFila, accionEditar } from '../../../components/funcionalidad/acciones'
 import { ESTADO_LLAVE_NFC_LABELS, LlaveNfc } from '../../../types/inventarios/llaves_nfc'
 import LlaveNfcForm from './LlaveNfcForm'
 import { LlaveNfcInventarioFormType } from './validations'
@@ -113,9 +114,9 @@ export default function InventarioLlaveNfc() {
         })
     }
 
-    const acciones = {
-        onEditar: handleUpdate
-    }
+    const acciones: AccionFila<LlaveNfc>[] = [
+        accionEditar(handleUpdate),
+    ]
 
     return (
         <div className={styles.page}>
