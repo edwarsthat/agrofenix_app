@@ -18,6 +18,7 @@ interface PersonalStore {
     eventAddPersonal: (empleado: Empleado) => void
     eventUpdatePersonal: (empleado: Empleado) => void
     eventDeletePersonal: (empelado: string) => void
+    eventLlaveNfc: (empleado_id: string, llave_id: string) => void
 }
 
 const usePersonalStore = create<PersonalStore>((set, get) => ({
@@ -191,6 +192,17 @@ const usePersonalStore = create<PersonalStore>((set, get) => ({
         set((state) => ({
             persoonal: state.persoonal.map((c) =>
                 c.id === empleado_id ? { ...c, activo: false } : c
+            ),
+        }))
+    },
+    eventLlaveNfc: (empleado_id: string, llave_id: string) => {
+        console.log(empleado_id)
+        console.log(llave_id)
+        set((state) => ({
+            persoonal: state.persoonal.map((c) =>
+                c.id === empleado_id
+                    ? { ...c, llave_id: c.llave_id === null ? llave_id : null }
+                    : c
             ),
         }))
     }

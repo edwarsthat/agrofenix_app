@@ -36,6 +36,27 @@ export const estadoLlaveNfcSchema = z.enum(ESTADOS_LLAVE_NFC, {
     error: "Selecciona un estado válido",
 })
 
+// Por qué se le quita la llave a un empleado. NO son los estados de arriba:
+// el estado describe dónde queda la tarjeta y el motivo por qué se soltó, y el
+// backend los guarda en columnas distintas. Estos valores replican tal cual el
+// CHECK `asignaciones_llave_motivo_valido_check` de la base de datos —incluido
+// `dannada` sin eñe—, así que cambiarlos aquí exige una migración allá.
+export const MOTIVOS_DEVOLUCION_LLAVE = [
+    "devolucion", "perdida", "dannada", "retiro", "reemplazo"
+] as const
+
+export const MOTIVO_DEVOLUCION_LLAVE_LABELS: Record<MotivoDevolucionLlave, string> = {
+    devolucion: "Devuelta al inventario",
+    perdida: "Perdida por el empleado",
+    dannada: "Dañada",
+    retiro: "Retiro del empleado",
+    reemplazo: "Reemplazo por otra llave",
+}
+
+export const motivoDevolucionLlaveSchema = z.enum(MOTIVOS_DEVOLUCION_LLAVE, {
+    error: "Selecciona un motivo válido",
+})
+
 // Convención: las CLAVES de los schemas replican tal cual el nombre del campo en
 // el backend (snake_case: `creado_en`, `actualizado_en`). Los identificadores de
 // TypeScript —tipos, constantes y helpers— siguen la convención del front
@@ -47,6 +68,7 @@ export const llaveNfcSchema = z.object({
     estado: estadoLlaveNfcSchema,
     descripcion: descripcionLlaveNfcSchema.nullable(),
     version: z.number().int().nonnegative(),
+    empleado_codigo: z.string().nullable(),
     creado_en: z.string(),
     actualizado_en: z.string(),
 })
@@ -56,4 +78,5 @@ export const llaveNfcDeletePayloadSchema = z.object({
 })
 
 export type EstadoLlaveNfc = z.infer<typeof estadoLlaveNfcSchema>
+export type MotivoDevolucionLlave = z.infer<typeof motivoDevolucionLlaveSchema>
 export type LlaveNfc = z.infer<typeof llaveNfcSchema>

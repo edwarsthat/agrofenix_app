@@ -44,6 +44,13 @@ export default function InventarioLlaveNfc() {
             render: (l) => ESTADO_LLAVE_NFC_LABELS[l.estado],
         },
         {
+            // `empleado_codigo` viene null cuando la llave no está asignada.
+            key: "empleado_codigo",
+            header: "Asignada a",
+            width: "1fr",
+            render: (l) => l.empleado_codigo ?? "—",
+        },
+        {
             key: "creado_en",
             header: "Registrada",
             width: "120px",
@@ -55,6 +62,12 @@ export default function InventarioLlaveNfc() {
     // estado en la insignia; el resto va al grid de metadatos.
     const columnsMobile: CardColumn<LlaveNfc>[] = useMemo(() => [
         { key: "uid", header: "UID", mono: true, fullWidth: true },
+        {
+            key: "empleado_codigo",
+            header: "Asignada a",
+            mono: true,
+            render: (l) => l.empleado_codigo ?? "—",
+        },
         { key: "creado_en", header: "Registrada", render: (l) => formatearFecha(l.creado_en) },
     ], [])
 

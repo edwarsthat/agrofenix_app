@@ -65,6 +65,7 @@ const useLlaveNfcStore = create<LlavesNfcStore>((set) => ({
                 payload: filtros
             }
             const response = await socketRequest(request)
+            console.log(response)
             if (response.status === 200) {
                 const parsed = z.array(llaveNfcSchema).safeParse(response.data ?? [])
                 if (!parsed.success) {

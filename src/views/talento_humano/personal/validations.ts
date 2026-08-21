@@ -13,9 +13,10 @@ import {
 } from "../../../types/talento_humano/personal"
 import type { TipoDocumento } from "../../../types/talento_humano/personal"
 import {
-    ESTADOS_LLAVE_NFC,
-    estadoLlaveNfcSchema,
-    type EstadoLlaveNfc,
+    MOTIVOS_DEVOLUCION_LLAVE,
+    MOTIVO_DEVOLUCION_LLAVE_LABELS,
+    motivoDevolucionLlaveSchema,
+    type MotivoDevolucionLlave,
 } from "../../../types/inventarios/llaves_nfc"
 
 
@@ -266,38 +267,28 @@ export function buildPersonalFiltrosArr(
 /* ------------------------------------------------------------------ */
 /* Quitar la llave NFC de un empleado                                  */
 /*                                                                     */
-/* El motivo ES el estado en el que queda la llave al soltarla, por eso */
-/* reutiliza `ESTADOS_LLAVE_NFC` en vez de tener una lista propia: si   */
-/* mañana el inventario gana un estado, aquí aparece solo.              */
+/* El motivo tiene su propio vocabulario (`MOTIVOS_DEVOLUCION_LLAVE`), */
+/* no el de `ESTADOS_LLAVE_NFC`: el estado dice dónde queda la tarjeta */
+/* y el motivo por qué se soltó, y el backend los valida por separado. */
 /* ------------------------------------------------------------------ */
 
 export type QuitarLlaveFormType = {
-    estado: EstadoLlaveNfc
+    motivo_devolucion: MotivoDevolucionLlave
 }
 
-// "inventario" es el caso normal —el empleado devolvió la tarjeta—, así que va
-// preseleccionado; los otros tres son la excepción.
+// "devolucion" es el caso normal —el empleado devolvió la tarjeta—, así que va
+// preseleccionado; los otros son la excepción.
 export const QuitarLlaveInitialValues: QuitarLlaveFormType = {
-    estado: "inventario",
+    motivo_devolucion: "devolucion",
 }
 
-// Las etiquetas no son las de `ESTADO_LLAVE_NFC_LABELS`: ahí describen un estado
-// ("En inventario") y aquí responden a "¿por qué se quita?" ("Devuelta al
-// inventario"). Mismo enum, distinta redacción.
-export const MOTIVO_QUITAR_LLAVE_LABELS: Record<EstadoLlaveNfc, string> = {
-    inventario: "Devuelta al inventario",
-    perdida: "Perdida por el empleado",
-    dañada: "Dañada",
-    baja: "Dada de baja",
-}
-
-export const motivoQuitarLlaveOptions: FormSelectOption[] = ESTADOS_LLAVE_NFC.map(estado => ({
-    value: estado,
-    label: MOTIVO_QUITAR_LLAVE_LABELS[estado],
+export const motivoQuitarLlaveOptions: FormSelectOption[] = MOTIVOS_DEVOLUCION_LLAVE.map(motivo => ({
+    value: motivo,
+    label: MOTIVO_DEVOLUCION_LLAVE_LABELS[motivo],
 }))
 
 export const quitarLlaveFormSchema = z.object({
-    estado: estadoLlaveNfcSchema,
+    motivo_devolucion: motivoDevolucionLlaveSchema,
 })
 
 export function buildQuitarLlaveFormArr(): FormType<QuitarLlaveFormType>["formArr"] {
@@ -305,9 +296,10 @@ export function buildQuitarLlaveFormArr(): FormType<QuitarLlaveFormType>["formAr
         {
             label: "Motivo",
             type: "select",
-            nombre: "estado",
+            nombre: "motivo_devolucion",
             options: motivoQuitarLlaveOptions,
             width: "full",
         },
     ]
 }
+

@@ -5,6 +5,7 @@ import usePersonalStore from "../../../store/data/talento_humano/usePersonalStor
 
 const personalEventPayloadSchema = z.object({ data: empleadoSchema })
 
+
 const personalRouter = (msg: ServerEvent) => {
     switch (msg.action) {
         case "add": {
