@@ -111,7 +111,7 @@ mod tests {
         let parsed: serde_json::Value = serde_json::from_str(&envelop).unwrap();
         assert_eq!(parsed["id"], "abc123");
         assert_eq!(parsed["token"], "my-token");
-        assert_eq!(parsed["info"], info);
+        assert_eq!(parsed["payload"], info);
     }
 
     #[test]
@@ -120,6 +120,6 @@ mod tests {
         let envelop = build_envelop("id", "token", &info);
 
         let parsed: serde_json::Value = serde_json::from_str(&envelop).unwrap();
-        assert_eq!(parsed["info"], info);
+        assert_eq!(parsed["payload"], info);
     }
 }

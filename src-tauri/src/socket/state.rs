@@ -40,6 +40,19 @@ impl SocketHandles {
         *self.session_token.lock().await = None;
         events.on_closed();
     }
+
+    /// ¿Esta conexión sigue siendo la vigente, o ya la reemplazó un login nuevo?
+    pub fn is_current(&self, my_id: u64) -> bool {
+        self.current_id.load(Ordering::SeqCst) == my_id
+    }
+
+    /// Reconexión: canal nuevo y respuestas viejas descartadas, pero el token intacto.
+    /// Las peticiones en vuelo no van a volver nunca: soltarlas hace que quien
+    /// esperaba reciba un error en vez de colgarse hasta el timeout de 15s.
+    pub async fn reattach(&self, tx: mpsc::UnboundedSender<String>) -> u64 {
+        self.pending.clear().await;
+        self.registrer_connection(tx).await
+    }
 }
 
 #[cfg(test)]
@@ -64,6 +77,8 @@ mod tests {
         fn on_closed(&self) {
             self.closed.fetch_add(1, Ordering::SeqCst);
         }
+        fn on_reconnecting(&self, _intento: usize, _total: usize) {}
+        fn on_reconnected(&self) {}
     }
 
     /// Handles de una conexión viva: canal abierto, token guardado y generación `current_id`.
