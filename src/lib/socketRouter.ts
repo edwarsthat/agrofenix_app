@@ -15,7 +15,6 @@ export interface ServerEvent {
 export function initSocketRouter() {
     listen("socket://message", (e) => {
         const msg: ServerEvent = JSON.parse(e.payload as string)
-        console.log(msg)
         switch (msg.event) {
             case "cargos":
                 cargoRouter(msg)

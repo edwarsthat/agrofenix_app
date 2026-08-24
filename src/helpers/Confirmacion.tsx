@@ -44,14 +44,9 @@ export function confirm({
     return new Promise((resolve) => {
         let resultado = false
 
-        const unsubscribe = useModalStore.subscribe((state, prevState) => {
-            if(prevState.open && !state.open){
-                unsubscribe()
-                resolve(resultado)
-            }
-        })
-
-        modal.show({
+        // show() va antes del subscribe: necesitamos el token para saber cuál
+        // de los modales es el nuestro.
+        const miToken = modal.show({
             title,
             children: <p>{mensaje}</p>,
             footer: (
@@ -66,7 +61,13 @@ export function confirm({
                 />
             )
         })
+
+        const unsubscribe = useModalStore.subscribe((state) => {
+            // Este confirm deja la pantalla si el modal se cerró o si otro show()
+            // ocupó su lugar. En ambos casos hay que resolver y soltar la suscripción.
+            if (state.open && state.token === miToken) return
+            unsubscribe()
+            resolve(resultado)
+        })
     })
-
-
 }

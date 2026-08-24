@@ -3,6 +3,7 @@ import { ServerEvent } from "../../socketRouter";
 import { llaveNfcSchema } from "../../../types/inventarios/llaves_nfc";
 import useLlaveNfcStore from "../../../store/data/inventarios/useLlavesNfc";
 import usePersonalStore from "../../../store/data/talento_humano/usePersonalStore";
+import { avisarDesincronizado } from "../../../helpers/desincronizado";
 
 const llaveNfcEventPayloadSchema = z.object({ data: llaveNfcSchema })
 const asignacionLLaveEventPayloadSchema = z.object({
@@ -16,7 +17,7 @@ const llavesNfcRouter = (msg: ServerEvent) => {
         case "add": {
             const parsed = llaveNfcEventPayloadSchema.safeParse(msg.data)
             if (!parsed.success) {
-                console.error("[socketRouter] personal:add payload inválido", parsed.error)
+                avisarDesincronizado("las llaves NFC", parsed.error)
                 break
             }
             useLlaveNfcStore.getState().eventAddLlaveNfc(parsed.data.data)
@@ -25,7 +26,7 @@ const llavesNfcRouter = (msg: ServerEvent) => {
         case "update": {
             const parsed = llaveNfcEventPayloadSchema.safeParse(msg.data)
             if (!parsed.success) {
-                console.error("[socketRouter] personal:update payload inválido", parsed.error)
+                avisarDesincronizado("las llaves NFC", parsed.error)
                 break
             }
             useLlaveNfcStore.getState().eventUpdateLlaveNfc(parsed.data.data)
@@ -35,7 +36,7 @@ const llavesNfcRouter = (msg: ServerEvent) => {
             const parsed = asignacionLLaveEventPayloadSchema.safeParse(msg.data)
             console.log(parsed, "datos parseados")
             if (!parsed.success) {
-                console.error("[socketRouter] personal:delete payload inválido", parsed.error)
+                avisarDesincronizado("las llaves NFC", parsed.error)
                 break
             }
             usePersonalStore.getState().eventLlaveNfc(

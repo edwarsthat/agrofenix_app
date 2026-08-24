@@ -3,6 +3,7 @@ import { Empleado, empleadoSchema } from "../../../types/talento_humano/personal
 import { PersonalFormType, PersonalReadPayload, QuitarLlaveFormType } from "../../../views/talento_humano/personal/validations";
 import { socketRequest } from "../../../lib/socket";
 import z from "zod";
+import { avisarDesincronizado } from "../../../helpers/desincronizado";
 import { confirm } from "../../../helpers/Confirmacion";
 
 interface PersonalStore {
@@ -35,7 +36,7 @@ const usePersonalStore = create<PersonalStore>((set, get) => ({
 
             const parsed = empleadoSchema.safeParse(response.data)
             if (!parsed.success) {
-                console.error("[Personal] respuesta inválida:", parsed.error)
+                avisarDesincronizado("el personal", parsed.error)
                 return null
             }
             return parsed.data
@@ -55,7 +56,7 @@ const usePersonalStore = create<PersonalStore>((set, get) => ({
             if (response.status === 200) {
                 const parsed = z.array(empleadoSchema).safeParse(response.data ?? [])
                 if (!parsed.success) {
-                    console.error("[personal] respuesta inválida:", parsed.error)
+                    avisarDesincronizado("el personal", parsed.error)
                     return
                 }
                 set({ persoonal: parsed.data })
@@ -80,12 +81,11 @@ const usePersonalStore = create<PersonalStore>((set, get) => ({
     },
     deletePersonal: async (empleado_id: string) => {
         if (get().eliminados.includes(empleado_id)) return
-
-        if (!(await confirm({ mensaje: "¿Eliminar el empleado?", danger: true }))) return
-
         set((state) => ({ eliminados: [...state.eliminados, empleado_id] }))
 
         try {
+            if (!(await confirm({ mensaje: "¿Eliminar el empleado?", danger: true }))) return
+
             const request = {
                 action: "talento_humano:personal:delete",
                 payload: { empleado_id },
@@ -134,11 +134,17 @@ const usePersonalStore = create<PersonalStore>((set, get) => ({
             const response = await socketRequest<Empleado>(request)
 
             const parsed = empleadoSchema.safeParse(response.data)
-            if (parsed.success) {
-                get().eventUpdatePersonal(parsed.data)
-            } else {
-                console.error("[personal] respuesta inválida al asignar la llave:", parsed.error)
+            if (!parsed.success) {
+                avisarDesincronizado(
+                    "el personal",
+                    parsed.error,
+                    "La llave se asignó, pero no se pudo refrescar el empleado. Recargando la lista."
+                )
+                await get().getPersonal()
+                return true
             }
+
+            get().eventUpdatePersonal(parsed.data)
             return true
         } catch (err) {
             console.error("[personal] error:", err)
@@ -157,11 +163,17 @@ const usePersonalStore = create<PersonalStore>((set, get) => ({
             const response = await socketRequest<Empleado>(request)
 
             const parsed = empleadoSchema.safeParse(response.data)
-            if (parsed.success) {
-                get().eventUpdatePersonal(parsed.data)
-            } else {
-                console.error("[personal] respuesta inválida al quitar la llave:", parsed.error)
+            if (!parsed.success) {
+                avisarDesincronizado(
+                    "el personal",
+                    parsed.error,
+                    "La llave se quitó, pero no se pudo refrescar el empleado. Recargando la lista."
+                )
+                await get().getPersonal()
+                return true
             }
+
+            get().eventUpdatePersonal(parsed.data)
             return true
         } catch (err) {
             console.error("[personal] error:", err)

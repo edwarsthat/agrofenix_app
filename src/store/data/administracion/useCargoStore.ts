@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import z from "zod";
+import { avisarDesincronizado } from "../../../helpers/desincronizado";
 import { Cargo, cargoSchema } from "../../../types/administracion/cargos";
 import { socketRequest } from "../../../lib/socket";
 import { confirm } from "../../../helpers/Confirmacion";
@@ -27,7 +28,7 @@ const useCargoStore = create<CargoStore>((set, get) => ({
             if (response.status === 200) {
                 const parsed = z.array(cargoSchema).safeParse(response.data ?? [])
                 if (!parsed.success) {
-                    console.error("[cargos] respuesta inválida:", parsed.error)
+                    avisarDesincronizado("los cargos", parsed.error)
                     return
                 }
                 set({ cargos: parsed.data })

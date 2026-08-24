@@ -11,6 +11,7 @@ const usuarioValido = {
     activo: true,
     creado_en: "2026-01-01",
     actualizado_en: "2026-01-01",
+    debe_cambiar_password: false,
 }
 
 describe("usuarioSchema", () => {

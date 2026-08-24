@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { create } from "zustand";
 
+let seq = 0;
 
 interface ModalOptions {
   title?: string;
@@ -15,7 +16,8 @@ interface ModalOptions {
 
 interface ModalState extends ModalOptions {
   open: boolean;
-  show: (options: ModalOptions) => void;
+  token: number;
+  show: (options: ModalOptions) => number;
   close: () => void;
 }
 
@@ -33,9 +35,14 @@ const defaults: ModalOptions = {
 
 export const useModalStore = create<ModalState>((set) => ({
   open: false,
+  token: 0,
   ...defaults,
-  show: (options) => set({ open: true, ...defaults, ...options }),
-  close: () => set({ open: false, ...defaults }),
+  show: (options) => {
+    const token = ++seq
+    set({ open: true, token, ...defaults, ...options })
+    return token
+  },
+  close: () => set({ open: false, token: 0, ...defaults }),
 }));
 
 export const modal = {

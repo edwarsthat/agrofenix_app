@@ -2,6 +2,7 @@ import { CargoPersonal, cargoPersonalSchema } from "../../../types/talento_human
 import { create } from "zustand"
 import { socketRequest } from "../../../lib/socket";
 import z from "zod";
+import { avisarDesincronizado } from "../../../helpers/desincronizado";
 import { CargoPersonalForm } from "../../../views/talento_humano/cargosPersonal/validations";
 import { confirm } from "../../../helpers/Confirmacion";
 
@@ -30,7 +31,7 @@ const useCargoPersonalStore = create<CargoPersonalStore>((set, get) => ({
             if (response.status === 200) {
                 const parsed = z.array(cargoPersonalSchema).safeParse(response.data ?? [])
                 if (!parsed.success) {
-                    console.error("[cargosPersonal] respuesta inválida:", parsed.error)
+                    avisarDesincronizado("los cargos del personal", parsed.error)
                     return
                 }
                 set({ cargosPersonal: parsed.data })
@@ -50,7 +51,7 @@ const useCargoPersonalStore = create<CargoPersonalStore>((set, get) => ({
 
             const parsed = cargoPersonalSchema.safeParse(response.data)
             if (!parsed.success) {
-                console.error("[cargosPersonal] respuesta inválida:", parsed.error)
+                avisarDesincronizado("los cargos del personal", parsed.error)
                 return null
             }
             return parsed.data
@@ -74,10 +75,9 @@ const useCargoPersonalStore = create<CargoPersonalStore>((set, get) => ({
         }
     },
     eliminarCargoPersonal: async (cargo_id: string) => {
-        if (get().eliminados.includes(cargo_id)) return
 
         if (!(await confirm({ mensaje: "¿Eliminar el cargo?", danger: true }))) return
-
+        if (get().eliminados.includes(cargo_id)) return
         set((state) => ({ eliminados: [...state.eliminados, cargo_id] }))
 
         try {

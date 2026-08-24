@@ -2,6 +2,7 @@ import z from "zod"
 import useCargoStore from "../../../store/data/administracion/useCargoStore"
 import { cargoDeletePayloadSchema, cargoSchema } from "../../../types/administracion/cargos"
 import { ServerEvent } from "../../socketRouter"
+import { avisarDesincronizado } from "../../../helpers/desincronizado";
 
 const cargoEventPayloadSchema = z.object({ data: cargoSchema })
 
@@ -10,7 +11,7 @@ const cargoRouter = (msg: ServerEvent) => {
         case "add": {
             const parsed = cargoEventPayloadSchema.safeParse(msg.data)
             if (!parsed.success) {
-                console.error("[socketRouter] cargos:add payload inválido", parsed.error)
+                avisarDesincronizado("los cargos", parsed.error)
                 break
             }
             useCargoStore.getState().eventAddCargo(parsed.data.data)
@@ -19,7 +20,7 @@ const cargoRouter = (msg: ServerEvent) => {
         case "update": {
             const parsed = cargoEventPayloadSchema.safeParse(msg.data)
             if (!parsed.success) {
-                console.error("[socketRouter] cargos:update payload inválido", parsed.error)
+                avisarDesincronizado("los cargos", parsed.error)
                 break
             }
             useCargoStore.getState().eventUpdateCargo(parsed.data.data)
@@ -28,7 +29,7 @@ const cargoRouter = (msg: ServerEvent) => {
         case "delete": {
             const parsed = cargoDeletePayloadSchema.safeParse(msg.data)
             if (!parsed.success) {
-                console.error("[socketRouter] cargos:delete payload inválido", parsed.error)
+                avisarDesincronizado("los cargos", parsed.error)
                 break
             }
             useCargoStore.getState().eventDeleteCargo(parsed.data.cargo_id)

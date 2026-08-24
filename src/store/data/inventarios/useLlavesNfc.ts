@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { descripcionLlaveNfcSchema, LlaveNfc, llaveNfcSchema, uidLlaveNfcSchema } from "../../../types/inventarios/llaves_nfc";
 import { socketRequest } from "../../../lib/socket";
 import z from "zod";
+import { avisarDesincronizado } from "../../../helpers/desincronizado";
 import { toast } from "../../useTosterStore";
 import { LlaveNfcInventarioFormType, LlaveNfcReadPayload } from "../../../views/inventarios/llaves_nfc/validations";
 
@@ -49,7 +50,7 @@ const useLlaveNfcStore = create<LlavesNfcStore>((set) => ({
 
             const parsed = llaveNfcSchema.safeParse(response.data)
             if (!parsed.success) {
-                console.error("[Llaves NFC] respuesta inválida:", parsed.error)
+                avisarDesincronizado("las llaves NFC", parsed.error)
                 return null
             }
             return parsed.data
@@ -69,7 +70,7 @@ const useLlaveNfcStore = create<LlavesNfcStore>((set) => ({
             if (response.status === 200) {
                 const parsed = z.array(llaveNfcSchema).safeParse(response.data ?? [])
                 if (!parsed.success) {
-                    console.error("[Llaves NFC] respuesta inválida:", parsed.error)
+                    avisarDesincronizado("las llaves NFC", parsed.error)
                     return
                 }
                 set({ llavesNfc: parsed.data })

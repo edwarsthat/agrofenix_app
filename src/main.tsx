@@ -5,8 +5,10 @@ import "./store/useSystemStore"; // aplica el tema del SO (data-theme) al arranc
 import App from "./App";
 import { BrowserRouter } from "react-router-dom"
 import { initSocketRouter } from "./lib/socketRouter";
+import { initSessionListeners } from "./store/useSessionStore";
 
 initSocketRouter()
+initSessionListeners()
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>

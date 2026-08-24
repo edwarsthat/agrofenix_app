@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { Sesion, sesionSchema } from "../../../types/administracion/sesiones";
 import { socketRequest } from "../../../lib/socket";
 import z from "zod";
+import { avisarDesincronizado } from "../../../helpers/desincronizado";
 import { confirm } from "../../../helpers/Confirmacion";
 
 interface SesionesStore {
@@ -24,7 +25,7 @@ const useSesionesStore = create<SesionesStore>((set, get) => ({
             if (response.status === 200) {
                 const parsed = z.array(sesionSchema).safeParse(response.data ?? [])
                 if (!parsed.success) {
-                    console.error("[sesion] respuesta inválida:", parsed.error)
+                    avisarDesincronizado("las sesiones", parsed.error)
                     return
                 }
                 set({ sesiones: parsed.data })
@@ -34,10 +35,8 @@ const useSesionesStore = create<SesionesStore>((set, get) => ({
         }
     },
     deleteSesiones: async (usuario_id: string) => {
-        if (get().eliminados.includes(usuario_id)) return
-
         if (!(await confirm({ mensaje: "¿Cerrar las sesiones de este usuario?", danger: true }))) return
-
+        if (get().eliminados.includes(usuario_id)) return
         set((state) => ({ eliminados: [...state.eliminados, usuario_id] }))
 
         try {

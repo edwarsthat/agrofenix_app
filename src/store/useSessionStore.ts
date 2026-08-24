@@ -133,20 +133,24 @@ const useSessionStore = create<SessionType>((set, get) => ({
     }
 }))
 
-// Listeners de los eventos que emite el backend de Rust. Se registran una sola
-// vez al cargar el módulo para no duplicarlos en cada login.
-listen("socket://error", (e) => console.error("[socket] error:", e.payload))
+export function initSessionListeners() {
+    // Listeners de los eventos que emite el backend de Rust. Se registran una sola
+    // vez al cargar el módulo para no duplicarlos en cada login.
+    listen("socket://error", (e) => console.error("[socket] error:", e.payload))
 
-listen("socket://closed", () => {
-    console.warn("[socket] conexión cerrada")
+    listen("socket://closed", () => {
+        console.warn("[socket] conexión cerrada")
 
-    // El cierre voluntario (logout) también pasa por aquí: si ya no hay sesión,
-    // no hay nada que cerrar ni que avisar.
-    const { isAuth, cerrarSesion } = useSessionStore.getState()
-    if (!isAuth) return
+        // El cierre voluntario (logout) también pasa por aquí: si ya no hay sesión,
+        // no hay nada que cerrar ni que avisar.
+        const { isAuth, cerrarSesion } = useSessionStore.getState()
+        if (!isAuth) return
 
-    cerrarSesion()   // isAuth = false -> App.tsx redirige a /login
-    toast.error("Sesión finalizada", "Se perdió la conexión con el servidor. Vuelve a iniciar sesión.")
-})
+        cerrarSesion()   // isAuth = false -> App.tsx redirige a /login
+        toast.error("Sesión finalizada", "Se perdió la conexión con el servidor. Vuelve a iniciar sesión.")
+    })
+}
+
+
 
 export default useSessionStore;

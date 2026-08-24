@@ -2,6 +2,7 @@ import z from "zod";
 import { usuarioDeletePayloadSchema, usuarioSchema } from "../../../types/administracion/usuarios";
 import { ServerEvent } from "../../socketRouter";
 import useUsuarioStore from "../../../store/data/administracion/useUsuariosStore";
+import { avisarDesincronizado } from "../../../helpers/desincronizado";
 
 
 const usuarioEventPayloadSchema = z.object({ data: usuarioSchema })
@@ -11,7 +12,7 @@ const usuarioRouter = (msg: ServerEvent) => {
         case "add": {
             const parsed = usuarioEventPayloadSchema.safeParse(msg.data)
             if (!parsed.success) {
-                console.error("[socketRouter] usuarios:add payload inválido", parsed.error)
+                avisarDesincronizado("los usuarios", parsed.error)
                 break
             }
             useUsuarioStore.getState().eventAddUsuario(parsed.data.data)
@@ -20,7 +21,7 @@ const usuarioRouter = (msg: ServerEvent) => {
         case "update": {
             const parsed = usuarioEventPayloadSchema.safeParse(msg.data)
             if (!parsed.success) {
-                console.error("[socketRouter] usuarios:update payload inválido", parsed.error)
+                avisarDesincronizado("los usuarios", parsed.error)
                 break
             }
             useUsuarioStore.getState().eventUpdateUsuario(parsed.data.data)
@@ -29,7 +30,7 @@ const usuarioRouter = (msg: ServerEvent) => {
         case "delete": {
             const parsed = usuarioDeletePayloadSchema.safeParse(msg.data)
             if(!parsed.success){
-                console.error("[socketRouter] usuarios:delete payload inválido", parsed.error)
+                avisarDesincronizado("los usuarios", parsed.error)
                 break
             }
             useUsuarioStore.getState().eventDeleteUsuario(parsed.data.usuario_id)

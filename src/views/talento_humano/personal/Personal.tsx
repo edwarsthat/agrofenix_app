@@ -2,7 +2,7 @@ import styles from "../../modulos.module.css"
 import tableStyles from "../../../components/funcionalidad/tablas/Table.module.css"
 import { Nfc, Plus, Unlink } from "lucide-react"
 import { Empleado } from "../../../types/talento_humano/personal"
-import { PersonalFormType, QuitarLlaveFormType } from "./validations"
+import { PersonalFiltrosInitialValues, PersonalFormType, QuitarLlaveFormType, toPersonalReadPayload } from "./validations"
 import { modal } from "../../../store/useModalStore"
 import PersonalForm from "./PersonalForm"
 import EscanearLlaveNfc from "./EscanearLlaveNfc"
@@ -34,7 +34,14 @@ export default function Personal() {
 
     useEffect(() => {
         if (useCargoPersonalStore.getState().cargosPersonal.length === 0) getCargoPersonal()
-    }, [persoonal]);
+    }, [getCargoPersonal]);
+
+    // Carga inicial de la tabla. Va con los valores por defecto del formulario de
+    // filtros, no sin payload: el backend siempre filtra por activo/inactivo, así
+    // que la lista tiene que coincidir con lo que el formulario muestra ("Activos").
+    useEffect(() => {
+        getPersonal(toPersonalReadPayload(PersonalFiltrosInitialValues))
+    }, [getPersonal]);
 
     const nombrePorCargo = useMemo(() => {
         const mapa = new Map<string, string>()
@@ -151,7 +158,7 @@ export default function Personal() {
     const handleAsignarLlave = (empleado: Empleado) => {
         const handleGuardar = async (uid: string) => {
             const actualizado = await asignarLLaveNfc(empleado.id, empleado.version, uid)
-            if (!actualizado) return modal.close()
+            if (!actualizado) return 
 
             modal.close()
         }

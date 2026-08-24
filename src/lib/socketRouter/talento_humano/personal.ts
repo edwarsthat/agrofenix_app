@@ -2,6 +2,7 @@ import z from "zod";
 import { ServerEvent } from "../../socketRouter";
 import { empleadoSchema } from "../../../types/talento_humano/personal";
 import usePersonalStore from "../../../store/data/talento_humano/usePersonalStore";
+import { avisarDesincronizado } from "../../../helpers/desincronizado";
 
 const personalEventPayloadSchema = z.object({ data: empleadoSchema })
 
@@ -11,7 +12,7 @@ const personalRouter = (msg: ServerEvent) => {
         case "add": {
             const parsed = personalEventPayloadSchema.safeParse(msg.data)
             if (!parsed.success) {
-                console.error("[socketRouter] personal:add payload inválido", parsed.error)
+                avisarDesincronizado("el personal", parsed.error)
                 break
             }
             usePersonalStore.getState().eventAddPersonal(parsed.data.data)
@@ -20,7 +21,7 @@ const personalRouter = (msg: ServerEvent) => {
         case "update": {
             const parsed = personalEventPayloadSchema.safeParse(msg.data)
             if (!parsed.success) {
-                console.error("[socketRouter] personal:update payload inválido", parsed.error)
+                avisarDesincronizado("el personal", parsed.error)
                 break
             }
             usePersonalStore.getState().eventUpdatePersonal(parsed.data.data)
@@ -29,7 +30,7 @@ const personalRouter = (msg: ServerEvent) => {
         case "delete": {
             const parsed = personalEventPayloadSchema.safeParse(msg.data)
             if (!parsed.success) {
-                console.error("[socketRouter] personal:delete payload inválido", parsed.error)
+                avisarDesincronizado("el personal", parsed.error)
                 break
             }
             usePersonalStore.getState().eventDeletePersonal(parsed.data.data.id)

@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { Usuario, usuarioSchema } from "../../../types/administracion/usuarios";
 import { ServerResponse, socketRequest } from "../../../lib/socket";
 import z from "zod";
+import { avisarDesincronizado } from "../../../helpers/desincronizado";
 import { UsuarioFormType } from "../../../views/administracion/usuarios/validation";
 import { confirm } from "../../../helpers/Confirmacion";
 
@@ -37,7 +38,7 @@ const useUsuarioStore = create<UsuariosStore>((set, get) => ({
             if (response.status === 200) {
                 const parsed = z.array(usuarioSchema).safeParse(response.data ?? [])
                 if (!parsed.success) {
-                    console.error("[cargos] respuesta inválida:", parsed.error)
+                    avisarDesincronizado("los usuarios", parsed.error)
                     return
                 }
                 set({ usuarios: parsed.data })
