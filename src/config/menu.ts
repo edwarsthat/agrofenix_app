@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
-import { Boxes, LayoutGrid, ShieldCheck, Users } from 'lucide-react'
+import { Boxes, LayoutGrid, ShieldCheck, Truck, Users } from 'lucide-react'
 
 export interface MenuNode {
     label: string
@@ -37,6 +37,14 @@ export const menu: MenuNode[] = [
         icon: Boxes,
         children: [
             { label: 'Llaves NFC', path: '/inventarios/llaves-nfc', permiso: 'llaves_nfc:read' },
+        ],
+    },
+    {
+        label: 'Proveedores',
+        permiso: 'proveedores:ver',
+        icon: Truck,
+        children: [
+            { label: 'Proveedores', path: '/proveedores/proveedores', permiso: 'proveedores:read' },
         ],
     },
 ]
