@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
-import { Pencil, RotateCcw, Trash2 } from 'lucide-react'
+import { Eye, Pencil, RotateCcw, Trash2 } from 'lucide-react'
 
 export type VarianteAccion = 'normal' | 'danger' | 'success'
 
@@ -11,6 +11,13 @@ export interface AccionFila<T> {
     visible?: (row: T) => boolean                 // sin esto, siempre visible
     variante?: VarianteAccion                     // default 'normal'
 }
+
+export const accionVer = <T>(onClick: (row: T) => void): AccionFila<T> => ({
+    id: 'ver',
+    icono: Eye,
+    titulo: 'Ver detalle',
+    onClick,
+})
 
 export const accionEditar = <T>(onClick: (row: T) => void): AccionFila<T> => ({
     id: 'editar',

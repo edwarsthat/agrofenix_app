@@ -18,6 +18,9 @@ interface ProveedoresStore {
     updateProveedor: (proveedor_id: string, version: number, form: ProveedorFormType) => Promise<boolean>
     deleteProveedor: (proveedor_id: string) => Promise<void>
     activarProveedor: (proveedor_id: string) => Promise<boolean>
+    eventAddProveedor: (proveedor: Proveedor) => void
+    eventUpdateProveedor: (proveedor: Proveedor) => void
+    eventDeleteProveedor: (proveedor_id: string) => void
 }
 
 // Reemplaza el proveedor en la lista, o lo agrega arriba si no estaba.
@@ -147,6 +150,28 @@ const useProveedores = create<ProveedoresStore>((set, get) => ({
             console.error("[proveedores] error:", err)
             return false
         }
+    },
+    // Los tres `event*` los llama el router del socket con lo que emite el
+    // servidor: son los cambios que hizo OTRO cliente, así que solo tocan la
+    // lista (nada de pedir confirmación ni volver a llamar al backend).
+    eventAddProveedor: (proveedor: Proveedor) => {
+        set((state) =>
+            state.proveedores.some((p) => p.id === proveedor.id)
+                ? state
+                : { proveedores: [proveedor, ...state.proveedores] }
+        )
+    },
+    eventUpdateProveedor: (proveedor: Proveedor) => {
+        set((state) => ({ proveedores: upsert(state.proveedores, proveedor) }))
+    },
+    // El backend no borra la fila, la inactiva; el proveedor sigue en la lista
+    // porque los filtros deciden si se ve o no.
+    eventDeleteProveedor: (proveedor_id: string) => {
+        set((state) => ({
+            proveedores: state.proveedores.map((p) =>
+                p.id === proveedor_id ? { ...p, activo: false } : p
+            ),
+        }))
     },
 }))
 

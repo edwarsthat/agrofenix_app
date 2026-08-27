@@ -6,11 +6,12 @@ import { modal } from "../../../store/useModalStore"
 import useProveedores from "../../../store/data/proveedores/useProveedoresStore"
 import FormProveedores from "./FormProveedores"
 import ProveedoresFiltros from "./ProveedoresFiltros"
+import ProveedorInfo from "./ProveedorInfo"
 import Tabla, { TablaColumn } from "../../../components/funcionalidad/tablas/Tabla"
 import MobileList from "../../../components/funcionalidad/listasMobile/MobileList"
 import { CardColumn } from "../../../components/funcionalidad/listasMobile/CardRow"
 import useIsMobile from "../../../hooks/useIsMobile"
-import { AccionFila, accionEditar, accionEliminar, accionReactivar } from "../../../components/funcionalidad/acciones"
+import { AccionFila, accionEditar, accionEliminar, accionReactivar, accionVer } from "../../../components/funcionalidad/acciones"
 import { Proveedor, TIPO_PROVEEDOR_LABELS } from "../../../types/proveedores/proveedores"
 import {
     ProveedorFormType,
@@ -133,7 +134,17 @@ export default function Proveedores() {
         await activarProveedor(proveedor.id)
     }
 
+    // El detalle trae su propio encabezado (nombre, código y estado), así que el
+    // modal va sin título para no repetirlo.
+    const abrirInfo = (proveedor: Proveedor) => {
+        modal.show({
+            size: "lg",
+            children: <ProveedorInfo proveedor={proveedor} />,
+        })
+    }
+
     const acciones: AccionFila<Proveedor>[] = [
+        accionVer(abrirInfo),
         accionEditar(abrirFormulario),
         accionEliminar(handleEliminar),
         accionReactivar(handleActivar),

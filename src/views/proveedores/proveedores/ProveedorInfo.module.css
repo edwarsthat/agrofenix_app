@@ -1,0 +1,275 @@
+/* Detalle de proveedor — vive DENTRO del <Modal>, así que aquí no hay overlay
+   ni contenedor: el diálogo ya pone fondo, borde, sombra y scroll. Los estilos
+   arrancan en el encabezado de identidad y usan los tokens globales
+   (colors.css, typography.css, spacing.css, radius.css, shadow.css). */
+
+.pd-detalle {
+  font-family: var(--font-body);
+  color: var(--color-text-primary);
+}
+
+/* ---- Encabezado de identidad ---- */
+.pd-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--color-border);
+}
+.pd-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--fenix-green-100);
+  color: var(--fenix-green-700);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+.pd-header-main {
+  flex: 1;
+  min-width: 0;
+}
+.pd-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.pd-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.375rem;
+  color: var(--color-text-primary);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+.pd-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 7px;
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  flex-wrap: wrap;
+}
+.pd-meta-sep {
+  opacity: 0.45;
+}
+.pd-codigo {
+  font-family: ui-monospace, monospace;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  background: var(--color-surface-sunken);
+  border: 1px solid var(--color-border);
+  border-radius: 7px;
+  padding: 3px 9px;
+}
+
+/* ---- Insignias de estado ---- */
+.pd-badge {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 5px 11px;
+  border-radius: 999px;
+}
+.pd-badge-activo {
+  background: var(--fenix-green-100);
+  color: var(--fenix-green-700);
+}
+.pd-badge-inactivo {
+  background: var(--fenix-gray-100);
+  color: var(--fenix-gray-600);
+}
+
+/* ---- Encabezado de sección ---- */
+.pd-section-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 22px 0 12px;
+}
+.pd-section-head svg {
+  width: 16px;
+  height: 16px;
+  color: var(--color-accent-flame);
+  flex-shrink: 0;
+}
+.pd-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+.pd-section-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+/* ---- Grid de campos ---- */
+.pd-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2px 28px;
+}
+.pd-grid-ubicacion {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr;
+  gap: 2px 28px;
+}
+.pd-field {
+  padding: 9px 0;
+  min-width: 0;
+}
+.pd-field-wide {
+  grid-column: span 2;
+}
+.pd-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin-bottom: 4px;
+}
+.pd-value {
+  font-size: 0.9375rem;
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+.pd-value-mono {
+  font-family: ui-monospace, monospace;
+}
+.pd-value-email {
+  overflow-wrap: anywhere;
+}
+/* campo nullable sin dato */
+.pd-value-empty {
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  font-style: italic;
+}
+
+/* ---- Bloque persona de contacto ---- */
+.pd-contacto {
+  margin-top: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-sunken);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.pd-contacto-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+.pd-contacto-main {
+  flex: 1;
+  min-width: 0;
+}
+.pd-contacto-tel {
+  text-align: right;
+}
+
+/* ---- Tarjeta bancaria ---- */
+.pd-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 4px 18px 14px;
+  background: var(--color-surface);
+}
+.pd-cuenta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pd-cuenta-toggle {
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  display: inline-flex;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+.pd-cuenta-toggle:hover {
+  color: var(--color-brand-primary);
+}
+
+/* ---- Observaciones ---- */
+.pd-observaciones {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+  margin: 0;
+  text-wrap: pretty;
+}
+
+/* ---- Auditoría ---- */
+.pd-auditoria {
+  margin-top: 26px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--color-border);
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+.pd-auditoria strong {
+  font-weight: 700;
+}
+.pd-auditoria-id {
+  opacity: 0.6;
+  font-family: ui-monospace, monospace;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+  .pd-grid,
+  .pd-grid-ubicacion {
+    grid-template-columns: 1fr 1fr;
+  }
+  .pd-field-wide {
+    grid-column: span 2;
+  }
+}
+@media (max-width: 620px) {
+  .pd-grid,
+  .pd-grid-ubicacion {
+    grid-template-columns: 1fr;
+  }
+  .pd-field-wide {
+    grid-column: span 1;
+  }
+  .pd-contacto {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .pd-contacto-tel {
+    text-align: left;
+  }
+  .pd-auditoria {
+    gap: 8px;
+    flex-direction: column;
+  }
+}
