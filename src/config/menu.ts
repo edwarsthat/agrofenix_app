@@ -45,6 +45,7 @@ export const menu: MenuNode[] = [
         icon: Truck,
         children: [
             { label: 'Proveedores', path: '/proveedores/proveedores', permiso: 'proveedores:read' },
+            { label: 'Predios', path: '/proveedores/predios', permiso: 'predios:read' },
         ],
     },
 ]

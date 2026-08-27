@@ -6,6 +6,7 @@ import cargoPersonalRouter from "./socketRouter/talento_humano/cargoPersonal";
 import personalRouter from "./socketRouter/talento_humano/personal";
 import llavesNfcRouter from "./socketRouter/inventarios/llaves_nfc";
 import proveedoresRouter from "./socketRouter/proveedores/proveedores";
+import prediosRouter from "./socketRouter/proveedores/predios";
 
 export interface ServerEvent {
     event: string
@@ -37,6 +38,9 @@ export function initSocketRouter() {
                 break;
             case "proveedores":
                 proveedoresRouter(msg)
+                break;
+            case "predios":
+                prediosRouter(msg)
                 break;
         }
     })
