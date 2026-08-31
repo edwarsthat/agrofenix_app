@@ -17,6 +17,15 @@ const prediosRouter = (msg: ServerEvent) => {
             usePredioStore.getState().eventAddPredios(parsed.data.data)
             break
         }
+        case "update": {
+            const parsed = predioEventPayloadSchema.safeParse(msg.data)
+            if(!parsed.success){
+                avisarDesincronizado("los predios", parsed.error)
+                break;
+            }
+            usePredioStore.getState().eventUpdatePredios(parsed.data.data)
+            break
+        }
     }
 }
 

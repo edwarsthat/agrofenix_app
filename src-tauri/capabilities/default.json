@@ -22,6 +22,9 @@
         },
         {
           "url": "http://192.168.0.200:3000/cambiar-password"
+        }, 
+        {
+          "url": "https://api.agroalimentosfenix.com/*"
         }
       ]
     }

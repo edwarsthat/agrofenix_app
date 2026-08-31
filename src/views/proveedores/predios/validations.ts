@@ -268,3 +268,111 @@ export function buildPredioFormArr(
         },
     ]
 }
+
+
+/* ------------------------------------------------------------------ */
+/* Filtros: el filtrado lo resuelve el servidor                        */
+/* (`proveedores:predios:read`), no un useMemo sobre la lista.         */
+/* ------------------------------------------------------------------ */
+
+// <Form> exige Record<string, string | number>, así que todo viaja plano y
+// `toPrediosReadPayload` se encarga de tipar y recortar antes de enviar.
+export type PrediosFiltrosType = {
+    busqueda: string
+    activo: string
+    proveedor_id: string
+    departamento: string
+}
+
+// `activo` arranca en "true" para no mostrar de entrada los predios dados de
+// baja. A diferencia de proveedores, aquí el backend lo recibe como Option, así
+// que "" es una tercera opción válida: no filtrar por estado.
+export const PrediosFiltrosInitialValues: PrediosFiltrosType = {
+    busqueda: "",
+    activo: "true",
+    proveedor_id: "",
+    departamento: "",
+}
+
+export const activoPredioOptions: FormSelectOption[] = [
+    { value: "true", label: "Activos" },
+    { value: "false", label: "Inactivos" },
+    { value: "", label: "Todos" },
+]
+
+// Departamento no reusa `departamentoSchema`: allá el mínimo de 3 caracteres
+// tiene sentido porque se guarda el nombre completo, pero aquí es una búsqueda
+// parcial y escribir "An" para Antioquia es legítimo.
+const textoFiltroSchema = (max: number, campo: string) =>
+    z.string().trim().max(max, `El ${campo} no puede superar los ${max} caracteres`)
+
+export const prediosFiltrosSchema = z.object({
+    busqueda: textoFiltroSchema(120, "texto de búsqueda"),
+    activo: z.enum(["true", "false", ""]),
+    // "" = todos los proveedores; si viene algo tiene que ser un id real.
+    proveedor_id: z.literal("").or(z.uuidv4("Selecciona un proveedor válido")),
+    departamento: textoFiltroSchema(80, "departamento"),
+})
+
+export type PrediosReadPayload = {
+    activo?: boolean
+    proveedor_id?: string
+    busqueda?: string
+    departamento?: string
+}
+
+// Los campos vacíos se omiten: el backend solo aplica los que llegan.
+export function toPrediosReadPayload(filtros: PrediosFiltrosType): PrediosReadPayload {
+    const payload: PrediosReadPayload = {}
+
+    if (filtros.activo) payload.activo = filtros.activo === "true"
+
+    // El select solo entrega ids de la lista de proveedores o "", que el if descarta.
+    if (filtros.proveedor_id) payload.proveedor_id = filtros.proveedor_id
+
+    const busqueda = filtros.busqueda.trim()
+    if (busqueda) payload.busqueda = busqueda
+
+    const departamento = filtros.departamento.trim()
+    if (departamento) payload.departamento = departamento
+
+    return payload
+}
+
+export function buildPrediosFiltrosArr(
+    proveedorOptions: FormSelectOption[]
+): FormType<PrediosFiltrosType>["formArr"] {
+    return [
+        {
+            label: "Búsqueda",
+            type: "text",
+            nombre: "busqueda",
+            placeholder: "Código, nombre, vereda o responsable",
+            width: "third",
+        },
+        {
+            label: "Estado",
+            type: "select",
+            nombre: "activo",
+            options: activoPredioOptions,
+            width: "third",
+        },
+        {
+            label: "Departamento",
+            type: "text",
+            nombre: "departamento",
+            placeholder: "Ej: Antioquia",
+            width: "third",
+        },
+        // El proveedor va a fila completa: la etiqueta es "codigo - nombre" y a
+        // un tercio de fila se corta.
+        {
+            label: "Proveedor",
+            type: "select",
+            nombre: "proveedor_id",
+            placeholder: "Todos los proveedores",
+            options: proveedorOptions,
+            width: "full",
+        },
+    ]
+}
