@@ -82,7 +82,6 @@ export default function InventarioLlaveNfc() {
         modal.show({
             title: "Leer llave NFC",
             description: "Acerca la llave al lector para leer su UID",
-            closeOnBackdropClick: false,   // que no se cierre por accidente a mitad de la lectura
             children: (
                 <EscanearLlaveForm type="read" readData={handleLeer} onCancel={modal.close} />
             ),
@@ -99,7 +98,6 @@ export default function InventarioLlaveNfc() {
         modal.show({
             title: "Agregar llave NFC",
             description: "Acerca la llave al lector para registrar su UID",
-            closeOnBackdropClick: false,   // que no se cierre por accidente a mitad de la lectura
             children: (
                 <EscanearLlaveForm type="add" onGuardar={handleGuardar} onCancel={modal.close} />
             ),

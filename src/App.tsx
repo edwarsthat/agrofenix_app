@@ -17,6 +17,7 @@ import Sessiones from './views/administracion/sessiones/Sesiones';
 import InventarioLlaveNfc from './views/inventarios/llaves_nfc/InventarioLlaveNfc';
 import Proveedores from './views/proveedores/proveedores/Proveedores';
 import Predios from './views/proveedores/predios/Predios';
+import LotesMateriasPrimas from './views/inventarios/lotes_materias_primas/LotesMateriasPrimas';
 
 
 function App() {
@@ -44,6 +45,7 @@ function App() {
           <Route path='talento_humano/personal' element={<Personal />} />
 
           <Route path='inventarios/llaves-nfc' element={<InventarioLlaveNfc />} />
+          <Route path='/inventarios/lotes-materias-primas' element={<LotesMateriasPrimas />} />
 
           <Route path='proveedores/proveedores' element={<Proveedores />} />
           <Route path='proveedores/predios' element={<Predios />} />

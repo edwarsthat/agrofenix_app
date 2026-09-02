@@ -37,6 +37,7 @@ export const menu: MenuNode[] = [
         icon: Boxes,
         children: [
             { label: 'Llaves NFC', path: '/inventarios/llaves-nfc', permiso: 'llaves_nfc:read' },
+            { label: 'Inventario Materias Primas', path: '/inventarios/lotes-materias-primas', permiso: 'lotes_materias_primas:read' },
         ],
     },
     {

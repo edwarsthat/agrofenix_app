@@ -9,7 +9,6 @@ interface ModalOptions {
   size?: 'sm' | 'md' | 'lg';
   children?: ReactNode;
   footer?: ReactNode;
-  closeOnBackdropClick?: boolean;
   closeOnEsc?: boolean;
   hideCloseButton?: boolean;
 }
@@ -27,7 +26,6 @@ const defaults: ModalOptions = {
   size: 'md',
   children: undefined,
   footer: undefined,
-  closeOnBackdropClick: true,
   closeOnEsc: true,
   hideCloseButton: false,
 };

@@ -9,7 +9,6 @@ export interface ModalProps {
   size?: 'sm' | 'md' | 'lg';
   children?: React.ReactNode;
   footer?: React.ReactNode;
-  closeOnBackdropClick?: boolean;
   closeOnEsc?: boolean;
   hideCloseButton?: boolean;
 }
@@ -30,7 +29,6 @@ export function Modal({
   size = 'md',
   children,
   footer,
-  closeOnBackdropClick = true,
   closeOnEsc = true,
   hideCloseButton = false,
 }: ModalProps) {
@@ -68,12 +66,6 @@ export function Modal({
     };
   }, [closeOnEsc, onClose]);
 
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDialogElement>) => {
-    if (closeOnBackdropClick && e.target === dialogRef.current) {
-      onClose();
-    }
-  };
-
   const hasHeader = Boolean(title || description || !hideCloseButton);
 
   return (
@@ -82,7 +74,6 @@ export function Modal({
       className={`${styles.dialog} ${styles[size]}`}
       aria-labelledby={title ? titleId : undefined}
       aria-describedby={description ? descId : undefined}
-      onClick={handleBackdropClick}
     >
       {hasHeader && (
         <div className={styles.header}>

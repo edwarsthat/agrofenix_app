@@ -166,7 +166,6 @@ export default function Personal() {
         modal.show({
             title: "Asignar llave NFC",
             description: `Acerca la llave al lector para asignarla a ${empleado.nombre} ${empleado.apellido}`,
-            closeOnBackdropClick: false,   // que no se cierre por accidente a mitad de la lectura
             children: (
                 <EscanearLlaveNfc onGuardar={handleGuardar} onCancel={modal.close} />
             ),

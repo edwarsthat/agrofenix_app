@@ -95,7 +95,6 @@ export default function Usuarios() {
         modal.show({
             size: "sm",
             hideCloseButton: true,
-            closeOnBackdropClick: false,
             closeOnEsc: false,
             children: (
                 <PasswordTemporal
@@ -115,7 +114,6 @@ export default function Usuarios() {
         modal.show({
             size: "sm",
             hideCloseButton: true,
-            closeOnBackdropClick: false,
             closeOnEsc: false,
             children: (
                 <PasswordTemporal
@@ -146,7 +144,6 @@ export default function Usuarios() {
             modal.show({
                 size: "sm",
                 hideCloseButton: true,
-                closeOnBackdropClick: false,
                 closeOnEsc: false,
                 children: (
                     <PasswordTemporal

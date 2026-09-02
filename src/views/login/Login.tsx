@@ -31,7 +31,6 @@ export default function Login() {
             modal.show({
                 size: "sm",
                 hideCloseButton: true,
-                closeOnBackdropClick: false,
                 closeOnEsc: false,
                 children: (
                     <ChangePassword
