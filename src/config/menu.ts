@@ -1,5 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
-import { Boxes, LayoutGrid, ShieldCheck, Truck, Users } from 'lucide-react'
+import { Boxes, Factory, LayoutGrid, ShieldCheck, Truck, Users } from 'lucide-react'
 
 export interface MenuNode {
     label: string
@@ -38,6 +38,14 @@ export const menu: MenuNode[] = [
         children: [
             { label: 'Llaves NFC', path: '/inventarios/llaves-nfc', permiso: 'llaves_nfc:read' },
             { label: 'Inventario Materias Primas', path: '/inventarios/lotes-materias-primas', permiso: 'lotes_materias_primas:read' },
+        ],
+    },
+    {
+        label: 'Proceso',
+        permiso: 'proceso:ver',
+        icon: Factory,
+        children: [
+            { label: 'Programación Proceso', path: '/proceso/programacion-proceso', permiso: 'programaciones_proceso:read' },
         ],
     },
     {
