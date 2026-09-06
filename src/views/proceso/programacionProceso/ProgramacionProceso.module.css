@@ -1,0 +1,170 @@
+/* Pestañas de la vista de proceso: cambian qué lista se está mirando —lo que hay
+   en patio o lo que ya se procesó—, no filtran una misma lista. Por eso son
+   pestañas y no un par de botones de filtro: cada una trae sus propias columnas.
+
+   El subrayado va con --color-brand-primary y no con --fenix-green-700 crudo:
+   ese verde es el de la marca sobre fondo claro y en modo oscuro desaparece
+   contra el fondo; el token ya está remapeado a un verde claro allá. */
+.pl-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.pl-tab {
+  padding: 11px 18px;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  /* El borde transparente ya ocupa su alto en la pestaña inactiva: sin él, la
+     activa empujaría el texto 2.5px hacia arriba al seleccionarla. */
+  border-bottom: 2.5px solid transparent;
+  cursor: pointer;
+}
+
+.pl-tab:hover {
+  color: var(--color-text-primary);
+}
+
+.pl-tab[aria-selected="true"] {
+  color: var(--color-text-primary);
+  border-bottom-color: var(--color-brand-primary);
+}
+
+/* ---------- Barra de filtros ----------
+   Los filtros son un flex con wrap y no un grid: el buscador crece con lo que
+   sobre y los selects mantienen su ancho fijo, así al agregar el filtro de
+   predio o proveedor solo hay que sumar un modificador de ancho.
+   align-items:flex-end alinea los controles por abajo aunque el label de uno
+   ocupe dos líneas. */
+.pl-filtros {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  /* El margen lo pone la barra y no la tabla: dentro del tabpanel no hay un
+     contenedor con gap que separe los dos bloques, y la tabla se reutiliza en
+     vistas que no traen filtros arriba. */
+  margin-bottom: var(--space-6);
+}
+
+.pl-filtro {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* min() y no min-width:240px crudo: en pantallas angostas 240px forzaría un
+   desborde horizontal en vez de dejar que el buscador se encoja. */
+.pl-filtro--buscar {
+  flex: 1;
+  min-width: min(240px, 100%);
+}
+
+.pl-filtro--materia { width: 170px; }
+.pl-filtro--predio { width: 190px; }
+.pl-filtro--proveedor { width: 200px; }
+
+.pl-filtro__label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+/* El borde vive en el contenedor, no en el input: así el ícono queda dentro
+   de la caja y :focus-within pinta el borde cuando el foco entra al input. */
+.pl-buscador {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0 12px;
+}
+
+/* --color-brand-primary y no --fenix-green-700 crudo, por lo mismo que las
+   pestañas de arriba: ese verde se pierde contra el fondo en modo oscuro y el
+   token ya está remapeado a un verde claro allá. */
+.pl-buscador:focus-within { border-color: var(--color-brand-primary); }
+
+.pl-buscador svg {
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.pl-buscador input {
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 10px 0;
+  width: 100%;
+  /* Sin min-width:0 el input impone su ancho por defecto y no deja que el
+     buscador se encoja dentro del flex. */
+  min-width: 0;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  color: var(--color-text-primary);
+}
+
+.pl-select {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  outline: none;
+  cursor: pointer;
+}
+
+.pl-select:focus { border-color: var(--color-brand-primary); }
+
+.pl-limpiar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.pl-limpiar:hover {
+  color: var(--color-text-primary);
+  border-color: var(--color-text-secondary);
+}
+
+.pl-limpiar svg { width: 15px; height: 15px; }
+
+/* Mismo breakpoint que la toolbar, el Sidebar y useIsMobile (< 768px): en
+   móvil los anchos fijos dejarían los selects a media pantalla y desalineados
+   contra la lista de tarjetas, que sí ocupa todo el ancho. */
+@media (max-width: 767px) {
+  .pl-filtro,
+  .pl-filtro--buscar,
+  .pl-filtro--materia,
+  .pl-filtro--predio,
+  .pl-filtro--proveedor {
+    width: 100%;
+    flex: none;
+  }
+
+  .pl-limpiar { width: 100%; justify-content: center; }
+}

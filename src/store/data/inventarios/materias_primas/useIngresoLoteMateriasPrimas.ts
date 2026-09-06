@@ -7,12 +7,14 @@ import {
 import { socketRequest } from "../../../../lib/socket";
 import { avisarDesincronizado } from "../../../../helpers/desincronizado";
 
+
 interface IngresoLoteMateriasPrimasStore {
-    lotesMateriasPrimas: IngresoMateriaPrima[],
+    lotesIngresosMateriasPrimas: IngresoMateriaPrima[],
     addLotesMateriasPrimas: (
         form: LoteMateriaPrimaFormType,
         clave_idempotencia: string
     ) => Promise<IngresoMateriaPrima | null>
+
 }
 
 // Reemplaza el lote en la lista, o lo agrega arriba si no estaba.
@@ -26,7 +28,7 @@ const upsert = (lotes: IngresoMateriaPrima[], ingreso_nuevo: IngresoMateriaPrima
 }
 
 const useIngresoLoteMateriasPrimasStore = create<IngresoLoteMateriasPrimasStore>((set) => ({
-    lotesMateriasPrimas: [],
+    lotesIngresosMateriasPrimas: [],
     addLotesMateriasPrimas: async (form: LoteMateriaPrimaFormType, clave_idempotencia: string) => {
         try {
             const request = {
@@ -34,7 +36,6 @@ const useIngresoLoteMateriasPrimasStore = create<IngresoLoteMateriasPrimasStore>
                 payload: toLoteMateriaPrimaAddPayload(form, clave_idempotencia),
                 isSuccess: true,
             }
-            console.log(request)
             const response = await socketRequest<IngresoMateriaPrima>(request)
 
             const parsed = ingresoMateriaPrimaSchema.safeParse(response.data)
@@ -43,13 +44,13 @@ const useIngresoLoteMateriasPrimasStore = create<IngresoLoteMateriasPrimasStore>
                 return null
             }
 
-            set((state) => ({ lotesMateriasPrimas: upsert(state.lotesMateriasPrimas, parsed.data) }))
+            set((state) => ({ lotesIngresosMateriasPrimas: upsert(state.lotesIngresosMateriasPrimas, parsed.data) }))
             return parsed.data
         } catch (err) {
             console.error("[lotes materias primas] error:", err)
             return null
         }
-    }
+    },
 }))
 
 export default useIngresoLoteMateriasPrimasStore;
