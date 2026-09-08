@@ -11,12 +11,14 @@ const OBSERVACIONES_MAXIMO = 500
 type propsType = {
     lote: InventarioMateriaPrima
     codigoLoteEnProceso?: string | null
+    onProcesado: () => void
     onCancel: () => void
 }
 
 export default function ProgramacionProcesarLoteModal({
     lote,
     codigoLoteEnProceso,
+    onProcesado,
     onCancel,
 }: propsType) {
     const { addProgramacionLote } = useProgramacionProcesoStore();
@@ -29,10 +31,13 @@ export default function ProgramacionProcesarLoteModal({
         if (procesando) return
         setProcesando(true)
         try {
-            const texto = observaciones.trim()
-            const response = await addProgramacionLote(lote.lote_id, texto)
-            console.log(response)
-            
+            const programacion = await addProgramacionLote(lote.lote_id, observaciones)
+            // null significa que falló: el store ya puso el toast, así que aquí
+            // solo queda dejar el modal abierto para poder reintentar sin volver a
+            // buscar el lote en la tabla. El store ya dejó la programación nueva en
+            // memoria, no hace falta recargar nada al cerrar.
+            if (!programacion) return
+            onProcesado()
         } finally {
             setProcesando(false)
         }

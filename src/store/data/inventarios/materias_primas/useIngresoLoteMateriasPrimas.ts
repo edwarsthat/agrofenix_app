@@ -32,7 +32,7 @@ const useIngresoLoteMateriasPrimasStore = create<IngresoLoteMateriasPrimasStore>
     addLotesMateriasPrimas: async (form: LoteMateriaPrimaFormType, clave_idempotencia: string) => {
         try {
             const request = {
-                action: "inventarios:lotes_materias_primas:add",
+                action: "inventarios:inventario_materia_prima:add",
                 payload: toLoteMateriaPrimaAddPayload(form, clave_idempotencia),
                 isSuccess: true,
             }

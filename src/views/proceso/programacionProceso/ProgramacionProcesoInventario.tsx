@@ -8,39 +8,40 @@ import useMateriaPrima from "../../../store/data/catalogos/useCatalogosStore"
 import { Search } from "lucide-react"
 import styles from "./ProgramacionProceso.module.css"
 import { AccionFila, accionProcesar } from "../../../components/funcionalidad/acciones"
-import useInventarioMateriasPrimasStore from "../../../store/data/inventarios/materias_primas/useInventarioMateriasPrimas"
 import { modal } from "../../../store/useModalStore"
 import ProgramacionProcesarLoteModal from "./ProgramacionProcesarLoteModal"
+import { ProgramacionProceso } from "../../../types/proceso/programacionProceso"
 
 type propsType = {
     isMobile: boolean
+    lotesActualMateriasPrimas: InventarioMateriaPrima[]
+    lotesEnProceso: ProgramacionProceso[]
+    codigoLoteEnProceso: string | null
 }
 
-export default function ProgramacionProcesoInventario({ isMobile }: propsType) {
-    const { getInventarioMateriaPrima, lotesActualMateriasPrimas } = useInventarioMateriasPrimasStore();
+export default function ProgramacionProcesoInventario({ isMobile, lotesActualMateriasPrimas, lotesEnProceso, codigoLoteEnProceso }: propsType) {
     const { getMateriaPrima, materiaPrima } = useMateriaPrima()
     const [buscar, setBuscar] = useState<string>('')
     const [mprima, setMprima] = useState<string>('')
 
     useEffect(() => {
-        getInventarioMateriaPrima();
         if (materiaPrima.length === 0) {
             getMateriaPrima();
         }
-    }, [getInventarioMateriaPrima, getMateriaPrima])
+    }, [getMateriaPrima])
 
-    // useMemo y no un useEffect que guarde el resultado en state: la lista
-    // filtrada se deriva de lo que ya está en memoria, y pasarla por state
-    // obligaría a un render de más y dejaría dos fuentes de verdad que se
-    // desincronizan cuando el store recarga el inventario.
-    //
-    // La materia prima se compara por materia_prima_id y no por el nombre que
-    // muestra la tabla: el <option> guarda el uuid del catálogo, que es el
-    // mismo que trae el lote, así que dos materias primas con nombres
-    // parecidos no se pisan.
+
+    // Un Set y no un .some() dentro del filtro: así el descarte es una búsqueda
+    // por lote en vez de recorrer las programaciones abiertas en cada fila.
+    const idsEnProceso = useMemo(
+        () => new Set(lotesEnProceso.map((p) => p.lote_id)),
+        [lotesEnProceso]
+    )
+
     const lotesFiltrados = useMemo(() => {
         const texto = buscar.trim().toLowerCase()
         return lotesActualMateriasPrimas.filter((lote) => {
+            if (idsEnProceso.has(lote.lote_id)) return false
             if (mprima !== '' && lote.materia_prima_id !== mprima) return false
             if (texto === '') return true
             return (
@@ -49,12 +50,9 @@ export default function ProgramacionProcesoInventario({ isMobile }: propsType) {
                 lote.proveedor.toLowerCase().includes(texto)
             )
         })
-    }, [lotesActualMateriasPrimas, buscar, mprima])
+    }, [lotesActualMateriasPrimas, idsEnProceso, buscar, mprima])
 
-    // En móvil la materia prima va en el título de la tarjeta y el predio con el
-    // proveedor en el subtítulo, que es como se pide el lote en patio; el resto
-    // va al grid de metadatos. El saldo ocupa el ancho completo porque es el dato
-    // por el que se abre esta vista.
+
     const columnsMobile: CardColumn<InventarioMateriaPrima>[] = useMemo(() => [
         { key: "codigo", header: "Código", mono: true },
         {
@@ -112,12 +110,13 @@ export default function ProgramacionProcesoInventario({ isMobile }: propsType) {
     ], [])
 
     const abrirModal = (lote: InventarioMateriaPrima) => {
-        if(!lote) return modal.close;
         modal.show({
             title: "Procesar Lote",
             children: (
                 <ProgramacionProcesarLoteModal
                     lote={lote}
+                    codigoLoteEnProceso={codigoLoteEnProceso}
+                    onProcesado={modal.close}
                     onCancel={modal.close} />
             )
         })

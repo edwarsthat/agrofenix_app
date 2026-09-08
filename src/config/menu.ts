@@ -45,7 +45,7 @@ export const menu: MenuNode[] = [
         permiso: 'proceso:ver',
         icon: Factory,
         children: [
-            { label: 'Programación Proceso', path: '/proceso/programacion-proceso', permiso: 'programaciones_proceso:read' },
+            { label: 'Programación Proceso', path: '/proceso/programacion-proceso', permiso: 'programacion_proceso:read' },
         ],
     },
     {
