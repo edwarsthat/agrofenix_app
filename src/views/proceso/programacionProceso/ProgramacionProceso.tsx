@@ -4,14 +4,16 @@ import { useEffect, useMemo, useState } from 'react';
 import useIsMobile from '../../../hooks/useIsMobile';
 import ProgramacionProcesoInventario from './ProgramacionProcesoInventario';
 import ProgramacionProcesarLoteProcesando from './ProgramacionProcesarLoteProcesando';
+import ProgramacionPesajesEnCurso from './ProgramacionPesajesEnCurso';
 import useProgramacionProcesoStore from '../../../store/data/proceso/useProgramacionProceso';
 import useInventarioMateriasPrimasStore from "../../../store/data/inventarios/materias_primas/useInventarioMateriasPrimas"
 
 
-type AreaProceso = "inventario" | "historial"
+type AreaProceso = "inventario" | "pesajes" | "historial"
 
 const AREAS: { id: AreaProceso; label: string }[] = [
     { id: "inventario", label: "Lotes en inventario" },
+    { id: "pesajes", label: "Pesajes en curso" },
     { id: "historial", label: "Historial procesado" },
 ]
 
@@ -87,6 +89,12 @@ export default function ProgramacionProceso() {
                         lotesEnProceso={loteProcesando}
                         lotesActualMateriasPrimas={lotesActualMateriasPrimas}
                         codigoLoteEnProceso={codigoLoteEnProceso}
+                    />
+                }
+                {area === "pesajes" &&
+                    <ProgramacionPesajesEnCurso
+                        isMobile={isMobile}
+                        lotesEnProceso={loteProcesando}
                     />
                 }
             </div>
