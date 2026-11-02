@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { socketRequest } from "../../../lib/socket";
-import { avisarDesincronizado } from "../../../helpers/desincronizado";
+import { socketRequest } from "../../../../lib/socket";
+import { avisarDesincronizado } from "../../../../helpers/desincronizado";
 import {
     CursorPesajes,
     FiltrosPesajesBascula,
@@ -8,12 +8,7 @@ import {
     PesajesBasculaRespuesta,
     TotalPesajesOperario,
     pesajesBasculaRespuestaSchema,
-} from "../../../types/inventarios/materias_primas/pesajesBascula";
-
-// PENDIENTE (2026-10-30): en el servidor, la función que registra el pesaje de
-// báscula tiene que hacer un rebroadcast del pesaje nuevo por el socket. Con eso
-// aquí se agrega un `eventAddPesaje` (como los `event*` de los otros stores) y la
-// pestaña "Pesajes en curso" se actualiza en tiempo real sin volver a pedir.
+} from "../../../../types/inventarios/materias_primas/pesajesBascula";
 
 // Mismo texto en todos los avisos para que `avisarDesincronizado` los agrupe
 // en un solo toast si fallan varias páginas seguidas.
@@ -28,6 +23,7 @@ interface MovimientoMateriaPrimaStore {
     siguienteCursor: CursorPesajes | null
     getRegistroMovimientoMateriaPrima: (filtros: FiltrosPesajesBascula) => Promise<void>
     getMasRegistroMovimientoMateriaPrima: () => Promise<void>
+    eventNewPesaje: (registro: PesajeBascula) => void
 }
 
 async function pedirPesajes(
@@ -86,6 +82,25 @@ const useMovimientoMateriaPrimaStore = create<MovimientoMateriaPrimaStore>((set,
         } catch (err) {
             console.error("[Pesajes báscula] error:", err)
         }
+    },
+    eventNewPesaje: (registro: PesajeBascula) => {
+        set((state) => {
+            if (state.registroPesaje.some((p) => p.id === registro.id)) return state
+
+            // El pesaje no trae operario_id, así que el total se busca por código.
+            // Si el operario aún no tiene total en la lista, se deja como está
+            // hasta la próxima lectura.
+            const totalesPesaje = state.totalesPesaje.map((t) =>
+                t.operario_codigo === registro.operario_codigo
+                    ? { ...t, cantidad: t.cantidad + 1, kg: t.kg + registro.peso }
+                    : t
+            )
+
+            return {
+                registroPesaje: [registro, ...state.registroPesaje],
+                totalesPesaje,
+            }
+        })
     },
 }))
 

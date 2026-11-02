@@ -7,6 +7,7 @@ import personalRouter from "./socketRouter/talento_humano/personal";
 import llavesNfcRouter from "./socketRouter/inventarios/llaves_nfc";
 import proveedoresRouter from "./socketRouter/proveedores/proveedores";
 import prediosRouter from "./socketRouter/proveedores/predios";
+import movimientosMateriaPrimaRouter from "./socketRouter/inventarios/movimientos_materia_prima";
 
 export interface ServerEvent {
     event: string
@@ -41,6 +42,9 @@ export function initSocketRouter() {
                 break;
             case "predios":
                 prediosRouter(msg)
+                break;
+            case "inventario_materia_prima":
+                movimientosMateriaPrimaRouter(msg)
                 break;
         }
     })

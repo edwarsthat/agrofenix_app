@@ -5,7 +5,7 @@ import Tabla, { TablaColumn } from "../../../components/funcionalidad/tablas/Tab
 import { formatearFecha, formatearPeso } from "../../../helpers/formatos"
 import { ProgramacionProceso } from "../../../types/proceso/programacionProceso"
 import { PesajeBascula } from "../../../types/inventarios/materias_primas/pesajesBascula"
-import useMovimientoMateriaPrimaStore from "../../../store/data/proceso/usePesajeStore"
+import useMovimientoMateriaPrimaStore from "../../../store/data/inventarios/materias_primas/usePesajeStore"
 
 // El backend rechaza rangos de más de 31 días. Una programación que lleve más
 // abierta que eso se recorta a los últimos 31 en vez de pedir y recibir un 400.

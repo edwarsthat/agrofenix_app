@@ -5,6 +5,7 @@ import useIsMobile from '../../../hooks/useIsMobile';
 import ProgramacionProcesoInventario from './ProgramacionProcesoInventario';
 import ProgramacionProcesarLoteProcesando from './ProgramacionProcesarLoteProcesando';
 import ProgramacionPesajesEnCurso from './ProgramacionPesajesEnCurso';
+import ProgramacionHistorialProcesado from './ProgramacionHistorialProcesado';
 import useProgramacionProcesoStore from '../../../store/data/proceso/useProgramacionProceso';
 import useInventarioMateriasPrimasStore from "../../../store/data/inventarios/materias_primas/useInventarioMateriasPrimas"
 
@@ -96,6 +97,9 @@ export default function ProgramacionProceso() {
                         isMobile={isMobile}
                         lotesEnProceso={loteProcesando}
                     />
+                }
+                {area === "historial" &&
+                    <ProgramacionHistorialProcesado isMobile={isMobile} />
                 }
             </div>
 

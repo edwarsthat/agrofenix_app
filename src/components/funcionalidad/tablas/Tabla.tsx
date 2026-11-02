@@ -36,6 +36,7 @@ interface TablaProps<T> {
     acciones?: AccionFila<T>[]
     emptyTitle?: string
     emptyMessage?: string
+    pie?: ReactNode
 }
 
 export default function Tabla<T>({
@@ -44,7 +45,8 @@ export default function Tabla<T>({
     rowKey,
     acciones,
     emptyTitle = 'Sin resultados',
-    emptyMessage = 'No hay datos para mostrar.'
+    emptyMessage = 'No hay datos para mostrar.',
+    pie = null
 }: TablaProps<T>) {
     const accionesFila = acciones ?? []
     const mostrarAcciones = accionesFila.length > 0
@@ -110,6 +112,7 @@ export default function Tabla<T>({
                     </div>
                 ))
             )}
+            {pie && <div className={styles.pie}>{pie}</div>}
         </div>
     )
 }

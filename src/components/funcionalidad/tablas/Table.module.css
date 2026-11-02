@@ -204,42 +204,11 @@
   color: var(--color-success);
 }
 
-/* ---- Pie: paginación ---- */
-.footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 22px;
-  font-size: 12px;
-  color: var(--color-text-secondary);
-}
-
-.paginationControls {
-  display: flex;
-  gap: 6px;
-}
-
-.paginationBtn {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  border: 1px solid var(--color-border);
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: var(--color-text-secondary);
-}
-
-.paginationBtn:hover {
-  background: var(--color-surface-sunken);
-}
-
-.paginationBtnDisabled {
-  opacity: 0.4;
-  cursor: default;
-  pointer-events: none;
+/* ---- Pie (paginación u otro contenido del slot `pie`) ----
+   Solo la línea que lo separa de la última fila; el contenido trae su propio
+   espaciado (ver Paginacion.module.css). */
+.pie {
+  border-top: 1px solid var(--color-border);
 }
 
 /* ---- Estado vacío ---- */

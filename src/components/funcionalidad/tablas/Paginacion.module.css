@@ -1,0 +1,177 @@
+/* Paginacion — Agroalimentos Fénix
+   Controles de página para Tabla (dentro de su .pie) y MobileList. No lleva
+   fondo ni borde propio: dentro de la tabla la línea superior la pone .pie, y
+   suelta debajo de una lista no la necesita. Solo usa alias semánticos
+   (--color-*), así que el modo oscuro se resuelve solo. */
+
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 22px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+/* ---- Texto "Mostrando X–Y de Z" ---- */
+.info {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.info strong {
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+/* ---- Controles ---- */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.list {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Base para los números y las flechas */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  box-sizing: border-box;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  user-select: none;
+  transition: background 120ms ease, border-color 120ms ease, transform 80ms ease;
+}
+
+.btn:hover:not(:disabled):not([aria-current='page']) {
+  background: var(--color-surface-sunken);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-accent-gold);
+  outline-offset: 2px;
+}
+
+.btn:disabled {
+  color: var(--color-text-secondary);
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Página activa: mismo verde que el botón principal de la toolbar */
+.btn[aria-current='page'] {
+  background: var(--color-brand-primary);
+  color: var(--color-text-on-accent);
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+  cursor: default;
+}
+
+/* ---- Flechas Anterior / Siguiente ---- */
+.arrow {
+  padding: 0 12px;
+  border-color: var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+.arrow:hover:not(:disabled) {
+  border-color: var(--color-border-strong);
+  color: var(--color-brand-primary);
+}
+
+.icon {
+  flex-shrink: 0;
+}
+
+.ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 32px;
+  color: var(--color-text-secondary);
+}
+
+/* ---- "Página X de Y" ---- */
+.estado {
+  margin: 0 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+/* Con números visibles el texto sobra en escritorio; solo aparece en móvil. */
+.estadoMovil {
+  display: none;
+}
+
+/* ---- Móvil ---- */
+@media (max-width: 640px) {
+  .root {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .nav {
+    width: 100%;
+    margin-left: 0;
+    justify-content: space-between;
+  }
+
+  .list,
+  .label {
+    display: none;
+  }
+
+  .estadoMovil {
+    display: block;
+  }
+
+  /* 44px: tamaño mínimo de toque */
+  .btn {
+    min-width: 44px;
+    height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+
+  .btn:active:not(:disabled) {
+    transform: none;
+  }
+}

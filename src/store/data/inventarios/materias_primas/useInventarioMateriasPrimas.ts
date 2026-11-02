@@ -9,6 +9,7 @@ import { avisarDesincronizado } from "../../../../helpers/desincronizado";
 interface InventarioMateriasPrimasStore {
     lotesActualMateriasPrimas: InventarioMateriaPrima[],
     getInventarioMateriaPrima: () => Promise<void>
+    eventConsumoLote: (lote_id: string, peso: number) => void
 }
 
 const useInventarioMateriasPrimasStore = create<InventarioMateriasPrimasStore>((set) => ({
@@ -32,6 +33,18 @@ const useInventarioMateriasPrimasStore = create<InventarioMateriasPrimasStore>((
             console.error("[Llaves NFC] error:", err)
         }
     },
+    // El consumido puede pasarse del peso de ingreso (la tarjeta lo muestra
+    // como excedido), pero el saldo no baja de cero porque el schema no lo admite.
+    eventConsumoLote: (lote_id: string, peso: number) => {
+        set((state) => ({
+            lotesActualMateriasPrimas: state.lotesActualMateriasPrimas.map((l) =>
+                l.lote_id === lote_id
+                    ? { ...l, consumido: l.consumido + peso, saldo: Math.max(0, l.saldo - peso) }
+                    : l
+            ),
+        }))
+    },
+
 }))
 
 export default useInventarioMateriasPrimasStore;

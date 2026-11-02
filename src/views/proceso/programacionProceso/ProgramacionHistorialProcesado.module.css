@@ -1,0 +1,45 @@
+/* Historial procesado — celdas propias de esta pestaña. La barra de filtros
+   reusa las clases pl-* de ProgramacionProceso.module.css y la tabla trae su
+   propio estilo; aquí solo va lo que esas dos no cubren. Todo con alias
+   --color-*, así que el modo oscuro se resuelve solo. */
+
+/* Código del lote en monoespaciada, igual que los códigos en CardRow (mono). */
+.codigo {
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 0.8125rem;
+}
+
+/* ---- Línea de proceso ---- */
+.linea {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-sunken);
+  border: 1px solid var(--color-border);
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-secondary);
+}
+
+/* ---- Procesado "X kg de Y kg" ---- */
+.procesado {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.procesadoDe {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+
+/* Mismo aviso que el "Excedido" de la tarjeta del lote en proceso. */
+.procesadoExcedido {
+  color: var(--color-accent-flame);
+}
