@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Search } from "lucide-react"
 import { CardColumn } from "../../../components/funcionalidad/listasMobile/CardRow"
 import MobileList from "../../../components/funcionalidad/listasMobile/MobileList"
 import Tabla, { TablaColumn } from "../../../components/funcionalidad/tablas/Tabla"
 import Paginacion from "../../../components/funcionalidad/tablas/Paginacion"
 import usePaginacion from "../../../hooks/usePaginacion"
+import useProgramacionProcesoStore from "../../../store/data/proceso/useProgramacionProceso"
 import { formatearFecha, formatearPeso } from "../../../helpers/formatos"
 import { HistorialProcesado } from "../../../types/proceso/historialProcesado"
 import filtrosStyles from "./ProgramacionProceso.module.css"
@@ -17,8 +18,10 @@ type propsType = {
 }
 
 // "2 h 15 min" a partir del intervalo de la programación. Si alguna fecha no
-// parsea se devuelve "—", igual que formatearFecha.
-function formatearDuracion(inicio: string, fin: string): string {
+// parsea se devuelve "—", igual que formatearFecha. Sin `fin` la programación
+// sigue montada.
+function formatearDuracion(inicio: string, fin: string | null): string {
+    if (fin === null) return "En curso"
     const ms = Date.parse(fin) - Date.parse(inicio)
     if (Number.isNaN(ms) || ms < 0) return "—"
 
@@ -29,24 +32,28 @@ function formatearDuracion(inicio: string, fin: string): string {
     return resto === 0 ? `${horas} h` : `${horas} h ${resto} min`
 }
 
-// Procesado contra el peso de ingreso. Se resalta cuando se pasó, igual que el
-// "Excedido" de la tarjeta del lote en proceso.
+function formatearFin(registro: HistorialProcesado): string {
+    return registro.fin_en === null ? "En curso" : formatearFecha(registro.fin_en)
+}
+
+// Lo pesado en este montaje y cuántos pesajes lo componen.
 function renderProcesado(registro: HistorialProcesado) {
-    const excedido = registro.procesado > registro.peso_ingreso
     return (
         <span className={styles.procesado}>
-            <span className={excedido ? styles.procesadoExcedido : undefined}>
-                {formatearPeso(registro.procesado)}
+            {formatearPeso(registro.kg_pesados)}
+            <span className={styles.procesadoDe}>
+                {registro.cantidad_pesajes} {registro.cantidad_pesajes === 1 ? "pesaje" : "pesajes"}
             </span>
-            <span className={styles.procesadoDe}>de {formatearPeso(registro.peso_ingreso)}</span>
         </span>
     )
 }
 
 export default function ProgramacionHistorialProcesado({ isMobile }: propsType) {
-    // PENDIENTE: traer el historial del servidor (store + petición). Mientras
-    // tanto la pestaña se pinta vacía.
-    const historial: HistorialProcesado[] = useMemo(() => [], [])
+    const { getRegistroProcesoLote, registroProgramacionProceso: historial } = useProgramacionProcesoStore()
+
+    useEffect(() => {
+        getRegistroProcesoLote()
+    }, [getRegistroProcesoLote])
 
     const [buscar, setBuscar] = useState<string>("")
 
@@ -55,8 +62,8 @@ export default function ProgramacionHistorialProcesado({ isMobile }: propsType) 
         if (texto === "") return historial
         return historial.filter((r) =>
             r.lote_codigo.toLowerCase().includes(texto) ||
-            r.materia_prima.toLowerCase().includes(texto) ||
-            r.proveedor.toLowerCase().includes(texto)
+            r.materia_prima_nombre.toLowerCase().includes(texto) ||
+            r.predio_nombre.toLowerCase().includes(texto)
         )
     }, [historial, buscar])
 
@@ -79,16 +86,16 @@ export default function ProgramacionHistorialProcesado({ isMobile }: propsType) 
         {
             key: "fin_en",
             header: "Fin",
-            render: (r) => formatearFecha(r.fin_en),
+            render: formatearFin,
         },
         {
             key: "duracion",
             header: "Duración",
             render: (r) => formatearDuracion(r.inicio_en, r.fin_en),
         },
-        { key: "proveedor", header: "Proveedor" },
+        { key: "predio_nombre", header: "Predio" },
         {
-            key: "procesado",
+            key: "kg_pesados",
             header: "Procesado",
             fullWidth: true,
             render: renderProcesado,
@@ -102,8 +109,8 @@ export default function ProgramacionHistorialProcesado({ isMobile }: propsType) 
             width: "0.9fr",
             render: (r) => <span className={styles.codigo}>{r.lote_codigo}</span>,
         },
-        { key: "materia_prima", header: "Materia prima", width: "1.3fr" },
-        { key: "proveedor", header: "Proveedor", width: "1.3fr" },
+        { key: "materia_prima_nombre", header: "Materia prima", width: "1.3fr" },
+        { key: "predio_nombre", header: "Predio", width: "1.3fr" },
         {
             key: "linea",
             header: "Línea",
@@ -120,7 +127,7 @@ export default function ProgramacionHistorialProcesado({ isMobile }: propsType) 
             key: "fin_en",
             header: "Fin",
             width: "1.1fr",
-            render: (r) => formatearFecha(r.fin_en),
+            render: formatearFin,
         },
         {
             key: "duracion",
@@ -129,7 +136,7 @@ export default function ProgramacionHistorialProcesado({ isMobile }: propsType) 
             render: (r) => formatearDuracion(r.inicio_en, r.fin_en),
         },
         {
-            key: "procesado",
+            key: "kg_pesados",
             header: "Procesado",
             width: "1.5fr",
             render: renderProcesado,
@@ -161,7 +168,7 @@ export default function ProgramacionHistorialProcesado({ isMobile }: propsType) 
                         data={filas}
                         rowKey={(r) => r.id}
                         titulo={(r) => r.lote_codigo}
-                        subtitulo={(r) => `${r.materia_prima} · Línea ${r.linea}`}
+                        subtitulo={(r) => `${r.materia_prima_nombre} · Línea ${r.linea}`}
                         emptyMessage="Aún no hay lotes procesados."
                     />
                     {pie}
