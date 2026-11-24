@@ -8,19 +8,21 @@ import { avisarDesincronizado } from "../../../../helpers/desincronizado";
 
 interface InventarioMateriasPrimasStore {
     lotesActualMateriasPrimas: InventarioMateriaPrima[],
-    getInventarioMateriaPrima: () => Promise<void>
+    // showLoading en false cuando la recarga la dispara un evento del servidor:
+    // no debe tapar la pantalla de quien está en otra cosa.
+    getInventarioMateriaPrima: (showLoading?: boolean) => Promise<void>
     eventConsumoLote: (lote_id: string, peso: number) => void
 }
 
 const useInventarioMateriasPrimasStore = create<InventarioMateriasPrimasStore>((set) => ({
     lotesActualMateriasPrimas: [],
-    getInventarioMateriaPrima: async () => {
+    getInventarioMateriaPrima: async (showLoading = true) => {
         try {
             const request = {
                 action: "inventarios:inventario_materia_prima:read",
+                showLoading,
             }
             const response = await socketRequest(request)
-            console.log(response)
             if (response.status === 200) {
                 const parsed = z.array(inventarioMateriaPrimaSchema).safeParse(response.data ?? [])
                 if (!parsed.success) {

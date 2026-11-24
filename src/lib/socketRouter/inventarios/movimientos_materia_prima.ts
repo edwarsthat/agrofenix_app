@@ -13,6 +13,12 @@ const pesajeEventPayloadSchema = z.object({
 
 const movimientosMateriaPrimaRouter = (msg: ServerEvent) => {
     switch (msg.action) {
+        // El evento trae el ingreso con sus ids, sin los nombres ni el saldo que
+        // pinta el inventario: se vuelve a pedir en vez de armar la fila a medias.
+        case "add": {
+            useInventarioMateriasPrimasStore.getState().getInventarioMateriaPrima(false)
+            break
+        }
         case "consumo": {
             const parsed = pesajeEventPayloadSchema.safeParse(msg.data)
             if (!parsed.success) {

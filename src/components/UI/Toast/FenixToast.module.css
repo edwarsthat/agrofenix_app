@@ -4,8 +4,14 @@
 
 .stack {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  /* De inset a overflow se anulan los estilos que el navegador le pone a un popover. */
+  inset: auto 20px 20px auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  overflow: visible;
+  max-width: calc(100vw - 40px);
   z-index: 1000;
   display: flex;
   flex-direction: column;

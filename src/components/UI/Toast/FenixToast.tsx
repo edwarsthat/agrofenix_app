@@ -168,8 +168,22 @@ export interface ToastStackProps {
 
 /** ToastStack — contenedor fijo abajo a la derecha. Renderiza tu lista de toasts activos. */
 export function FenixToastStack({ toasts, onDismiss }: ToastStackProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const ultimoId = toasts[toasts.length - 1]?.id;
+
+  // Un <dialog> modal va en la capa superior del navegador, donde el z-index no
+  // cuenta: para salir por encima, la pila entra a esa capa después que él. Se
+  // reabre con cada toast nuevo porque el modal pudo abrirse entre uno y otro.
+  useEffect(() => {
+    const el = ref.current;
+    // Un WebView viejo no tiene popover: los toasts salen debajo del modal.
+    if (!el?.showPopover) return;
+    if (el.matches(':popover-open')) el.hidePopover();
+    if (ultimoId !== undefined) el.showPopover();
+  }, [ultimoId]);
+
   return (
-    <div className={styles.stack}>
+    <div ref={ref} popover="manual" className={styles.stack}>
       {toasts.map((t) => (
         <FenixToast
           key={t.id}

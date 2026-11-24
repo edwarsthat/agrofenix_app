@@ -28,6 +28,9 @@ export interface ServerResponse<T> {
 /** Errores que significan que ya no hay socket: la sesión no sirve. */
 const KINDS_SIN_SESION: SocketErr["kind"][] = ["NotConnected", "Disconnected"]
 
+// Más que el toast normal: el mensaje del servidor puede decir qué hacer.
+const DURACION_ERROR_MS = 10000
+
 export function isSocketErr(e: unknown): e is SocketErr {
     return typeof e === "object" && e !== null && "kind" in e
 }
@@ -93,7 +96,7 @@ export async function socketRequest<T>({
             const message = isSocketErr(err)
                 ? err.message
                 : err instanceof Error ? err.message : String(err)
-            toast.error("Error", message)
+            toast.error("Error", message, DURACION_ERROR_MS)
         }
         throw err
     } finally {

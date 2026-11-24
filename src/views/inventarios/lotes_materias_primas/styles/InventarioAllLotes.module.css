@@ -1,0 +1,27 @@
+/* Todos los lotes — celdas propias de esta tabla. La barra de filtros reusa las
+   clases pl-* de ProgramacionProceso.module.css y la tabla trae su propio
+   estilo; aquí solo va lo que esas dos no cubren. Todo con alias --color-*, así
+   que el modo oscuro se resuelve solo. */
+
+/* Código del lote en monoespaciada, igual que los códigos en CardRow (mono). */
+.codigo {
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 0.8125rem;
+}
+
+/* ---- Disponible "X kg de Y kg" ---- */
+.saldo {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.saldoDe {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
